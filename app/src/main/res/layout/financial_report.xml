@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="التقرير المالى"
+            android:textColor="@color/black"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_baseline_arrow_back_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/black" />
+
+        <TextView
+            android:id="@+id/textView57"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:text="الخزينة"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/safeDepositCheckbox"
+            app:layout_constraintEnd_toStartOf="@+id/safeDepositCheckbox"
+            app:layout_constraintTop_toTopOf="@+id/safeDepositCheckbox" />
+
+        <CheckBox
+            android:id="@+id/shiftsCheckbox"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/safeDepositCheckbox" />
+
+        <Spinner
+            android:id="@+id/safeDepositSpinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/safeDepositCheckbox"
+            app:layout_constraintEnd_toStartOf="@+id/textView56"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/safeDepositCheckbox" />
+
+
+        <TextView
+            android:id="@+id/textView53"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:text="الفرع"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/back" />
+
+        <Spinner
+            android:id="@+id/branchSpinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/textView53"
+            app:layout_constraintEnd_toStartOf="@+id/textView53"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textView53" />
+
+        <TextView
+            android:id="@+id/branchName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/textView53"
+            app:layout_constraintEnd_toStartOf="@+id/textView53"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textView53" />
+
+
+        <TextView
+            android:id="@+id/textView56"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:text="الوردية"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/shiftsCheckbox"
+            app:layout_constraintEnd_toStartOf="@+id/shiftsCheckbox"
+            app:layout_constraintTop_toTopOf="@+id/shiftsCheckbox" />
+
+        <CheckBox
+            android:id="@+id/safeDepositCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView53" />
+
+
+        <EditText
+            android:visibility="gone"
+            android:id="@+id/shiftISN"
+            android:inputType="number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:hint="أدخل رقم الوردية"
+            app:layout_constraintBottom_toBottomOf="@+id/textView56"
+            app:layout_constraintEnd_toStartOf="@+id/textView56"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textView56" />
+
+
+        <CheckBox
+            android:id="@+id/userCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/shiftsCheckbox" />
+
+        <CheckBox
+            android:id="@+id/intervalCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/userCheckbox" />
+
+        <CheckBox
+            android:id="@+id/workDateCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/intervalCheckBox" />
+
+        <CheckBox
+            android:id="@+id/bankCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/workDateCheckbox" />
+
+        <CheckBox
+            android:id="@+id/cashCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:layoutDirection="rtl"
+            android:text="النقدى"
+            android:checked="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/checkCheckbox"
+            app:layout_constraintTop_toBottomOf="@+id/bankCheckbox" />
+
+        <CheckBox
+            android:id="@+id/checkCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layoutDirection="rtl"
+            android:text="الشيكات"
+            android:checked="true"
+            app:layout_constraintBottom_toBottomOf="@+id/cashCheckBox"
+            app:layout_constraintEnd_toStartOf="@+id/cashCheckBox"
+            app:layout_constraintStart_toEndOf="@+id/creditCheckbox"
+            app:layout_constraintTop_toTopOf="@+id/cashCheckBox" />
+
+        <CheckBox
+            android:id="@+id/creditCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:checked="true"
+            android:layoutDirection="rtl"
+            android:text="الإئتمان"
+            app:layout_constraintBottom_toBottomOf="@+id/checkCheckbox"
+            app:layout_constraintEnd_toStartOf="@+id/checkCheckbox"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/checkCheckbox" />
+
+        <TextView
+            android:id="@+id/startTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:textSize="10sp"
+            android:background="@drawable/border"
+            android:padding="5dp"
+            android:gravity="center"
+            android:hint="بداية الفترة"
+            app:drawableEndCompat="@drawable/ic_baseline_edit_calendar_24"
+            app:layout_constraintBottom_toBottomOf="@+id/intervalTxt"
+            app:layout_constraintEnd_toStartOf="@+id/intervalTxt"
+            app:layout_constraintStart_toEndOf="@+id/endTime"
+            app:layout_constraintTop_toTopOf="@+id/intervalTxt"
+            tools:targetApi="o" />
+
+        <TextView
+            android:id="@+id/workStartTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/border"
+            android:gravity="center"
+            android:padding="5dp"
+            android:hint="بداية يومية العمل"
+            android:textSize="10sp"
+            app:drawableEndCompat="@drawable/ic_baseline_edit_calendar_24"
+            app:layout_constraintBottom_toBottomOf="@+id/intervalTxt2"
+            app:layout_constraintEnd_toStartOf="@+id/intervalTxt2"
+            app:layout_constraintStart_toEndOf="@+id/workEndTime"
+            app:layout_constraintTop_toTopOf="@+id/intervalTxt2" />
+
+        <TextView
+            android:id="@+id/endTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/border"
+            android:gravity="center"
+            android:padding="5dp"
+            android:hint="نهاية الفترة"
+            android:textSize="10sp"
+            app:drawableEndCompat="@drawable/ic_baseline_edit_calendar_24"
+            app:layout_constraintBottom_toBottomOf="@+id/intervalTxt"
+            app:layout_constraintEnd_toStartOf="@+id/startTime"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/intervalTxt" />
+
+        <TextView
+            android:id="@+id/workEndTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/border"
+            android:fontFamily="@font/cairo_regular"
+            android:gravity="center"
+            android:padding="5dp"
+            android:hint="نهاية يومية العمل"
+            android:textSize="10sp"
+            app:drawableEndCompat="@drawable/ic_baseline_edit_calendar_24"
+            app:layout_constraintBottom_toBottomOf="@+id/intervalTxt2"
+            app:layout_constraintEnd_toStartOf="@+id/workStartTime"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/intervalTxt2" />
+
+        <TextView
+            android:id="@+id/intervalTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:text="الفترة"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/intervalCheckBox"
+            app:layout_constraintEnd_toStartOf="@+id/intervalCheckBox"
+            app:layout_constraintTop_toTopOf="@+id/intervalCheckBox"
+            app:layout_constraintVertical_bias="0.777" />
+
+        <TextView
+            android:id="@+id/intervalTxt2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:text="تاريخ يومية العمل"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/workDateCheckbox"
+            app:layout_constraintEnd_toStartOf="@+id/workDateCheckbox"
+            app:layout_constraintTop_toTopOf="@+id/workDateCheckbox" />
+
+        <TextView
+            android:id="@+id/intervalTxt3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:text="البنك"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/bankCheckbox"
+            app:layout_constraintEnd_toStartOf="@+id/bankCheckbox"
+            app:layout_constraintTop_toTopOf="@+id/bankCheckbox" />
+
+        <Spinner
+            android:id="@+id/userSpinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/userCheckbox"
+            app:layout_constraintEnd_toStartOf="@+id/userTxt"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/userCheckbox" />
+
+        <TextView
+            android:id="@+id/userName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="50dp"
+            app:layout_constraintBottom_toBottomOf="@+id/userCheckbox"
+            app:layout_constraintEnd_toStartOf="@+id/userTxt"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/userCheckbox" />
+
+        <Spinner
+            android:id="@+id/bankSpinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/intervalTxt3"
+            app:layout_constraintEnd_toStartOf="@+id/intervalTxt3"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/intervalTxt3" />
+
+        <TextView
+            android:id="@+id/userTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:text="المستخدم"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/userCheckbox"
+            app:layout_constraintEnd_toStartOf="@+id/userCheckbox"
+            app:layout_constraintTop_toTopOf="@+id/userCheckbox" />
+
+
+        <Button
+            android:id="@+id/reportButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="50dp"
+            android:background="@drawable/blue_rounded"
+            android:gravity="center"
+            android:text="عرض التقرير"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/checkCheckbox" />
+
+        <LinearLayout
+            android:id="@+id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:clickable="true"
+            android:elevation="2dp"
+            android:focusable="true"
+            android:gravity="center"
+            android:visibility="gone"
+            tools:targetApi="lollipop">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

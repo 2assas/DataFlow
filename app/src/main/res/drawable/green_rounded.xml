@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:shape="rectangle"
+    android:padding="10dp">
+    <!-- you can use any color you want I used here gray color-->
+    <solid android:color="#17D117"/>
+    <corners android:radius="20dp"/>
+    <path
+        android:pathData="M772,772m-772,0a772,772 0,1 1,1544 0a772,772 0,1 1,-1544 0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startY="772"
+                android:startX="-3.7597014E-14"
+                android:endY="772"
+                android:endX="2000"
+                android:type="linear">
+                <item android:offset="0" android:color="#00FF00"/>
+                <item android:offset="0.494" android:color="#00FF00"/>
+                <item android:offset="1" android:color="#00FF00"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+</shape>

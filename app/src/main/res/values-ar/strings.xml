@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">DataFlow</string>
+    <string name="date_error">من فضلك أدخل التاريخ</string>
+    <string name="serial_error">من فضلك أدخل الرقم التسلسلى</string>
+    <string name="remember_me">تذكرنى</string>
+    <string name="request_submitted">تم حفظ الفاتورة</string>
+    <string name="welcome">مرحبا </string>
+    <string name="cheque_missing">الدفع بالشيك يتطلب ادخال رقم الشيك</string>
+    <string name="chequeDate_missing">الدفع بالشيك يتطلب ادخال تاريخ الشيك</string>
+    <string name="chequeBank_missing">الدفع بالشيك يتطلب اختيار البنك الخاص به</string>
+    <string name="no_connection">من فضلك تحقق من إتصالك بالإنترنت!</string>
+    <string name="no_connection_title">لا يوجد إتصال</string>
+    <string name="hint">إختر الطابعة</string>
+    <string name="select">إختيار</string>
+    <string name="none_ble_device">لا يوجد أجهزه قريبة</string>
+    <string name="connect">إتصال</string>
+    <string name="toast_discon_success">تم قطع الإتصال بنجاح</string>
+    <string name="toast_discon_faile">لم يتم قطع الإتصال</string>
+    <string name="toast_present_con">لا يوجد إتصال</string>
+    <string name="con_success">نجح الإتصال</string>
+    <string name="con_has_discon">تم قطع الإتصال</string>
+    <string name="con_failed">فشل فالإتصال</string>
+    <string name="select_your_printer">إختار الطابعة</string>
+    <string name="connect_first">من فضلك قم بالإتصال أولا</string>
+    <string name="confirm">تأكيد</string>
+    <string name="item_serial_number">رقم تسلسلى للصنف</string>
+</resources>
