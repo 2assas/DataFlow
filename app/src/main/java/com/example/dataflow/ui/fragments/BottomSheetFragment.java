@@ -23,6 +23,7 @@ import com.example.dataflow.ViewModels.InvoiceViewModel;
 import com.example.dataflow.ViewModels.ProductVM;
 import com.example.dataflow.databinding.BottomSheetBinding;
 import com.example.dataflow.ui.ProductDetails;
+import com.example.dataflow.ui.SplashScreen;
 import com.example.dataflow.ui.adapters.AgentAdapter;
 import com.example.dataflow.ui.adapters.CustomerAdapter;
 import com.example.dataflow.ui.adapters.ProductAdapter;
@@ -33,32 +34,41 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Pr
     BottomSheetBinding binding;
     InvoiceViewModel invoiceVM;
     ProductVM productVM;
-    String uuid="";
-    boolean isSerial= false;
-    public BottomSheetFragment() {}
+    String uuid = "";
+    boolean isSerial = false;
+
+    public BottomSheetFragment() {
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate( inflater,R.layout.bottom_sheet, container, false);
-        firstInvoice();
-        getProduct();
+        binding = DataBindingUtil.inflate(inflater, R.layout.bottom_sheet, container, false);
+        if (savedInstanceState != null) {
+            startActivity(new Intent(requireActivity(), SplashScreen.class));
+            requireActivity().finishAffinity();
+        } else {
+            firstInvoice();
+            getProduct();
+        }
         return binding.getRoot();
     }
 
     @SuppressLint("HardwareIds")
-    public void firstInvoice(){
-        invoiceVM =new ViewModelProvider(getActivity()).get(InvoiceViewModel.class);
-        invoiceVM.salesManLiveData=new MutableLiveData<>();
-        invoiceVM.customerLiveData=new MutableLiveData<>();
+    public void firstInvoice() {
+        invoiceVM = new ViewModelProvider(getActivity()).get(InvoiceViewModel.class);
+        invoiceVM.salesManLiveData = new MutableLiveData<>();
+        invoiceVM.customerLiveData = new MutableLiveData<>();
         uuid = Settings.Secure.getString(getActivity().getContentResolver(), Settings.Secure.ANDROID_ID);
         invoiceVM.customerLiveData.observe(getActivity(), customer -> {
             binding.progressBar.setVisibility(View.GONE);
 
-            if(customer.getStatus()==1) {
+            if (customer.getStatus() == 1) {
                 CustomerAdapter customerAdapter = new CustomerAdapter(customer.getData(), this);
                 binding.resultRV.setAdapter(customerAdapter);
                 binding.resultRV.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -66,47 +76,51 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Pr
         });
         invoiceVM.salesManLiveData.observe(getActivity(), salesMan -> {
             binding.progressBar.setVisibility(View.GONE);
-            if(salesMan.getStatus()==1) {
+            if (salesMan.getStatus() == 1) {
                 AgentAdapter agentAdapter = new AgentAdapter(salesMan.getData(), this);
                 binding.resultRV.setAdapter(agentAdapter);
                 binding.resultRV.setLayoutManager(new LinearLayoutManager(getActivity()));
             }
         });
     }
-    public void getProduct(){
-        productVM =new ViewModelProvider(getActivity()).get(ProductVM.class);
-        productVM.productMutableLiveData=new MutableLiveData<>();
+
+    public void getProduct() {
+        productVM = new ViewModelProvider(getActivity()).get(ProductVM.class);
+        productVM.productMutableLiveData = new MutableLiveData<>();
         productVM.productMutableLiveData.observe(getActivity(), product -> {
             binding.serialDialog.serialContainer.setVisibility(View.GONE);
             binding.progressBar.setVisibility(View.GONE);
-            if(product.getStatus()==1){
-                if(isSerial){
-                    App.product=product.getData().get(0);
-                    App.serialNumber=binding.serialDialog.serialNumberInput.getText().toString();
-                    isSerial=false;
+            if (product.getStatus() == 1) {
+                if (isSerial) {
+                    App.product = product.getData().get(0);
+                    App.serialNumber = binding.serialDialog.serialNumberInput.getText().toString();
+                    isSerial = false;
                     startActivity(new Intent(getActivity(), ProductDetails.class));
                     getActivity().finish();
                     dismiss();
                 } else {
-                ProductAdapter productAdapter= new ProductAdapter(product.getData(), this, getActivity(), this);
-                binding.resultRV.setAdapter(productAdapter);
-                binding.resultRV.setLayoutManager(new LinearLayoutManager(getActivity()));
-            }}
+                    ProductAdapter productAdapter = new ProductAdapter(product.getData(), this, getActivity(), this);
+                    binding.resultRV.setAdapter(productAdapter);
+                    binding.resultRV.setLayoutManager(new LinearLayoutManager(getActivity()));
+                }
+            }
         });
     }
+
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
         super.onDismiss(dialog);
         Activity activity = getActivity();
-        if(activity instanceof MyDialogCloseListener)
-            ((MyDialogCloseListener)activity).handleDialogClose(dialog);
+        if (activity instanceof MyDialogCloseListener)
+            ((MyDialogCloseListener) activity).handleDialogClose(dialog);
     }
+
     @Override
     public void serialClicked(int position) {
         binding.serialDialog.serialContainer.setVisibility(View.VISIBLE);
         binding.serialDialog.confirm.setOnClickListener(view -> {
-            productVM.getProduct(App.product.getItemName(),uuid, binding.serialDialog.serialNumberInput.getText().toString());
-            isSerial=true;
+            productVM.getProduct(App.product.getItemName(), uuid, binding.serialDialog.serialNumberInput.getText().toString());
+            isSerial = true;
         });
     }
 }

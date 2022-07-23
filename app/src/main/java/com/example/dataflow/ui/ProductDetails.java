@@ -52,18 +52,23 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.product_screen);
-        productVM = new ViewModelProvider(this).get(ProductVM.class);
-        checkoutVM = new ViewModelProvider(this).get(CheckoutVM.class);
-        fillViews();
-        handleSpinners();
-        unitSpinner();
-        stores_priceTypeSpinner();
-        quantityButtons();
-        bonusButtons();
-        addButton();
-        quantityWatchers();
-        discount();
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        } else {
+            binding = DataBindingUtil.setContentView(this, R.layout.product_screen);
+            productVM = new ViewModelProvider(this).get(ProductVM.class);
+            checkoutVM = new ViewModelProvider(this).get(CheckoutVM.class);
+            fillViews();
+            handleSpinners();
+            unitSpinner();
+            stores_priceTypeSpinner();
+            quantityButtons();
+            bonusButtons();
+            addButton();
+            quantityWatchers();
+            discount();
+        }
     }
 
     //    =====================================================================================================================
@@ -77,15 +82,18 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
         binding.item.setText(Integer.toString(App.product.getItemISN()));
         binding.itemBranchISN.setText(Long.toString(App.product.getItemISNBranch()));
         if (App.product.getQuantity() > 1) {
-            quantity = App.product.getQuantity();
+            quantity = App.product.getActualQuantity();
+            if (App.product.getBonusQuantity() > 1) {
+                bonus = App.product.getBonusQuantity();
+            }
             binding.totalQuantity.setText(String.format(Locale.US, "%.3f", quantity + bonus) + "");
             binding.textView26.setText(String.format(Locale.US, "%.3f", App.product.getActualQuantity()) + "");
         }
-        if(App.product.getDiscount1()!=0){
-            binding.itemDiscPer.setText(App.product.getDiscount1()+"");
+        if (App.product.getDiscount1() != 0) {
+            binding.itemDiscPer.setText(App.product.getDiscount1() + "");
         }
-        if(App.product.getBonusQuantity()!=0){
-            binding.bounusQuantity.setText(App.product.getBonusQuantity()+"");
+        if (App.product.getBonusQuantity() != 0) {
+            binding.bounusQuantity.setText(App.product.getBonusQuantity() + "");
         }
         App.product.setQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
         App.product.setActualQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
@@ -439,6 +447,12 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             }
         });
 //      =========================
+        if (App.product.getSelectedStore() != null) {
+            for (int i = 0; i < App.stores.getData().size(); i++) {
+                if (App.product.getSelectedStore() == App.stores.getData().get(i))
+                    binding.storesList.setSelection(i);
+            }
+        }
         ArrayList<String> priceType = new ArrayList<>();
         priceType.add(App.priceType.getPricesTypeName());
 

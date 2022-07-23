@@ -37,14 +37,19 @@ public class SearchCustomerBalance extends AppCompatActivity implements MyDialog
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         binding = DataBindingUtil.setContentView(this, R.layout.search_customer_balance);
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        }else{
         uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         invoiceVM = new ViewModelProvider(this).get(InvoiceViewModel.class);
         binding.back.setOnClickListener(view -> finish());
         App.customer=new CustomerData();
         searchButtons();
         observer();
-    }
+    }}
 
     private void observer() {
         invoiceVM.customerBalanceLiveData.observe(this, customerBalance -> {

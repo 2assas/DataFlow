@@ -35,6 +35,7 @@ import com.example.dataflow.ViewModels.PrintInvoiceVM;
 import com.example.dataflow.databinding.CachingPrintingBinding;
 import com.example.dataflow.databinding.SearchCashingBinding;
 import com.example.dataflow.ui.SearchInvoice;
+import com.example.dataflow.ui.SplashScreen;
 import com.example.dataflow.ui.invoice.PrintScreen;
 
 import net.posprinter.posprinterface.IMyBinder;
@@ -64,12 +65,16 @@ public class SearchCashing extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        }else{
         binding= DataBindingUtil.setContentView(this, R.layout.search_cashing);
         printInvoiceVM = new ViewModelProvider(this).get(PrintInvoiceVM.class);
         uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         moveType = getIntent().getIntExtra("moveType",16);
         setupViews();
-    }
+    }}
 
     public void setupViews() {
         @SuppressLint("HardwareIds")

@@ -32,6 +32,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.example.dataflow.App;
 import com.example.dataflow.R;
+import com.example.dataflow.ui.SplashScreen;
 import com.example.dataflow.utils.Conts;
 import com.example.dataflow.utils.DeviceReceiver;
 import com.google.android.material.snackbar.Snackbar;
@@ -102,6 +103,10 @@ public class PrintScreen extends AppCompatActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.printer_screen);
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        }else{
         // bind service，get ImyBinder object
         try{
             Intent intent=new Intent(this, PosprinterService.class);
@@ -126,6 +131,7 @@ public class PrintScreen extends AppCompatActivity implements View.OnClickListen
         } catch (Exception ex) {
             Log.e("Exception", ex.toString());
         }
+    }
     }
     private void initView(){
         BTCon= (Button) findViewById(R.id.buttonConnect);

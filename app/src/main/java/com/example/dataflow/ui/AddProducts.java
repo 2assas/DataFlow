@@ -41,27 +41,16 @@ public class AddProducts extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.add_products);
-        productVM = new ViewModelProvider(this).get(ProductVM.class);
-        uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        binding.searchProducts.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                if (App.isNetworkAvailable(AddProducts.this))
-                    productVM.getProduct(s, uuid, null);
-                else {
-                    App.noConnectionDialog(AddProducts.this);
-                }
-                BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
-                bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
-                binding.invoice.setText("متابعة الفاتورة");
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                binding.invoice.setText("بحث عن صنف");
-                binding.invoice.setOnClickListener(view -> {
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        } else {
+            binding = DataBindingUtil.setContentView(this, R.layout.add_products);
+            productVM = new ViewModelProvider(this).get(ProductVM.class);
+            uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            binding.searchProducts.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
                     if (App.isNetworkAvailable(AddProducts.this))
                         productVM.getProduct(s, uuid, null);
                     else {
@@ -70,22 +59,38 @@ public class AddProducts extends AppCompatActivity {
                     BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
                     bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
                     binding.invoice.setText("متابعة الفاتورة");
-                });
-                return false;
-            }
-        });
-        if (App.selectedProducts.size() > 0) {
-            binding.productsRecycler.setLayoutManager(new LinearLayoutManager(this));
-            selectedProductsAdapter = new SelectedProductsAdapter(App.selectedProducts, this);
-            selectedProductsAdapter.notifyDataSetChanged();
-            binding.productsRecycler.setAdapter(selectedProductsAdapter);
-            binding.invoice.setOnClickListener(view -> {
-                startActivity(new Intent(this, Checkout.class));
-                finish();
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    binding.invoice.setText("بحث عن صنف");
+                    binding.invoice.setOnClickListener(view -> {
+                        if (App.isNetworkAvailable(AddProducts.this))
+                            productVM.getProduct(s, uuid, null);
+                        else {
+                            App.noConnectionDialog(AddProducts.this);
+                        }
+                        BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
+                        bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+                        binding.invoice.setText("متابعة الفاتورة");
+                    });
+                    return false;
+                }
             });
+            if (App.selectedProducts.size() > 0) {
+                binding.productsRecycler.setLayoutManager(new LinearLayoutManager(this));
+                selectedProductsAdapter = new SelectedProductsAdapter(App.selectedProducts, this);
+                selectedProductsAdapter.notifyDataSetChanged();
+                binding.productsRecycler.setAdapter(selectedProductsAdapter);
+                binding.invoice.setOnClickListener(view -> {
+                    startActivity(new Intent(this, Checkout.class));
+                    finish();
+                });
+            }
+            recyclerSwipe();
+            barCodeScan();
         }
-        recyclerSwipe();
-        barCodeScan();
     }
 
     public void barCodeScan() {

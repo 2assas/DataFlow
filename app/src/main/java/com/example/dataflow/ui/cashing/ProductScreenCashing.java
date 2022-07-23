@@ -26,6 +26,7 @@ import com.example.dataflow.ViewModels.ProductVM;
 import com.example.dataflow.databinding.ProductScreenCashingBinding;
 import com.example.dataflow.pojo.product.MeasureUnit;
 import com.example.dataflow.pojo.product.ProductData;
+import com.example.dataflow.ui.SplashScreen;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,18 +50,22 @@ public class ProductScreenCashing extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.product_screen_cashing);
-        productVM = new ViewModelProvider(this).get(ProductVM.class);
-        checkoutVM = new ViewModelProvider(this).get(CheckoutVM.class);
-        moveType = getIntent().getIntExtra("moveType", 16);
-        fillViews();
-        handleSpinners();
-        unitSpinner();
-        stores_priceTypeSpinner();
-        quantityButtons();
-        addButton();
-        quantityWatchers();
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        } else {
+            productVM = new ViewModelProvider(this).get(ProductVM.class);
+            checkoutVM = new ViewModelProvider(this).get(CheckoutVM.class);
+            moveType = getIntent().getIntExtra("moveType", 16);
+            fillViews();
+            handleSpinners();
+            unitSpinner();
+            stores_priceTypeSpinner();
+            quantityButtons();
+            addButton();
+            quantityWatchers();
+        }
     }
-
     //    =====================================================================================================================
     @SuppressLint("SetTextI18n")
     public void fillViews() {

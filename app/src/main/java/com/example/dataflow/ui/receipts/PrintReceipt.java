@@ -16,6 +16,7 @@ import androidx.databinding.DataBindingUtil;
 import com.example.dataflow.App;
 import com.example.dataflow.R;
 import com.example.dataflow.databinding.PrintReceiptBinding;
+import com.example.dataflow.ui.SplashScreen;
 import com.example.dataflow.ui.invoice.PrintScreen;
 
 import java.util.Locale;
@@ -27,8 +28,12 @@ public class PrintReceipt extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.print_receipt);
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        }else{
         fillData();
-    }
+    }}
 
     private void takeScreenShot() {
         View u = binding.printReceipt;

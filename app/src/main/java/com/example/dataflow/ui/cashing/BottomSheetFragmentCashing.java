@@ -23,6 +23,7 @@ import com.example.dataflow.ViewModels.InvoiceViewModel;
 import com.example.dataflow.ViewModels.ProductVM;
 import com.example.dataflow.databinding.BottomSheetBinding;
 import com.example.dataflow.ui.ProductDetails;
+import com.example.dataflow.ui.SplashScreen;
 import com.example.dataflow.ui.adapters.AgentAdapter;
 import com.example.dataflow.ui.adapters.CustomerAdapter;
 import com.example.dataflow.ui.adapters.ProductAdapter;
@@ -44,6 +45,10 @@ public class BottomSheetFragmentCashing extends BottomSheetDialogFragment implem
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            startActivity(new Intent(requireActivity(), SplashScreen.class));
+            requireActivity().finishAffinity();
+        }
     }
 
     @Override

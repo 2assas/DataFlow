@@ -21,6 +21,7 @@ import com.example.dataflow.databinding.InvoiceFirstBinding;
 import com.example.dataflow.pojo.users.CustomerData;
 import com.example.dataflow.pojo.users.SalesManData;
 import com.example.dataflow.ui.AddProducts;
+import com.example.dataflow.ui.SplashScreen;
 import com.example.dataflow.ui.fragments.BottomSheetFragment;
 import com.example.dataflow.ui.listeners.MyDialogCloseListener;
 
@@ -34,6 +35,10 @@ public class FirstInvoice extends AppCompatActivity implements MyDialogCloseList
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        }else{
         binding = DataBindingUtil.setContentView(this,R.layout.invoice_first);
         uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         invoiceVM =new  ViewModelProvider(this).get(InvoiceViewModel.class);
@@ -45,6 +50,7 @@ public class FirstInvoice extends AppCompatActivity implements MyDialogCloseList
         checkboxes();
         searchButtons();
         confirmButton();
+        }
     }
 
     public void checkboxes(){

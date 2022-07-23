@@ -37,16 +37,20 @@ public class ScanBarCode extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.barcode_scanner);
-        toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-        surfaceView = findViewById(R.id.scannerCamera);
-        detected = findViewById(R.id.detected);
-        initialiseDetectorsAndSources();
-        findViewById(R.id.back).setOnClickListener(view -> {
-            Intent returnIntent = new Intent();
-            setResult(Activity.RESULT_CANCELED, returnIntent);
-            finish();
-        });
-
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        }else {
+            toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+            surfaceView = findViewById(R.id.scannerCamera);
+            detected = findViewById(R.id.detected);
+            initialiseDetectorsAndSources();
+            findViewById(R.id.back).setOnClickListener(view -> {
+                Intent returnIntent = new Intent();
+                setResult(Activity.RESULT_CANCELED, returnIntent);
+                finish();
+            });
+        }
     }
     private void initialiseDetectorsAndSources() {
         //Toast.makeText(getApplicationContext(), "Barcode scanner started", Toast.LENGTH_SHORT).show();

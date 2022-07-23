@@ -45,10 +45,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(savedInstanceState!=null){
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        }else{
         setupViews();
         getUserSettings(App.currentUser.getBranchISN(), uuid);
         initToolBarAnNavMenu();
     }
+}
 
     @SuppressLint({"HardwareIds", "SetTextI18n"})
     private void setupViews() {

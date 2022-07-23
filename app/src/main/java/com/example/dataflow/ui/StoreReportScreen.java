@@ -38,16 +38,20 @@ public class StoreReportScreen extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding= DataBindingUtil.setContentView(this, R.layout.store_report);
-        storeSpinner();
-        reportViewModel = new ViewModelProvider(this).get(ReportViewModel.class);
-        uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        binding.button2.setOnClickListener(v -> {
-            reportViewModel.getStoreReport(uuid, storesData.getBranchISN(), storesData.getStore_ISN());
-            binding.progress.setVisibility(View.VISIBLE);
-            observeReport();
-        });
-
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        }else {
+            binding = DataBindingUtil.setContentView(this, R.layout.store_report);
+            storeSpinner();
+            reportViewModel = new ViewModelProvider(this).get(ReportViewModel.class);
+            uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            binding.button2.setOnClickListener(v -> {
+                reportViewModel.getStoreReport(uuid, storesData.getBranchISN(), storesData.getStore_ISN());
+                binding.progress.setVisibility(View.VISIBLE);
+                observeReport();
+            });
+        }
     }
 
 

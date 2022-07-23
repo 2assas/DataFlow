@@ -37,13 +37,17 @@ public class SearchReceipts extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        }else{
         binding = DataBindingUtil.setContentView(this, R.layout.search_receipt);
         receiptsVM = new ViewModelProvider(this).get(ReceiptsVM.class);
         uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         setupViews();
         observeData();
         checkPermission();
-    }
+    }}
 
 
     public void setupViews() {

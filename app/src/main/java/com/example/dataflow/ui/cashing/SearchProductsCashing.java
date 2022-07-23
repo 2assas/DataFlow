@@ -35,6 +35,7 @@ import com.example.dataflow.pojo.users.CustomerData;
 import com.example.dataflow.ui.AddProducts;
 import com.example.dataflow.ui.Checkout;
 import com.example.dataflow.ui.ScanBarCode;
+import com.example.dataflow.ui.SplashScreen;
 import com.example.dataflow.ui.invoice.PrintInvoice;
 import com.example.dataflow.utils.SingleShotLocationProvider;
 import com.example.dataflow.utils.SwipeHelper;
@@ -59,6 +60,10 @@ public class SearchProductsCashing extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        }else{
         binding = DataBindingUtil.setContentView(this, R.layout.add_products);
         productVM = new ViewModelProvider(this).get(ProductVM.class);
         settingVM = new ViewModelProvider(this).get(SettingVM.class);
@@ -120,7 +125,7 @@ public class SearchProductsCashing extends AppCompatActivity {
         });
         recyclerSwipe();
         barCodeScan();
-    }
+    }}
 
 
     @Override

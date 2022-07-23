@@ -40,6 +40,7 @@ import com.example.dataflow.R;
 import com.example.dataflow.ViewModels.PrintInvoiceVM;
 import com.example.dataflow.databinding.PrintInvoiceBinding;
 import com.example.dataflow.ui.DeviceListActivity;
+import com.example.dataflow.ui.SplashScreen;
 import com.example.dataflow.ui.adapters.PrintingLinesAdapter;
 
 import net.posprinter.posprinterface.IMyBinder;
@@ -104,23 +105,28 @@ public class PrintInvoice extends AppCompatActivity implements Runnable {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this,R.layout.print_invoice);
-        printInvoiceVM = new ViewModelProvider(this).get(PrintInvoiceVM.class);
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        } else {
+            binding = DataBindingUtil.setContentView(this, R.layout.print_invoice);
+            printInvoiceVM = new ViewModelProvider(this).get(PrintInvoiceVM.class);
 
-        @SuppressLint("HardwareIds")
-        String uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        try {
-            printInvoiceVM.getPrintingData(String.valueOf(App.currentUser.getBranchISN()), uuid, String.valueOf(App.invoiceResponse.getData().getMove_ID()),
-                    String.valueOf(App.currentUser.getWorkerBranchISN()), String.valueOf(App.currentUser.getWorkerISN()), this, null);
-        }catch (Exception e){
-          Toast.makeText(this, "حدث خطأ فى البيانات .. لم يتم تسجيل الفاتورة", Toast.LENGTH_LONG).show();
-        };
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        Intent intent=new Intent(this, PosprinterService.class);
-        bindService(intent, conn, BIND_AUTO_CREATE);
-        getInvoiceData();
+            @SuppressLint("HardwareIds")
+            String uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            try {
+                printInvoiceVM.getPrintingData(String.valueOf(App.currentUser.getBranchISN()), uuid, String.valueOf(App.invoiceResponse.getData().getMove_ID()),
+                        String.valueOf(App.currentUser.getWorkerBranchISN()), String.valueOf(App.currentUser.getWorkerISN()), this, null);
+            } catch (Exception e) {
+                Toast.makeText(this, "حدث خطأ فى البيانات .. لم يتم تسجيل الفاتورة", Toast.LENGTH_LONG).show();
+            }
+            ;
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+            Intent intent = new Intent(this, PosprinterService.class);
+            bindService(intent, conn, BIND_AUTO_CREATE);
+            getInvoiceData();
+        }
     }
-
     public void  getInvoiceData(){
         printInvoiceVM.invoiceMutableLiveData=new MutableLiveData<>();
         printInvoiceVM.invoiceMutableLiveData.observe(this, invoice -> {

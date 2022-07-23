@@ -40,6 +40,7 @@ import com.example.dataflow.R;
 import com.example.dataflow.ViewModels.PrintInvoiceVM;
 import com.example.dataflow.databinding.CachingPrintingBinding;
 import com.example.dataflow.ui.DeviceListActivity;
+import com.example.dataflow.ui.SplashScreen;
 import com.example.dataflow.ui.invoice.PrintScreen;
 
 import net.posprinter.posprinterface.IMyBinder;
@@ -82,11 +83,16 @@ public class CashingPrinting extends AppCompatActivity implements Runnable {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.caching_printing);
-        uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        moveType = getIntent().getIntExtra("moveType", 16);
-        printInvoiceVM = new ViewModelProvider(this).get(PrintInvoiceVM.class);
-        setupViews();
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        } else {
+            binding = DataBindingUtil.setContentView(this, R.layout.caching_printing);
+            uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            moveType = getIntent().getIntExtra("moveType", 16);
+            printInvoiceVM = new ViewModelProvider(this).get(PrintInvoiceVM.class);
+            setupViews();
+        }
     }
 
     public void setupViews() {
@@ -122,7 +128,7 @@ public class CashingPrinting extends AppCompatActivity implements Runnable {
         binding.branchName.setText(App.currentUser.getBranchName());
         binding.invoiceDate.setText("التاريخ: " + App.printInvoice.getMoveHeader().getCreateDate().replace(".000", ""));
         binding.dealerName.setText("الموظف: " + App.printInvoice.getMoveHeader().getWorkerName());
-        switch (moveType){
+        switch (moveType) {
             case 16: {
                 binding.cashingNumber.setText("إذن صرف رقم " + App.printInvoice.getMoveHeader().getMove_ID());
                 binding.fromStore.setText("المخزن");

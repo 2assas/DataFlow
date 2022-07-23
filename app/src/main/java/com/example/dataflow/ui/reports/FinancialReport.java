@@ -30,6 +30,7 @@ import com.example.dataflow.pojo.settings.BanksData;
 import com.example.dataflow.pojo.settings.SafeDeposit;
 import com.example.dataflow.pojo.settings.SafeDepositData;
 import com.example.dataflow.pojo.workStation.BranchData;
+import com.example.dataflow.ui.SplashScreen;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,10 +65,15 @@ public class FinancialReport extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        }else{
         binding = DataBindingUtil.setContentView(this, R.layout.financial_report);
         reportVM = new ViewModelProvider(this).get(ReportViewModel.class);
         uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         initViews();
+        }
     }
 
     void initViews() {

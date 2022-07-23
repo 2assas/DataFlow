@@ -40,11 +40,16 @@ public class SearchInvoice extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.search_invoice);
-        printInvoiceVM = new ViewModelProvider(this).get(PrintInvoiceVM.class);
-        uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        setupViews();
-        invoiceObserver();
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        } else {
+            binding = DataBindingUtil.setContentView(this, R.layout.search_invoice);
+            printInvoiceVM = new ViewModelProvider(this).get(PrintInvoiceVM.class);
+            uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            setupViews();
+            invoiceObserver();
+        }
     }
 
     public void setupViews() {
@@ -53,9 +58,6 @@ public class SearchInvoice extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 if (App.isNetworkAvailable(SearchInvoice.this)) {
-                    if (App.currentUser.getMobileShowDealerCurrentBalanceInPrint() == 1 && App.customer.getDealerName() != null) {
-                        printInvoiceVM.getCustomerBalance(uuid, String.valueOf(App.customer.getDealer_ISN()), String.valueOf(App.customer.getBranchISN()), String.valueOf(App.customer.getDealerType()), String.valueOf(App.customer.getDealerName()));
-                    }
                     printInvoiceVM.getPrintingData(String.valueOf(App.currentUser.getBranchISN()), uuid, s,
                             String.valueOf(App.currentUser.getWorkerBranchISN()), String.valueOf(App.currentUser.getWorkerISN()), SearchInvoice.this, null);
                     binding.progressBar.setVisibility(View.VISIBLE);
@@ -64,6 +66,7 @@ public class SearchInvoice extends AppCompatActivity {
                 }
                 return false;
             }
+
             @Override
             public boolean onQueryTextChange(String s) {
                 binding.printButton.setOnClickListener(view -> {
@@ -107,12 +110,19 @@ public class SearchInvoice extends AppCompatActivity {
         });
         printInvoiceVM.customerBalanceLiveData.observe(this, customerBalance -> {
             App.customerBalance = customerBalance.getMessage();
-        });
-        printInvoiceVM.invoiceMutableLiveData.observe(this, invoice -> {
-            App.printInvoice = invoice;
             binding.progressBar.setVisibility(View.GONE);
             binding.printButton.setVisibility(View.VISIBLE);
             displayPrintingData();
+        });
+        printInvoiceVM.invoiceMutableLiveData.observe(this, invoice -> {
+            App.printInvoice = invoice;
+            if (App.currentUser.getMobileShowDealerCurrentBalanceInPrint() == 1 && App.customer.getDealerName() != null) {
+                printInvoiceVM.getCustomerBalance(uuid, String.valueOf(App.customer.getDealer_ISN()), String.valueOf(App.customer.getBranchISN()), String.valueOf(App.customer.getDealerType()), String.valueOf(App.customer.getDealerName()));
+            } else {
+                binding.printButton.setVisibility(View.VISIBLE);
+                displayPrintingData();
+                binding.progressBar.setVisibility(View.GONE);
+            }
         });
     }
 
@@ -127,7 +137,7 @@ public class SearchInvoice extends AppCompatActivity {
         binding.invoiceTemplate.dealerName.setText("المستخدم: " + App.printInvoice.getMoveHeader().getWorkerName());
         binding.invoiceTemplate.tradeRecord.setText("السجل التجاري" + "\n" + App.printInvoice.getMoveHeader().getTradeRecoredNo());
         binding.invoiceTemplate.taxCardNo.setText("رقم التسجيل" + "\n" + App.printInvoice.getMoveHeader().getTaxeCardNo());
-        if(!App.customerBalance.isEmpty()){
+        if (!App.customerBalance.isEmpty()) {
             binding.invoiceTemplate.view511.setVisibility(View.VISIBLE);
             binding.invoiceTemplate.clientBalance.setText(App.customerBalance);
             binding.invoiceTemplate.clientBalance.setVisibility(View.VISIBLE);

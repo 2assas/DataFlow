@@ -95,98 +95,111 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.checkout);
-        checkoutVM = new ViewModelProvider(this).get(CheckoutVM.class);
-        uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        getProductsTotal();
-        remaining();
-        safeDepositSpinner();
-        userRestricts();
-        customer_agent();
-        calculations();
-        binding.checkout.setOnClickListener(view -> {
-            binding.progress.setVisibility(View.VISIBLE);
-            if (requiredData())
-                if (lat != 0 || _long != 0) {
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        } else {
+            binding = DataBindingUtil.setContentView(this, R.layout.checkout);
+            checkoutVM = new ViewModelProvider(this).get(CheckoutVM.class);
+            uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            getProductsTotal();
+            remaining();
+            safeDepositSpinner();
+            userRestricts();
+            customer_agent();
+            calculations();
+            binding.checkout.setOnClickListener(view -> {
+                binding.progress.setVisibility(View.VISIBLE);
+                if (requiredData())
+                    if (lat != 0 || _long != 0) {
+                        invoicePost();
+                        binding.checkout.setClickable(false);
+                    } else {
+                        binding.checkout.setClickable(true);
+                        new androidx.appcompat.app.AlertDialog.Builder(this).
+                                setTitle("الموقع مطلوب")
+                                .setMessage("لإتمام العملية يرجى السماح لإذن أخذ الموقع الحالى للجهاز")
+                                .setPositiveButton("حسنا", (dialogInterface, i) -> {
+                                    binding.progress.setVisibility(View.GONE);
+                                    dialogInterface.dismiss();
+                                    requestPermission();
+                                    settingsRequest();
+                                }).show();
+                    }
+            });
+
+            checkoutVM.responseDataMutableLiveData.observe(this, response -> {
+                binding.progress.setVisibility(View.GONE);
+                String errorMessage = response.getMessage();
+                if (response.getMessage().equals("Not saved ... please save again")) {
+                    errorMessage = "لا يوجد الكمية الكافية من هذا الصنف";
+                    binding.checkout.setClickable(true);
+                }
+
+                if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 2) {
+                    new AlertDialog.Builder(this).
+                            setTitle("نقص فالمخزن")
+                            .setMessage(errorMessage)
+                            .setCancelable(false)
+                            .setPositiveButton("متابعة", (dialogInterface, i) -> {
+                                AllowStoreMinusConfirm = 1;
+                                totalAfterTax -= totalLineTaxes;
+                                invoicePost();
+                            }).setNegativeButton("إلغاء", (dialogInterface, i) -> {
+                                dialogInterface.dismiss();
+
+                                startActivity(new Intent(Checkout.this, AddProducts.class));
+                                finish();
+                            }).show();
+                } else if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 1) {
+                    String error = response.getMessage();
+                    String errorTitle = "نقص فالمخزن";
+                    if (response.getMessage().equals("Not saved ... please save again")) {
+                        error = "لا يوجد الكمية الكافية من هذا الصنف";
+                    }
+                    if (response.getMessage().equals("Invoice not saved: Data redundancy.") || response.getMessage().equals("WARNING: Duplicate invoice data.")) {
+                        errorTitle = "تكرار بيانات";
+                    }
+                    binding.checkout.setClickable(true);
+                    new AlertDialog.Builder(this).
+                            setTitle(errorTitle)
+                            .setMessage(error)
+                            .setCancelable(false)
+                            .setNegativeButton("إلغاء", (dialogInterface, i) -> {
+                                dialogInterface.dismiss();
+                                startActivity(new Intent(Checkout.this, AddProducts.class));
+                                finish();
+                            }).show();
+                } else {
+                    App.invoiceResponse = response;
                     if (App.currentUser.getMobileShowDealerCurrentBalanceInPrint() == 1 && App.customer.getDealerName() != null) {
                         checkoutVM.getCustomerBalance(uuid, String.valueOf(App.customer.getDealer_ISN()), String.valueOf(App.customer.getBranchISN()), String.valueOf(App.customer.getDealerType()), String.valueOf(App.customer.getDealerName()));
+                        Log.e("checkBalance", "true");
+                    } else {
+                        Log.e("checkBalance", App.currentUser.getMobileShowDealerCurrentBalanceInPrint() +"  -- ");
+                        App.selectedProducts = new ArrayList<>();
+                        App.customer = new CustomerData();
+                        binding.checkout.setClickable(true);
+                        startActivity(new Intent(this, PrintInvoice.class));
+                        finish();
                     }
-                    invoicePost();
-                    binding.checkout.setClickable(false);
-                } else {
-                    binding.checkout.setClickable(true);
-                    new androidx.appcompat.app.AlertDialog.Builder(this).
-                            setTitle("الموقع مطلوب")
-                            .setMessage("لإتمام العملية يرجى السماح لإذن أخذ الموقع الحالى للجهاز")
-                            .setPositiveButton("حسنا", (dialogInterface, i) -> {
-                                binding.progress.setVisibility(View.GONE);
-                                dialogInterface.dismiss();
-                                requestPermission();
-                                settingsRequest();
-                            }).show();
                 }
-        });
-
-        checkoutVM.responseDataMutableLiveData.observe(this, response -> {
-            binding.progress.setVisibility(View.GONE);
-            String errorMessage = response.getMessage();
-            if (response.getMessage().equals("Not saved ... please save again")) {
-                errorMessage = "لا يوجد الكمية الكافية من هذا الصنف";
-                binding.checkout.setClickable(true);
-            }
-
-            if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 2) {
-                new AlertDialog.Builder(this).
-                        setTitle("نقص فالمخزن")
-                        .setMessage(errorMessage)
-                        .setCancelable(false)
-                        .setPositiveButton("متابعة", (dialogInterface, i) -> {
-                            AllowStoreMinusConfirm = 1;
-                            totalAfterTax -= totalLineTaxes;
-                            invoicePost();
-                        }).setNegativeButton("إلغاء", (dialogInterface, i) -> {
-                            dialogInterface.dismiss();
-
-                            startActivity(new Intent(Checkout.this, AddProducts.class));
-                            finish();
-                        }).show();
-            } else if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 1) {
-                String error = response.getMessage();
-                String errorTitle = "نقص فالمخزن";
-                if (response.getMessage().equals("Not saved ... please save again")) {
-                    error = "لا يوجد الكمية الكافية من هذا الصنف";
-                }
-                if (response.getMessage().equals("Invoice not saved: Data redundancy.") || response.getMessage().equals("WARNING: Duplicate invoice data.")) {
-                    errorTitle = "تكرار بيانات";
-                }
-                binding.checkout.setClickable(true);
-                new AlertDialog.Builder(this).
-                        setTitle(errorTitle)
-                        .setMessage(error)
-                        .setCancelable(false)
-                        .setNegativeButton("إلغاء", (dialogInterface, i) -> {
-                            dialogInterface.dismiss();
-                            startActivity(new Intent(Checkout.this, AddProducts.class));
-                            finish();
-                        }).show();
-            } else {
+            });
+            checkoutVM.customerBalanceLiveData.observe(this, customerBalance1 -> {
+                App.customerBalance = customerBalance1.getMessage();
                 App.selectedProducts = new ArrayList<>();
-                App.invoiceResponse = response;
                 App.customer = new CustomerData();
                 binding.checkout.setClickable(true);
                 startActivity(new Intent(this, PrintInvoice.class));
                 finish();
-            }
-        });
-        checkoutVM.customerBalanceLiveData.observe(this, customerBalance1 -> {
-            App.customerBalance = customerBalance1.getMessage();
-        });
-        binding.back.setOnClickListener(view -> {
-            startActivity(new Intent(Checkout.this, AddProducts.class));
-            finish();
-        });
-        if (checkPermission()) getLocation(this);
-        else requestPermission();
+            });
+            binding.back.setOnClickListener(view -> {
+                startActivity(new Intent(Checkout.this, AddProducts.class));
+                finish();
+            });
+            if (checkPermission()) getLocation(this);
+            else requestPermission();
+        }
     }
 
     @Override

@@ -35,14 +35,18 @@ public class GateWay extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         binding= DataBindingUtil.setContentView(this, R.layout.gateway);
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        }else{
+        binding= DataBindingUtil.setContentView(this, R.layout.gateway);
          uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 //        uuid = "bbca3293592c95eb";
         Log.e("getID", uuid);
          gateWayViewModel =new ViewModelProvider(this).get(GateWayViewModel.class);
          binding.appVersion.setText("رقم الإصدار" + Conts.APP_VERSION);
          handleLoginCases();
-    }
+    }}
     public void loginButton(View view) {
         if(binding.foundation.getText().toString().isEmpty()&&binding.phone.getText().toString().isEmpty()){
             if(App.isNetworkAvailable(this))

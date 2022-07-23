@@ -22,6 +22,7 @@ import com.example.dataflow.R;
 import com.example.dataflow.databinding.FinancialReportPrintBinding;
 import com.example.dataflow.pojo.report.FinancialReportAdapter;
 import com.example.dataflow.pojo.settings.SafeDepositData;
+import com.example.dataflow.ui.SplashScreen;
 import com.example.dataflow.ui.invoice.PrintScreen;
 
 import java.text.ParseException;
@@ -37,7 +38,11 @@ public class FinancialReportPrintScreen extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.financial_report_print);
-        initViews();
+        if (savedInstanceState != null) {
+            startActivity(new Intent(this, SplashScreen.class));
+            finishAffinity();
+        } else
+            initViews();
     }
 
     void initViews() {
@@ -81,7 +86,7 @@ public class FinancialReportPrintScreen extends AppCompatActivity {
         binding.totalRevenue.setText(String.format(Locale.US, "%.2f", App.financialReportData.getTotalRevenue()));
         binding.totalExpenses.setText(String.format(Locale.US, "%.2f", App.financialReportData.getTotalExpenses()));
         binding.finalBalance.setText(String.format(Locale.US, "%.2f", App.financialReportData.getFinalBalance()));
-        binding.branchName.setText("فرع: "+getIntent().getStringExtra("branch"));
+        binding.branchName.setText("فرع: " + getIntent().getStringExtra("branch"));
         if (App.financialReportData.getReport().size() > 0) {
             FinancialReportAdapter financialReportAdapter = new FinancialReportAdapter(App.financialReportData.getReport());
             binding.recyclerView2.setLayoutManager(new LinearLayoutManager(this));
@@ -92,20 +97,20 @@ public class FinancialReportPrintScreen extends AppCompatActivity {
         }
         if (getIntent().getStringExtra("bank") != null) {
             binding.bankName.setVisibility(View.VISIBLE);
-            binding.bankName.setText("البنك: "+getIntent().getStringExtra("bank"));
+            binding.bankName.setText("البنك: " + getIntent().getStringExtra("bank"));
         }
         if (getIntent().getStringExtra("userName") != null) {
             binding.userName.setVisibility(View.VISIBLE);
-            binding.userName.setText("الموظف: "+ getIntent().getStringExtra("userName"));
+            binding.userName.setText("الموظف: " + getIntent().getStringExtra("userName"));
         }
-        if (getIntent().getStringExtra("cash").equals("1")||getIntent().getStringExtra("check").equals("1")||getIntent().getStringExtra("credit").equals("1")){
+        if (getIntent().getStringExtra("cash").equals("1") || getIntent().getStringExtra("check").equals("1") || getIntent().getStringExtra("credit").equals("1")) {
             binding.paymentMethod.setVisibility(View.VISIBLE);
-            if(getIntent().getStringExtra("cash").equals("1"))
-                binding.paymentMethod.setText(binding.paymentMethod.getText().toString() +"    " + "النقدى");
-            if(getIntent().getStringExtra("check").equals("1"))
-                binding.paymentMethod.setText(binding.paymentMethod.getText().toString() +"    " + "الشيك");
-            if(getIntent().getStringExtra("cash").equals("1"))
-                binding.paymentMethod.setText(binding.paymentMethod.getText().toString() +"    " + "الإئتمان");
+            if (getIntent().getStringExtra("cash").equals("1"))
+                binding.paymentMethod.setText(binding.paymentMethod.getText().toString() + "    " + "النقدى");
+            if (getIntent().getStringExtra("check").equals("1"))
+                binding.paymentMethod.setText(binding.paymentMethod.getText().toString() + "    " + "الشيك");
+            if (getIntent().getStringExtra("cash").equals("1"))
+                binding.paymentMethod.setText(binding.paymentMethod.getText().toString() + "    " + "الإئتمان");
         }
 
         if (getIntent().getSerializableExtra("safeDeposit") != null) {
