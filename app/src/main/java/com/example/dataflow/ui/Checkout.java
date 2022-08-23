@@ -108,6 +108,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
             userRestricts();
             customer_agent();
             calculations();
+
             binding.checkout.setOnClickListener(view -> {
                 binding.progress.setVisibility(View.VISIBLE);
                 if (requiredData())
@@ -176,7 +177,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
                         checkoutVM.getCustomerBalance(uuid, String.valueOf(App.customer.getDealer_ISN()), String.valueOf(App.customer.getBranchISN()), String.valueOf(App.customer.getDealerType()), String.valueOf(App.customer.getDealerName()));
                         Log.e("checkBalance", "true");
                     } else {
-                        Log.e("checkBalance", App.currentUser.getMobileShowDealerCurrentBalanceInPrint() +"  -- ");
+                        Log.e("checkBalance", App.currentUser.getMobileShowDealerCurrentBalanceInPrint() + "  -- ");
                         App.selectedProducts = new ArrayList<>();
                         App.customer = new CustomerData();
                         binding.checkout.setClickable(true);
@@ -354,6 +355,9 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
             binding.creditBankCon.setVisibility(View.GONE);
             binding.remaining.setVisibility(View.GONE);
             binding.cashCheck.setChecked(true);
+        }
+        if (App.currentUser.getMobileDiscount() == 0) {
+            binding.discountContainer.setVisibility(View.GONE);
         }
     }
 
@@ -987,6 +991,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (!charSequence.toString().isEmpty())
+                    //TODO:: Come here.
                     if (Double.parseDouble(binding.remaining.getText().toString()) < (totalAfterTax + totalLineTaxes))
                         binding.remainedCash.setText(String.format(Locale.US, "%.2f", (totalAfterTax + totalLineTaxes) - Double.parseDouble(binding.remaining.getText().toString())) + " جنيه");
                     else {
@@ -994,7 +999,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
                         binding.remaining.setText("");
                     }
                 else
-                    binding.remainedCash.setText(String.format(Locale.US, "%.2f", ++totalAfterTax + totalLineTaxes) + " جنيه");
+                    binding.remainedCash.setText(String.format(Locale.US, "%.2f", totalAfterTax + totalLineTaxes) + " جنيه");
             }
 
             @Override
@@ -1084,7 +1089,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
         ArrayList<String> LineNotes = new ArrayList<>();
         long numberOFItems = 0;
         ArrayList<Double> netPrices = new ArrayList<>();
-        ArrayList<Integer> basicMeasureUnitQuantity = new ArrayList<>();
+        ArrayList<Double> basicMeasureUnitQuantity = new ArrayList<>();
         ArrayList<Boolean> expireDateBool = new ArrayList<>();
         ArrayList<Boolean> colorsBool = new ArrayList<>();
         ArrayList<Boolean> sizesBool = new ArrayList<>();

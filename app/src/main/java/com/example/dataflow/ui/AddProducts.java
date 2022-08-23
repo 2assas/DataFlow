@@ -1,6 +1,7 @@
 package com.example.dataflow.ui;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -79,6 +80,10 @@ public class AddProducts extends AppCompatActivity {
                 }
             });
             if (App.selectedProducts.size() > 0) {
+                if (App.priceType != App.selectedProducts.get(0).getSelectedPriceType()) {
+                    App.selectedProducts = new ArrayList<>();
+                    return;
+                }
                 binding.productsRecycler.setLayoutManager(new LinearLayoutManager(this));
                 selectedProductsAdapter = new SelectedProductsAdapter(App.selectedProducts, this);
                 selectedProductsAdapter.notifyDataSetChanged();
@@ -98,6 +103,20 @@ public class AddProducts extends AppCompatActivity {
             Intent intent = new Intent(this, ScanBarCode.class);
             startActivityForResult(intent, 0);
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (App.specialDiscount == 1) {
+            new AlertDialog.Builder(this).setTitle("تحذير")
+                    .setMessage("لقد تم إضافة منتجات بأسعار خاصة، فاذا تم تغيير العميل سيتم حذف المنتجات المضافة حاليا من الفاتورة")
+                    .setPositiveButton("إلغاء", (dialogInterface, i) -> dialogInterface.dismiss())
+                    .setNegativeButton("متابعة", ((dialogInterface, i) -> {
+                        super.onBackPressed();
+                    })).show();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override

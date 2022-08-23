@@ -17,7 +17,7 @@
         <entry key="..\:/From To/DataFlow/app/src/main/res/layout/caching_printing.xml" value="0.264" />
         <entry key="..\:/From To/DataFlow/app/src/main/res/layout/cashing_line_item.xml" value="0.2" />
         <entry key="..\:/From To/DataFlow/app/src/main/res/layout/checkout.xml" value="0.22592592592592592" />
-        <entry key="..\:/From To/DataFlow/app/src/main/res/layout/financial_report.xml" value="0.136" />
+        <entry key="..\:/From To/DataFlow/app/src/main/res/layout/financial_report.xml" value="0.536" />
         <entry key="..\:/From To/DataFlow/app/src/main/res/layout/financial_report_item.xml" value="0.264" />
         <entry key="..\:/From To/DataFlow/app/src/main/res/layout/financial_report_print.xml" value="0.264" />
         <entry key="..\:/From To/DataFlow/app/src/main/res/layout/gateway.xml" value="0.264" />
@@ -26,11 +26,12 @@
         <entry key="..\:/From To/DataFlow/app/src/main/res/layout/line_item.xml" value="0.4" />
         <entry key="..\:/From To/DataFlow/app/src/main/res/layout/nav_header_main.xml" value="0.2228310502283105" />
         <entry key="..\:/From To/DataFlow/app/src/main/res/layout/print_invoice.xml" value="0.264" />
-        <entry key="..\:/From To/DataFlow/app/src/main/res/layout/print_receipt.xml" value="0.22592592592592592" />
+        <entry key="..\:/From To/DataFlow/app/src/main/res/layout/print_receipt.xml" value="0.152" />
         <entry key="..\:/From To/DataFlow/app/src/main/res/layout/product_item.xml" value="0.6" />
         <entry key="..\:/From To/DataFlow/app/src/main/res/layout/product_item_cashing.xml" value="0.2" />
         <entry key="..\:/From To/DataFlow/app/src/main/res/layout/product_screen.xml" value="0.22592592592592592" />
         <entry key="..\:/From To/DataFlow/app/src/main/res/layout/product_screen_cashing.xml" value="0.225" />
+        <entry key="..\:/From To/DataFlow/app/src/main/res/layout/receipt_template.xml" value="0.264" />
         <entry key="..\:/From To/DataFlow/app/src/main/res/layout/receipts.xml" value="0.264" />
         <entry key="..\:/From To/DataFlow/app/src/main/res/layout/report_screen.xml" value="0.21203703703703702" />
         <entry key="..\:/From To/DataFlow/app/src/main/res/layout/search_cashing.xml" value="0.225" />

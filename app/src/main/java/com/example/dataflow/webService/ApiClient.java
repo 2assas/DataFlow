@@ -78,8 +78,7 @@ public interface ApiClient {
             @Query("uiid") String uuid,
             @Query("Dealer_ISN") String dealerISN,
             @Query("BranchISN") String branchISN,
-            @Query("DealerType") String dealerType,
-            @Query("DealerName") String dealerName
+            @Query("DealerType") String dealerType
             );
 
 
@@ -131,6 +130,7 @@ public interface ApiClient {
             @Query("DealerType") int dealerType,
             @Query("Dealer_ISN") long dealer_ISN,
             @Query("BranchISN") int BranchISN,
+            @Query("CurrentBranchISN") int CurrentBranchISN,
             @Query("AllowSpecificDealersPrices") int AllowSpecificDealersPrices,
             @Query("Serial") String serial
     );
@@ -142,6 +142,7 @@ public interface ApiClient {
             @Query("PricesTypeBranchISN") long pricesTypeBranchISN,
             @Query("PricesTypeISN") long pricesTypeISN,
             @Query("AllowSpecificDealersPrices") int AllowSpecificDealersPrices,
+            @Query("CurrentBranchISN") int CurrentBranchISN,
             @Query("Serial") String serial);
 
 
@@ -215,7 +216,7 @@ public interface ApiClient {
             @Field("numberOFItems") Long numberOFItems,
             @Field("CreateSource") int createSource,
             @Field("NetPrice[]") ArrayList<Double> NetPrice,
-            @Field("BasicMeasureUnitQuantity[]") ArrayList<Integer> BasicMeasureUnitQuantity,
+            @Field("BasicMeasureUnitQuantity[]") ArrayList<Double> BasicMeasureUnitQuantity,
             @Field("ExpireDate[]") ArrayList<Boolean> ExpireDate,
             @Field("Colors[]") ArrayList<Boolean> Colors,
             @Field("Seasons[]") ArrayList<Boolean> Seasons,
@@ -271,7 +272,7 @@ public interface ApiClient {
             @Field("Group2ISN[]") ArrayList<Long> Group2ISN,
             @Field("LineNotes[]") ArrayList<String> LineNotes,
             @Field("NetPrice[]") ArrayList<Double> NetPrice,
-            @Field("BasicMeasureUnitQuantity[]") ArrayList<Integer> BasicMeasureUnitQuantity,
+            @Field("BasicMeasureUnitQuantity[]") ArrayList<Double> BasicMeasureUnitQuantity,
             @Field("ExpireDate[]") ArrayList<Boolean> ExpireDate,
             @Field("Colors[]") ArrayList<Boolean> Colors,
             @Field("Seasons[]") ArrayList<Boolean> Seasons,

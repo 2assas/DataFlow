@@ -3,6 +3,7 @@ package com.example.dataflow.pojo.settings;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PriceType implements Serializable {
@@ -10,7 +11,7 @@ public class PriceType implements Serializable {
     @SerializedName("status")
     int status;
     @SerializedName("data")
-    List<PriceTypeData> data;
+    ArrayList<PriceTypeData> data;
     @SerializedName("message")
     String message;
 
@@ -22,11 +23,11 @@ public class PriceType implements Serializable {
         this.status = status;
     }
 
-    public List<PriceTypeData> getData() {
+    public ArrayList<PriceTypeData> getData() {
         return data;
     }
 
-    public void setData(List<PriceTypeData> data) {
+    public void setData(ArrayList<PriceTypeData> data) {
         this.data = data;
     }
 

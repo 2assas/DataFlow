@@ -16,13 +16,23 @@ public class MeasureUnit implements Serializable {
     @SerializedName("MeasureUnitArName")
     private String measureUnitArName;
     @SerializedName("BasicMeasureUnit")
-    private int basicMeasureUnit;
+    private double basicMeasureUnit;
     @SerializedName("BasicUnitQuantity")
-    private int basicUnitQuantity;
+    private double basicUnitQuantity;
     @SerializedName("DefaultMeasureUnit")
     private Boolean defaultMeasureUnit;
     @SerializedName("Price")
     private double price;
+    @SerializedName("DealerSpecialPriceFound")
+    private int SpecialDiscFound;
+
+    public int getSpecialDiscFound() {
+        return SpecialDiscFound;
+    }
+
+    public void setSpecialDiscFound(int specialDiscFound) {
+        SpecialDiscFound = specialDiscFound;
+    }
 
     public int getItemBranchISN() {
         return itemBranchISN;
@@ -64,19 +74,19 @@ public class MeasureUnit implements Serializable {
         this.measureUnitArName = measureUnitArName;
     }
 
-    public int getBasicMeasureUnit() {
+    public double getBasicMeasureUnit() {
         return basicMeasureUnit;
     }
 
-    public void setBasicMeasureUnit(int basicMeasureUnit) {
+    public void setBasicMeasureUnit(double basicMeasureUnit) {
         this.basicMeasureUnit = basicMeasureUnit;
     }
 
-    public int getBasicUnitQuantity() {
+    public double getBasicUnitQuantity() {
         return basicUnitQuantity;
     }
 
-    public void setBasicUnitQuantity(int basicUnitQuantity) {
+    public void setBasicUnitQuantity(double basicUnitQuantity) {
         this.basicUnitQuantity = basicUnitQuantity;
     }
 

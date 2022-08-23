@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.dataflow.pojo.receipts.ReceiptModel;
 import com.example.dataflow.pojo.receipts.ReceiptResponse;
+import com.example.dataflow.pojo.users.CustomerBalance;
 import com.example.dataflow.webService.ApiClient;
 import com.example.dataflow.webService.Constants;
 import com.example.dataflow.webService.ServiceGenerator;
@@ -23,6 +24,7 @@ public class ReceiptsVM extends ViewModel {
 
     public MutableLiveData<ReceiptResponse> receiptResponseMutableLiveData= new MutableLiveData<>();
     public MutableLiveData<ReceiptModel> receiptModelMutableLiveData= new MutableLiveData<>();
+    public MutableLiveData<CustomerBalance> customerBalanceLiveData = new MutableLiveData<>();
 
     ApiClient apiClient = ServiceGenerator.tokenService(
             ApiClient.class, Constants.BASE_URL);
@@ -85,4 +87,30 @@ public class ReceiptsVM extends ViewModel {
             }
         });
     }
+    public void getCustomerBalance(String uuid, String dealerISN, String branchISN, String dealerType, String dealerName) {
+        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(uuid, dealerISN, branchISN, dealerType).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observer<CustomerBalance> observer = new Observer<CustomerBalance>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@NonNull CustomerBalance customer) {
+                customerBalanceLiveData.postValue(customer);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
+        customerObservable.subscribe(observer);
+    }
+
 }

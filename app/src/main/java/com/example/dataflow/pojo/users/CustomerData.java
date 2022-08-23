@@ -20,6 +20,29 @@ public class CustomerData implements Serializable {
     @SerializedName("Dealer_Address")
     private String dealerAddress;
 
+    @SerializedName("DealerSellPriceTypeBranchISN")
+    private String DealerSellPriceTypeBranchISN;
+
+    @SerializedName("DealerSellPriceTypeISN")
+    private String DealerSellPriceTypeISN;
+
+
+    public String getDealerSellPriceTypeBranchISN() {
+        return DealerSellPriceTypeBranchISN;
+    }
+
+    public void setDealerSellPriceTypeBranchISN(String dealerSellPriceTypeBranchISN) {
+        DealerSellPriceTypeBranchISN = dealerSellPriceTypeBranchISN;
+    }
+
+    public String getDealerSellPriceTypeISN() {
+        return DealerSellPriceTypeISN;
+    }
+
+    public void setDealerSellPriceTypeISN(String dealerSellPriceTypeISN) {
+        DealerSellPriceTypeISN = dealerSellPriceTypeISN;
+    }
+
     public long getDealer_ISN() {
         return Dealer_ISN;
     }

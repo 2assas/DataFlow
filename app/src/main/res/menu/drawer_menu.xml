@@ -30,7 +30,7 @@
     <item android:title="App Version">
         <menu>
             <item android:id="@+id/nav_item_six"
-                android:title="22.0723" />
+                android:title="22.0819" />
         </menu>
     </item>
 </menu>

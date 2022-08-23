@@ -71,6 +71,11 @@ public class PrintReceipt extends AppCompatActivity {
         if(!App.customerBalance.isEmpty()){
             binding.clientBalance.setText(App.customerBalance);
             binding.clientBalance.setVisibility(View.VISIBLE);
+            binding.view19.setVisibility(View.VISIBLE);
+            App.customerBalance="";
+        }else{
+            binding.clientBalance.setVisibility(View.GONE);
+            binding.view19.setVisibility(View.GONE);
         }
         binding.date.setText("التاريخ: "+ App.receiptModel.getData().get(0).getCreateDate());
         binding.receiptTotal.setText(String.format(Locale.US,"%.2f",Float.parseFloat(App.receiptModel.getData().get(0).getNetValue()))+" جنيه");

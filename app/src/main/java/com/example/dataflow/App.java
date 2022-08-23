@@ -37,6 +37,7 @@ public class App extends Application {
     public static Banks banks = new Banks();
     public static ReceiptModel receiptModel = new ReceiptModel();
     public static PriceTypeData priceType = new PriceTypeData();
+    public static ArrayList<PriceTypeData> allPriceType = new ArrayList<>();
     public static SafeDeposit safeDeposit = new SafeDeposit();
     public static Stores stores = new Stores();
     public static Stores storesCashing = new Stores();
@@ -52,6 +53,7 @@ public class App extends Application {
     public static String lastConnected="";
     public static String serialNumber="";
     public static String customerBalance="";
+    public static int specialDiscount=0;
     public static Data financialReportData = new Data();
 
 

@@ -66,6 +66,7 @@ public class ProductScreenCashing extends AppCompatActivity {
             quantityWatchers();
         }
     }
+
     //    =====================================================================================================================
     @SuppressLint("SetTextI18n")
     public void fillViews() {
@@ -267,27 +268,8 @@ public class ProductScreenCashing extends AppCompatActivity {
             binding.fromStoreTxt.setText("المخزن المحول منه");
         ArrayList<String> stores = new ArrayList<>();
         int pos = 0;
-        for (int i = 0; i < App.storesCashing.getData().size(); i++) {
-            if (App.currentUser.getPermission() == 0) {
-                if (moveType == 16)
-                    if (App.storesCashing.getData().get(i).getStore_ISN() == App.currentUser.getStockOutDefaultStoreISN()
-                            && App.storesCashing.getData().get(i).getBranchISN() == App.currentUser.getStockInDefaultStoreBranchISN()) {
-                        App.product.setSelectedStore(App.storesCashing.getData().get(i));
-                        stores.add(App.storesCashing.getData().get(i).getStoreName());
-                    }
-                if (moveType == 17)
-                    if (App.storesCashing.getData().get(i).getStore_ISN() == App.currentUser.getStockInDefaultStoreISN()
-                            && App.storesCashing.getData().get(i).getBranchISN() == App.currentUser.getStockInDefaultStoreBranchISN()) {
-                        App.product.setSelectedStore(App.storesCashing.getData().get(i));
-                        stores.add(App.storesCashing.getData().get(i).getStoreName());
-                    }
-                if (moveType == 14)
-                    if (App.storesCashing.getData().get(i).getStore_ISN() == App.currentUser.getTransfereFromDefaultStoreISN()
-                            && App.storesCashing.getData().get(i).getBranchISN() == App.currentUser.getTransfereFromDefaultStoreBranchISN()) {
-                        App.product.setSelectedStore(App.storesCashing.getData().get(i));
-                        stores.add(App.storesCashing.getData().get(i).getStoreName());
-                    }
-            } else {
+        if (App.currentUser.getPermission() == 1) {
+            for (int i = 0; i < App.storesCashing.getData().size(); i++) {
                 stores.add(App.storesCashing.getData().get(i).getStoreName());
                 if (moveType == 16)
                     if (App.storesCashing.getData().get(i).getStore_ISN() == App.currentUser.getStockOutDefaultStoreISN()
@@ -302,6 +284,9 @@ public class ProductScreenCashing extends AppCompatActivity {
                             && App.storesCashing.getData().get(i).getBranchISN() == App.currentUser.getTransfereFromDefaultStoreBranchISN())
                         pos = i;
             }
+        } else {
+            App.product.setSelectedStore(App.stores.getData().get(0));
+            stores.add(App.stores.getData().get(0).getStoreName());
         }
         ArrayAdapter aa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, stores);
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -309,16 +294,16 @@ public class ProductScreenCashing extends AppCompatActivity {
         binding.storesList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                App.product.setSelectedStore(App.stores.getData().get(i));
+                App.product.setSelectedStore(App.storesCashing.getData().get(i));
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                App.product.setSelectedStore(App.stores.getData().get(0));
+                App.product.setSelectedStore(App.storesCashing.getData().get(0));
             }
         });
-        binding.storesList.setSelection(pos);
-
+        if (App.currentUser.getPermission() == 1)
+            binding.storesList.setSelection(pos);
         if (moveType == 14) {
             int pos2 = 0;
             ArrayList<String> storesTo = new ArrayList<>();
@@ -433,6 +418,7 @@ public class ProductScreenCashing extends AppCompatActivity {
                     quantity = 1;
                 }
                 App.product.setActualQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
+                App.product.setQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
             }
 
             @Override
@@ -629,7 +615,7 @@ public class ProductScreenCashing extends AppCompatActivity {
         ArrayList<Long> Group2ISN = new ArrayList<>();
         ArrayList<String> LineNotes = new ArrayList<>();
         ArrayList<Double> netPrices = new ArrayList<>();
-        ArrayList<Integer> basicMeasureUnitQuantity = new ArrayList<>();
+        ArrayList<Double> basicMeasureUnitQuantity = new ArrayList<>();
         ArrayList<Boolean> expireDateBool = new ArrayList<>();
         ArrayList<Boolean> colorsBool = new ArrayList<>();
         ArrayList<Boolean> sizesBool = new ArrayList<>();

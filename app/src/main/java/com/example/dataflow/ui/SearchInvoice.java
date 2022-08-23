@@ -30,6 +30,7 @@ import com.example.dataflow.ui.invoice.PrintScreen;
 
 import java.text.DecimalFormat;
 import java.util.Locale;
+import java.util.Objects;
 
 public class SearchInvoice extends AppCompatActivity {
     PrintInvoiceVM printInvoiceVM;
@@ -116,8 +117,10 @@ public class SearchInvoice extends AppCompatActivity {
         });
         printInvoiceVM.invoiceMutableLiveData.observe(this, invoice -> {
             App.printInvoice = invoice;
-            if (App.currentUser.getMobileShowDealerCurrentBalanceInPrint() == 1 && App.customer.getDealerName() != null) {
-                printInvoiceVM.getCustomerBalance(uuid, String.valueOf(App.customer.getDealer_ISN()), String.valueOf(App.customer.getBranchISN()), String.valueOf(App.customer.getDealerType()), String.valueOf(App.customer.getDealerName()));
+            if (App.currentUser.getMobileShowDealerCurrentBalanceInPrint() == 1 && !Objects.equals(invoice.getMoveHeader().getDealerISN(), "0")
+                    && !Objects.equals(invoice.getMoveHeader().getDealerBranchISN(), "0") && !Objects.equals(invoice.getMoveHeader().getDealerType(), "0")
+            ) {
+                printInvoiceVM.getCustomerBalance(uuid, invoice.getMoveHeader().getDealerISN(), invoice.getMoveHeader().getDealerBranchISN(), invoice.getMoveHeader().getDealerType(), "");
             } else {
                 binding.printButton.setVisibility(View.VISIBLE);
                 displayPrintingData();
@@ -141,14 +144,20 @@ public class SearchInvoice extends AppCompatActivity {
             binding.invoiceTemplate.view511.setVisibility(View.VISIBLE);
             binding.invoiceTemplate.clientBalance.setText(App.customerBalance);
             binding.invoiceTemplate.clientBalance.setVisibility(View.VISIBLE);
+            App.customerBalance="";
+        }else{
+            binding.invoiceTemplate.clientBalance.setVisibility(View.GONE);
+            binding.invoiceTemplate.view511.setVisibility(View.GONE);
         }
         if (App.printInvoice.getMoveHeader().getDealerName() != null) {
             binding.invoiceTemplate.dealerName2.setText("العميل: " + App.printInvoice.getMoveHeader().getDealerName());
+            binding.invoiceTemplate.dealerName2.setVisibility(View.VISIBLE);
         } else {
             binding.invoiceTemplate.dealerName2.setVisibility(View.GONE);
         }
         if (App.printInvoice.getMoveHeader().getSaleManName() != null) {
             binding.invoiceTemplate.saleMan.setText("المندوب: " + App.printInvoice.getMoveHeader().getSaleManName());
+            binding.invoiceTemplate.saleMan.setVisibility(View.VISIBLE);
         } else {
             binding.invoiceTemplate.saleMan.setVisibility(View.GONE);
         }
@@ -173,14 +182,17 @@ public class SearchInvoice extends AppCompatActivity {
         binding.invoiceTemplate.textView41.setText("المتبقى  " + roundTwoDecimals(Double.parseDouble(App.printInvoice.getMoveHeader().getRemainValue())));
         binding.invoiceTemplate.textView42.setText("المدفوع  " + roundTwoDecimals(Double.parseDouble(App.printInvoice.getMoveHeader().getPaidValue())));
         binding.invoiceTemplate.textView43.setText(App.printInvoice.getMoveHeader().getBranchAddress());
-        if (!App.printInvoice.getMoveHeader().getTel1().isEmpty())
+        if (!App.printInvoice.getMoveHeader().getTel1().isEmpty()) {
             binding.invoiceTemplate.textView45.setText(App.printInvoice.getMoveHeader().getTel1());
-        else
+            binding.invoiceTemplate.textView45.setVisibility(View.VISIBLE);
+        }
+        else {
             binding.invoiceTemplate.textView45.setVisibility(View.GONE);
-
-        if (!App.printInvoice.getMoveHeader().getTel2().isEmpty())
+        }
+        if (!App.printInvoice.getMoveHeader().getTel2().isEmpty()) {
             binding.invoiceTemplate.textView44.setText(App.printInvoice.getMoveHeader().getTel2());
-        else
+            binding.invoiceTemplate.textView44.setVisibility(View.VISIBLE);
+        }  else
             binding.invoiceTemplate.textView44.setVisibility(View.GONE);
         checkPermission();
         findViewById(R.id.invoiceTemplate).setVisibility(View.VISIBLE);

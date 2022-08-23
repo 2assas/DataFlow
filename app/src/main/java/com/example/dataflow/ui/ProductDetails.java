@@ -696,10 +696,16 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                     if (!App.isEditing) {
                         App.selectedProducts.add(App.product);
                         binding.button.setClickable(false);
+                        if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
+                            App.specialDiscount = 1;
+                        }
                         startActivity(new Intent(this, AddProducts.class));
                     } else {
                         App.selectedProducts.set(App.editingPos, App.product);
                         binding.button.setClickable(false);
+                        if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
+                            App.specialDiscount = 1;
+                        }
                         startActivity(new Intent(this, AddProducts.class));
                         App.isEditing = false;
                         App.editingPos = 0;
@@ -725,10 +731,16 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                                         if (!App.isEditing) {
                                             binding.button.setClickable(false);
                                             App.selectedProducts.add(App.product);
+                                            if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
+                                                App.specialDiscount = 1;
+                                            }
                                             startActivity(new Intent(this, AddProducts.class));
                                         } else {
                                             App.selectedProducts.set(App.editingPos, App.product);
                                             binding.button.setClickable(false);
+                                            if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
+                                                App.specialDiscount = 1;
+                                            }
                                             startActivity(new Intent(this, AddProducts.class));
                                             App.isEditing = false;
                                             App.editingPos = 0;
@@ -759,10 +771,16 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                             if (!App.isEditing) {
                                 App.selectedProducts.add(App.product);
                                 binding.button.setClickable(false);
+                                if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
+                                    App.specialDiscount = 1;
+                                }
                                 startActivity(new Intent(this, AddProducts.class));
                             } else {
                                 App.selectedProducts.set(App.editingPos, App.product);
                                 binding.button.setClickable(false);
+                                if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
+                                    App.specialDiscount = 1;
+                                }
                                 startActivity(new Intent(this, AddProducts.class));
                                 App.isEditing = false;
                                 App.editingPos = 0;
@@ -812,7 +830,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
         ArrayList<Long> Group2ISN = new ArrayList<>();
         ArrayList<String> LineNotes = new ArrayList<>();
         ArrayList<Double> netPrices = new ArrayList<>();
-        ArrayList<Integer> basicMeasureUnitQuantity = new ArrayList<>();
+        ArrayList<Double> basicMeasureUnitQuantity = new ArrayList<>();
         ArrayList<Boolean> expireDateBool = new ArrayList<>();
         ArrayList<Boolean> colorsBool = new ArrayList<>();
         ArrayList<Boolean> sizesBool = new ArrayList<>();

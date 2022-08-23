@@ -23,6 +23,7 @@ public class SettingVM extends ViewModel {
     public MutableLiveData<Stores> storesMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<Banks> banksMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<PriceTypeData> priceTypeMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<PriceType> allPriceTypeMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<SafeDeposit> safeDepositMutableLiveData = new MutableLiveData<>();
     ApiClient apiClient = ServiceGenerator.tokenService(
             ApiClient.class, Constants.BASE_URL);
@@ -60,7 +61,7 @@ public class SettingVM extends ViewModel {
                     priceTypeMutableLiveData.setValue(priceType.getData().get(i));
                 }
             }
-
+           App.allPriceType= priceType.getData();
         });
     }
 }

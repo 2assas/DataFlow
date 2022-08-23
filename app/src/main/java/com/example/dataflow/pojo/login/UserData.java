@@ -91,6 +91,19 @@ public class UserData implements Serializable {
     @SerializedName("MobileDiscount")
     private int MobileDiscount =1;
 
+
+    @SerializedName("MobileChangeSellPrice")
+    private int MobileChangeSellPrice =0;
+
+
+    public int getMobileChangeSellPrice() {
+        return MobileChangeSellPrice;
+    }
+
+    public void setMobileChangeSellPrice(int mobileChangeSellPrice) {
+        MobileChangeSellPrice = mobileChangeSellPrice;
+    }
+
     public int getMobileBonus() {
         return MobileBonus;
     }

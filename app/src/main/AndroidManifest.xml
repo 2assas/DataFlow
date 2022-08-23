@@ -2,8 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.dataflow">
-    <uses-permission android:name="android.permiss  ion.ACCESS_WIFI_STATE"/>
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
+
+    <uses-permission android:name="android.permiss  ion.ACCESS_WIFI_STATE" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission. ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -16,9 +20,12 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
+
     <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
 
@@ -30,47 +37,97 @@
         android:name="android.hardware.camera"
         android:required="true" />
     <application
-        android:usesCleartextTraffic="true"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:hardwareAccelerated="true"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
-        android:requestLegacyExternalStorage="true"
         android:theme="@style/AppTheme"
-        tools:targetApi="m"
-        tools:replace="android:supportsRtl">
-        <activity android:name=".ui.MainActivity"/>
-        <activity android:name=".ui.GateWay" />
-        <activity android:name=".ui.invoice.FirstInvoice" />
-        <activity android:name=".ui.Checkout" />
-        <activity android:name=".ui.SplashScreen" >
+        android:usesCleartextTraffic="true"
+        tools:replace="android:supportsRtl"
+        tools:targetApi="m">
+        <activity
+            android:name=".ui.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.GateWay"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.invoice.FirstInvoice"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.Checkout"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.SplashScreen"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.AddProducts" />
-        <activity android:name=".ui.ProductDetails" />
-        <activity android:name=".ui.ScanBarCode" />
-        <activity android:name=".ui.invoice.PrintInvoice" />
-        <activity android:name=".ui.DeviceListActivity" />
-        <activity android:name=".ui.PrintingInvoice" />
-        <activity android:name=".ui.invoice.PrintScreen" />
-        <activity android:name=".ui.SearchInvoice" />
-        <activity android:name=".ui.StoreReportScreen" />
-        <activity android:name=".ui.reports.ReportsScreen" />
-        <activity android:name=".ui.receipts.ReceiptScreen" />
-        <activity android:name=".ui.receipts.PrintReceipt" />
-        <activity android:name=".ui.SearchReceipts" />
-        <activity android:name=".ui.reports.FinancialReport" />
-        <activity android:name=".ui.reports.FinancialReportPrintScreen" />
-        <activity android:name=".ui.cashing.ProductScreenCashing" />
-        <activity android:name=".ui.cashing.SearchProductsCashing" />
-        <activity android:name=".ui.cashing.CashingPrinting" />
-        <activity android:name=".ui.cashing.SearchCashing" />
-        <activity android:name=".ui.SearchCustomerBalance" />
+        <activity
+            android:name=".ui.AddProducts"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ProductDetails"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ScanBarCode"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.invoice.PrintInvoice"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.DeviceListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.PrintingInvoice"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.invoice.PrintScreen"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.SearchInvoice"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.StoreReportScreen"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.reports.ReportsScreen"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.receipts.ReceiptScreen"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.receipts.PrintReceipt"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.SearchReceipts"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.reports.FinancialReport"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.reports.FinancialReportPrintScreen"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.cashing.ProductScreenCashing"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.cashing.SearchProductsCashing"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.cashing.CashingPrinting"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.cashing.SearchCashing"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.SearchCustomerBalance"
+            android:screenOrientation="portrait" />
 
         <service android:name="net.posprinter.service.PosprinterService" />
     </application>

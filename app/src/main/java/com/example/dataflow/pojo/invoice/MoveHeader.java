@@ -146,6 +146,36 @@ public class MoveHeader implements Serializable {
     String TaxeCardNo="";
     @SerializedName("SaleManName")
     String SaleManName="";
+    @SerializedName("DealerType")
+    String DealerType="";
+    @SerializedName("DealerBranchISN")
+    String DealerBranchISN="";
+    @SerializedName("DealerISN")
+    String DealerISN="";
+
+    public String getDealerType() {
+        return DealerType;
+    }
+
+    public void setDealerType(String dealerType) {
+        DealerType = dealerType;
+    }
+
+    public String getDealerBranchISN() {
+        return DealerBranchISN;
+    }
+
+    public void setDealerBranchISN(String dealerBranchISN) {
+        DealerBranchISN = dealerBranchISN;
+    }
+
+    public String getDealerISN() {
+        return DealerISN;
+    }
+
+    public void setDealerISN(String dealerISN) {
+        DealerISN = dealerISN;
+    }
 
     public String getSaleManName() {
         return SaleManName;

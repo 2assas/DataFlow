@@ -35,6 +35,7 @@ import com.example.dataflow.ui.SplashScreen;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class FinancialReport extends AppCompatActivity {
@@ -81,6 +82,15 @@ public class FinancialReport extends AppCompatActivity {
         binding.back.setOnClickListener(v -> finish());
         observers();
         collectData();
+        fillDates();
+    }
+    void fillDates(){
+        Calendar calendar = Calendar.getInstance();
+        String date = sdf.format(calendar.getTime());
+        binding.startTime.setText(date);
+        binding.endTime.setText(date);
+        binding.workStartTime.setText(date);
+        binding.workEndTime.setText(date);
     }
 
     void observers() {

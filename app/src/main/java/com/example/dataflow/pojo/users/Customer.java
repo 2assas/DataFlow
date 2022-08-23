@@ -9,7 +9,7 @@ public class Customer implements Serializable {
     @SerializedName("status")
     private int status;
     @SerializedName("data")
-    private ArrayList< CustomerData> data;
+    private ArrayList<CustomerData> data;
     @SerializedName("message")
     private String message;
 

@@ -155,7 +155,6 @@ public class SearchProductsCashing extends AppCompatActivity {
             if (response.getMessage().equals("Not saved ... please save again")) {
                 errorMessage = "لا يوجد الكمية الكافية من هذا الصنف";
             }
-
             if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 2) {
                 new AlertDialog.Builder(this).
                         setTitle("binding.invoiceTemplate.ص فالمخزن")
@@ -305,7 +304,7 @@ public class SearchProductsCashing extends AppCompatActivity {
         ArrayList<String> LineNotes = new ArrayList<>();
         long numberOFItems = 0;
         ArrayList<Double> netPrices = new ArrayList<>();
-        ArrayList<Integer> basicMeasureUnitQuantity = new ArrayList<>();
+        ArrayList<Double> basicMeasureUnitQuantity = new ArrayList<>();
         ArrayList<Boolean> expireDateBool = new ArrayList<>();
         ArrayList<Boolean> colorsBool = new ArrayList<>();
         ArrayList<Boolean> sizesBool = new ArrayList<>();

@@ -39,7 +39,7 @@ public class CheckoutVM extends ViewModel {
             ArrayList<Float> TotalQuantity, ArrayList<Double> Price, ArrayList<Long> MeasureUnitBranchISN, ArrayList<Long> MeasureUnitISN, ArrayList<Long> BasicMeasureUnitBranchISN,
             ArrayList<Long> BasicMeasureUnitISN, ArrayList<String> ItemSerial, ArrayList<String> ExpireDate, ArrayList<Long> ColorBranchISN, ArrayList<Long> ColorISN, ArrayList<Long> SizeBranchISN,
             ArrayList<Long> SizeISN, ArrayList<Long> SeasonBranchISN, ArrayList<Long> SeasonISN, ArrayList<Long> Group1BranchISN, ArrayList<Long> Group1ISN,
-            ArrayList<Long> Group2BranchISN, ArrayList<Long> Group2ISN, ArrayList<String> LineNotes, Long numberOFItems, ArrayList<Double> NetPrice, ArrayList<Integer> BasicMeasureUnitQuantity,
+            ArrayList<Long> Group2BranchISN, ArrayList<Long> Group2ISN, ArrayList<String> LineNotes, Long numberOFItems, ArrayList<Double> NetPrice, ArrayList<Double> BasicMeasureUnitQuantity,
                              ArrayList<Boolean> ExpireDateBool, ArrayList<Boolean> ColorsBool, ArrayList<Boolean> SeasonsBool, ArrayList<Boolean> SizesBool, ArrayList<Boolean> SerialBool,
                              ArrayList<Boolean> Group1Bool, ArrayList<Boolean> Group2Bool, ArrayList<Boolean> ServiceItem, ArrayList<Double>ItemTax,ArrayList<Double>TaxValue, double TotalLinesTaxVal, int allowStoreMinus,
                              ArrayList<String> itemName, ArrayList<Double> discount1, Integer AllowStoreMinusConfirm, float latitude, float longitude, String invoiceType, Integer moveType, ArrayList<Long> StoreBranchISN2, ArrayList<Long> StoreISN2
@@ -87,7 +87,7 @@ public class CheckoutVM extends ViewModel {
                             ArrayList<Float> TotalQuantity, ArrayList<Double> Price, ArrayList<Long> MeasureUnitBranchISN, ArrayList<Long> MeasureUnitISN, ArrayList<Long> BasicMeasureUnitBranchISN,
                             ArrayList<Long> BasicMeasureUnitISN, ArrayList<String> ItemSerial, ArrayList<String> ExpireDate, ArrayList<Long> ColorBranchISN, ArrayList<Long> ColorISN, ArrayList<Long> SizeBranchISN,
                             ArrayList<Long> SizeISN, ArrayList<Long> SeasonBranchISN, ArrayList<Long> SeasonISN, ArrayList<Long> Group1BranchISN, ArrayList<Long> Group1ISN,
-                            ArrayList<Long> Group2BranchISN, ArrayList<Long> Group2ISN, ArrayList<String> LineNotes, ArrayList<Double> NetPrice, ArrayList<Integer> BasicMeasureUnitQuantity,
+                            ArrayList<Long> Group2BranchISN, ArrayList<Long> Group2ISN, ArrayList<String> LineNotes, ArrayList<Double> NetPrice, ArrayList<Double> BasicMeasureUnitQuantity,
                             ArrayList<Boolean> ExpireDateBool, ArrayList<Boolean> ColorsBool, ArrayList<Boolean> SeasonsBool, ArrayList<Boolean> SizesBool, ArrayList<Boolean> SerialBool,
                             ArrayList<Boolean> Group1Bool, ArrayList<Boolean> Group2Bool, ArrayList<Boolean> ServiceItem, ArrayList<Double>ItemTax,ArrayList<Double>TaxValue,
                             ArrayList<String> itemName, ArrayList<Double> discount1, int allowStoreMinus, Integer AllowStoreMinusConfirm){
@@ -126,7 +126,7 @@ public class CheckoutVM extends ViewModel {
 
 
     public void getCustomerBalance(String uuid, String dealerISN, String branchISN, String dealerType, String dealerName) {
-        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(uuid, dealerISN, branchISN, dealerType, dealerName).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(uuid, dealerISN, branchISN, dealerType).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observer<CustomerBalance> observer = new Observer<CustomerBalance>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
