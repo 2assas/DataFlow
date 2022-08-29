@@ -121,7 +121,7 @@ public interface ApiClient {
             @Query("uiid") String uuid);
 
 
-    @GET("product/getProduct")
+    @GET("product/getProductTest")
     Observable<Product> getProductCustomer(
             @Query("product_name") String productName,
             @Query("uiid") String uuid,
@@ -135,7 +135,7 @@ public interface ApiClient {
             @Query("Serial") String serial
     );
 
-    @GET("product/getProduct")
+    @GET("product/getProductTest")
     Observable<Product> getProduct(
             @Query("product_name") String productName,
             @Query("uiid") String uuid,

@@ -648,7 +648,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
             @SuppressLint({"SetTextI18n", "DefaultLocale"})
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (!charSequence.toString().isEmpty()) {
+                if (!charSequence.toString().isEmpty()&&!charSequence.toString().equals(".")) {
                     double value = (Double.parseDouble(binding.deliveryValue.getText().toString()) / productsTotal);
                     binding.percentService.setText(String.format(Locale.US, "%.2f", value * 100) + "");
                     totalAfterService = productsTotal + Double.parseDouble(binding.deliveryValue.getText().toString());
@@ -684,7 +684,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
             @SuppressLint("SetTextI18n")
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (!charSequence.toString().isEmpty()) {
+                if (!charSequence.toString().isEmpty()&&!charSequence.toString().equals(".")) {
                     if (Double.parseDouble(charSequence.toString()) <= 100) {
                         double value = (productsTotal / 100) * Double.parseDouble(binding.percentService.getText().toString());
                         binding.percentServiceVal.setText(String.format(Locale.US, "%.2f", value) + "");
@@ -724,7 +724,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
             @SuppressLint("SetTextI18n")
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (!charSequence.toString().isEmpty()) {
+                if (!charSequence.toString().isEmpty()&&!charSequence.toString().equals(".")) {
                     if (Double.parseDouble(charSequence.toString()) <= productsTotal) {
                         double value = (Double.parseDouble(binding.percentServiceVal.getText().toString()) / productsTotal);
                         double value1 = (productsTotal / 100) * value * 100;
@@ -767,7 +767,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
             @SuppressLint("SetTextI18n")
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (!charSequence.toString().isEmpty()) {
+                if (!charSequence.toString().isEmpty()&&!charSequence.toString().equals(".")) {
                     if (Double.parseDouble(charSequence.toString()) <= 100) {
                         double value = (totalAfterService / 100) * Double.parseDouble(binding.percentDiscount.getText().toString());
                         double value1 = value / totalAfterService;
@@ -808,7 +808,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
             @SuppressLint("SetTextI18n")
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (!charSequence.toString().isEmpty()) {
+                if (!charSequence.toString().isEmpty()&&!charSequence.toString().equals(".")) {
                     if (Double.parseDouble(charSequence.toString()) <= totalAfterService) {
                         double value = Double.parseDouble(binding.percentDiscountVal.getText().toString()) / totalAfterService;
                         binding.percentDiscount.setText(String.format(Locale.US, "%.2f", value * 100) + "");
@@ -851,7 +851,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
             @SuppressLint("SetTextI18n")
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (!charSequence.toString().isEmpty()) {
+                if (!charSequence.toString().isEmpty()&&!charSequence.toString().equals(".")) {
                     if (Double.parseDouble(charSequence.toString()) <= 100) {
                         double value = (totalAfterDiscount / 100) * Double.parseDouble(binding.percentTax.getText().toString());
                         double value1 = value / totalAfterDiscount;
@@ -889,7 +889,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (!charSequence.toString().isEmpty()) {
+                if (!charSequence.toString().isEmpty()&&!charSequence.toString().equals(".")) {
                     if (Double.parseDouble(charSequence.toString()) <= totalAfterDiscount) {
                         double value = Double.parseDouble(binding.percentTaxVal.getText().toString()) / totalAfterDiscount;
                         double value1 = (totalAfterDiscount / 100) * value;
@@ -990,7 +990,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (!charSequence.toString().isEmpty())
+                if (!charSequence.toString().isEmpty()&&!charSequence.toString().equals("."))
                     //TODO:: Come here.
                     if (Double.parseDouble(binding.remaining.getText().toString()) < (totalAfterTax + totalLineTaxes))
                         binding.remainedCash.setText(String.format(Locale.US, "%.2f", (totalAfterTax + totalLineTaxes) - Double.parseDouble(binding.remaining.getText().toString())) + " جنيه");

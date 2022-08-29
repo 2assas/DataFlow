@@ -403,7 +403,7 @@ public class ProductScreenCashing extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 //                charSequence.toString().replaceAll(".","");
-                if (!charSequence.toString().isEmpty()) {
+                if (!charSequence.toString().isEmpty()&&!charSequence.toString().equals(".")) {
                     try {
                         quantity = Float.parseFloat(charSequence.toString());
                     } catch (Exception e) {

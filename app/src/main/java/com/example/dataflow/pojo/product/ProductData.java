@@ -72,6 +72,261 @@ public class ProductData implements Serializable {
     @SerializedName("ItemTax")
     private String itemTax;
 
+    @SerializedName("xPriceFromBarcode")
+    private int xPriceFromBarcode;
+
+    @SerializedName("xBarCodeColorISN")
+    private int xBarCodeColorISN;
+
+    @SerializedName("xBarCodeGroup2BranchISN")
+    private int xBarCodeGroup2BranchISN;
+    @SerializedName("xQuanFromBarcode")
+    private String xQuanFromBarcode;
+
+    @SerializedName("xBarCodeGroup2ISN")
+    private int xBarCodeGroup2ISN;
+
+    @SerializedName("xBarCodeMeasureUnitBranchISN")
+    private int xBarCodeMeasureUnitBranchISN;
+
+    @SerializedName("xBarCodeGroup1BranchISN")
+    private int xBarCodeGroup1BranchISN;
+
+    @SerializedName("xBarCodeMeasureUnitName")
+    private String xBarCodeMeasureUnitName;
+
+    @SerializedName("xBarCodeColorBranchISN")
+    private int xBarCodeColorBranchISN;
+
+    @SerializedName("xBarCodeSizeISN")
+    private int xBarCodeSizeISN;
+
+    @SerializedName("xBarCodeSerial")
+    private String xBarCodeSerial;
+
+    @SerializedName("xBarCodeColorName")
+    private String xBarCodeColorName;
+
+    @SerializedName("xBarCodeMeasureUnitISN")
+    private int xBarCodeMeasureUnitISN;
+
+    @SerializedName("xBarCodeSizeName")
+    private String xBarCodeSizeName;
+
+    @SerializedName("xBarCodeGroup1ISN")
+    private int xBarCodeGroup1ISN;
+
+    @SerializedName("xBarCodeSeasonISN")
+    private int xBarCodeSeasonISN;
+
+    @SerializedName("xItemCode")
+    private String xItemCode;
+
+    @SerializedName("xBarCodeGroup1Name")
+    private String xBarCodeGroup1Name;
+
+
+    @SerializedName("xBarCodeSizeBranchISN")
+    private int xBarCodeSizeBranchISN;
+
+    @SerializedName("xBarCodeSeasonBranchISN")
+    private int xBarCodeSeasonBranchISN;
+
+    @SerializedName("xBarCodeSeasonName")
+    private String xBarCodeSeasonName;
+
+
+    @SerializedName("xBarCodeExpireDate")
+    private String xBarCodeExpireDate;
+
+    @SerializedName("xBarCodeGroup2Name")
+    private String xBarCodeGroup2Name;
+
+
+    public int getxPriceFromBarcode() {
+        return xPriceFromBarcode;
+    }
+
+    public void setxPriceFromBarcode(int xPriceFromBarcode) {
+        this.xPriceFromBarcode = xPriceFromBarcode;
+    }
+
+    public int getxBarCodeColorISN() {
+        return xBarCodeColorISN;
+    }
+
+    public void setxBarCodeColorISN(int xBarCodeColorISN) {
+        this.xBarCodeColorISN = xBarCodeColorISN;
+    }
+
+    public int getxBarCodeGroup2BranchISN() {
+        return xBarCodeGroup2BranchISN;
+    }
+
+    public void setxBarCodeGroup2BranchISN(int xBarCodeGroup2BranchISN) {
+        this.xBarCodeGroup2BranchISN = xBarCodeGroup2BranchISN;
+    }
+
+    public String getxQuanFromBarcode() {
+        return xQuanFromBarcode;
+    }
+
+    public void setxQuanFromBarcode(String xQuanFromBarcode) {
+        this.xQuanFromBarcode = xQuanFromBarcode;
+    }
+
+    public int getxBarCodeGroup2ISN() {
+        return xBarCodeGroup2ISN;
+    }
+
+    public void setxBarCodeGroup2ISN(int xBarCodeGroup2ISN) {
+        this.xBarCodeGroup2ISN = xBarCodeGroup2ISN;
+    }
+
+    public int getxBarCodeMeasureUnitBranchISN() {
+        return xBarCodeMeasureUnitBranchISN;
+    }
+
+    public void setxBarCodeMeasureUnitBranchISN(int xBarCodeMeasureUnitBranchISN) {
+        this.xBarCodeMeasureUnitBranchISN = xBarCodeMeasureUnitBranchISN;
+    }
+
+    public int getxBarCodeGroup1BranchISN() {
+        return xBarCodeGroup1BranchISN;
+    }
+
+    public void setxBarCodeGroup1BranchISN(int xBarCodeGroup1BranchISN) {
+        this.xBarCodeGroup1BranchISN = xBarCodeGroup1BranchISN;
+    }
+
+    public String getxBarCodeMeasureUnitName() {
+        return xBarCodeMeasureUnitName;
+    }
+
+    public void setxBarCodeMeasureUnitName(String xBarCodeMeasureUnitName) {
+        this.xBarCodeMeasureUnitName = xBarCodeMeasureUnitName;
+    }
+
+    public int getxBarCodeColorBranchISN() {
+        return xBarCodeColorBranchISN;
+    }
+
+    public void setxBarCodeColorBranchISN(int xBarCodeColorBranchISN) {
+        this.xBarCodeColorBranchISN = xBarCodeColorBranchISN;
+    }
+
+    public int getxBarCodeSizeISN() {
+        return xBarCodeSizeISN;
+    }
+
+    public void setxBarCodeSizeISN(int xBarCodeSizeISN) {
+        this.xBarCodeSizeISN = xBarCodeSizeISN;
+    }
+
+    public String getxBarCodeSerial() {
+        return xBarCodeSerial;
+    }
+
+    public void setxBarCodeSerial(String xBarCodeSerial) {
+        this.xBarCodeSerial = xBarCodeSerial;
+    }
+
+    public String getxBarCodeColorName() {
+        return xBarCodeColorName;
+    }
+
+    public void setxBarCodeColorName(String xBarCodeColorName) {
+        this.xBarCodeColorName = xBarCodeColorName;
+    }
+
+    public int getxBarCodeMeasureUnitISN() {
+        return xBarCodeMeasureUnitISN;
+    }
+
+    public void setxBarCodeMeasureUnitISN(int xBarCodeMeasureUnitISN) {
+        this.xBarCodeMeasureUnitISN = xBarCodeMeasureUnitISN;
+    }
+
+    public String getxBarCodeSizeName() {
+        return xBarCodeSizeName;
+    }
+
+    public void setxBarCodeSizeName(String xBarCodeSizeName) {
+        this.xBarCodeSizeName = xBarCodeSizeName;
+    }
+
+    public int getxBarCodeGroup1ISN() {
+        return xBarCodeGroup1ISN;
+    }
+
+    public void setxBarCodeGroup1ISN(int xBarCodeGroup1ISN) {
+        this.xBarCodeGroup1ISN = xBarCodeGroup1ISN;
+    }
+
+    public int getxBarCodeSeasonISN() {
+        return xBarCodeSeasonISN;
+    }
+
+    public void setxBarCodeSeasonISN(int xBarCodeSeasonISN) {
+        this.xBarCodeSeasonISN = xBarCodeSeasonISN;
+    }
+
+    public String getxItemCode() {
+        return xItemCode;
+    }
+
+    public void setxItemCode(String xItemCode) {
+        this.xItemCode = xItemCode;
+    }
+
+    public String getxBarCodeGroup1Name() {
+        return xBarCodeGroup1Name;
+    }
+
+    public void setxBarCodeGroup1Name(String xBarCodeGroup1Name) {
+        this.xBarCodeGroup1Name = xBarCodeGroup1Name;
+    }
+
+    public int getxBarCodeSizeBranchISN() {
+        return xBarCodeSizeBranchISN;
+    }
+
+    public void setxBarCodeSizeBranchISN(int xBarCodeSizeBranchISN) {
+        this.xBarCodeSizeBranchISN = xBarCodeSizeBranchISN;
+    }
+
+    public int getxBarCodeSeasonBranchISN() {
+        return xBarCodeSeasonBranchISN;
+    }
+
+    public void setxBarCodeSeasonBranchISN(int xBarCodeSeasonBranchISN) {
+        this.xBarCodeSeasonBranchISN = xBarCodeSeasonBranchISN;
+    }
+
+    public String getxBarCodeSeasonName() {
+        return xBarCodeSeasonName;
+    }
+
+    public void setxBarCodeSeasonName(String xBarCodeSeasonName) {
+        this.xBarCodeSeasonName = xBarCodeSeasonName;
+    }
+
+    public String getxBarCodeExpireDate() {
+        return xBarCodeExpireDate;
+    }
+
+    public void setxBarCodeExpireDate(String xBarCodeExpireDate) {
+        this.xBarCodeExpireDate = xBarCodeExpireDate;
+    }
+
+    public String getxBarCodeGroup2Name() {
+        return xBarCodeGroup2Name;
+    }
+
+    public void setxBarCodeGroup2Name(String xBarCodeGroup2Name) {
+        this.xBarCodeGroup2Name = xBarCodeGroup2Name;
+    }
+
     public StoresData getSelectedToStore() {
         return selectedToStore;
     }

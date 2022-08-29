@@ -270,7 +270,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 double value = 0;
-                if (!charSequence.toString().isEmpty()) {
+                if (!charSequence.toString().isEmpty()&&!charSequence.toString().equals(".")) {
                     if (Double.parseDouble(charSequence.toString()) <= 100) {
                         value = (measureUnit.getPrice() / 100) * Double.parseDouble(binding.itemDiscPer.getText().toString());
                         binding.itemDiscVal.setText(String.format(Locale.US, "%.2f", value * quantity) + "");
@@ -310,7 +310,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 double value = 0;
-                if (!charSequence.toString().isEmpty()) {
+                if (!charSequence.toString().isEmpty()&&!charSequence.toString().equals(".")) {
                     if (Double.parseDouble(charSequence.toString()) <= (measureUnit.getPrice() * quantity)) {
                         value = (Double.parseDouble(binding.itemDiscVal.getText().toString()) / (measureUnit.getPrice() * quantity));
                         double value1 = (measureUnit.getPrice() / 100) * value * 100 * quantity;
@@ -583,7 +583,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 //                charSequence.toString().replaceAll(".","");
-                if (!charSequence.toString().isEmpty()) {
+                if (!charSequence.toString().isEmpty()&&!charSequence.toString().equals(".")) {
                     try {
                         quantity = Float.parseFloat(charSequence.toString());
                     } catch (Exception e) {
@@ -636,7 +636,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             @SuppressLint("SetTextI18n")
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (!charSequence.toString().isEmpty()) {
+                if (!charSequence.toString().isEmpty()&&!charSequence.toString().equals(".")) {
 //                   charSequence.toString().replaceAll(".","");
                     bonus = Float.parseFloat(charSequence.toString());
                     binding.totalQuantity.setText(quantity + bonus + "");
