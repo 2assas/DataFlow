@@ -132,6 +132,7 @@ public interface ApiClient {
             @Query("BranchISN") int BranchISN,
             @Query("CurrentBranchISN") int CurrentBranchISN,
             @Query("AllowSpecificDealersPrices") int AllowSpecificDealersPrices,
+            @Query("MoveType") int moveType,
             @Query("Serial") String serial
     );
 
@@ -143,7 +144,9 @@ public interface ApiClient {
             @Query("PricesTypeISN") long pricesTypeISN,
             @Query("AllowSpecificDealersPrices") int AllowSpecificDealersPrices,
             @Query("CurrentBranchISN") int CurrentBranchISN,
-            @Query("Serial") String serial);
+            @Query("MoveType") int moveType,
+            @Query("Serial") String serial
+    );
 
 
     @POST("invoices/store")

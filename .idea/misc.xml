@@ -3,6 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/DataFlow2/app/src/main/res/drawable/blue_rounded.xml" value="0.2595" />
+        <entry key="..\:/DataFlow2/app/src/main/res/drawable/gray_rounded.xml" value="0.2595" />
+        <entry key="..\:/DataFlow2/app/src/main/res/drawable/rounded_gray.xml" value="0.1585" />
+        <entry key="..\:/DataFlow2/app/src/main/res/layout/activity_main.xml" value="0.14895833333333333" />
+        <entry key="..\:/DataFlow2/app/src/main/res/layout/home_screen.xml" value="0.14895833333333333" />
+        <entry key="..\:/DataFlow2/app/src/main/res/layout/product_screen.xml" value="0.225" />
+        <entry key="..\:/DataFlow2/app/src/main/res/layout/product_screen_cashing.xml" value="0.24010416666666667" />
+        <entry key="..\:/DataFlow2/app/src/main/res/layout/serial_dialog.xml" value="0.25416666666666665" />
         <entry key="..\:/From To/DataFlow/app/src/main/res/drawable/blue_border.xml" value="0.24027777777777778" />
         <entry key="..\:/From To/DataFlow/app/src/main/res/drawable/blue_rounded.xml" value="0.1300925925925926" />
         <entry key="..\:/From To/DataFlow/app/src/main/res/drawable/border.xml" value="0.24027777777777778" />

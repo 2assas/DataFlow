@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -186,6 +188,18 @@ public class MainActivity extends AppCompatActivity {
         }
         if (App.currentUser.getMobileDealersBalanceEnquiry() == 0) {
             binding.mainActivity.searchCustomer.setVisibility(View.GONE);
+        }
+        if (App.currentUser.getMobileSales() == 0) {
+            binding.mainActivity.invoice.setEnabled(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                binding.mainActivity.invoice.setBackground(getDrawable(R.drawable.gray_rounded));
+            }
+        }
+        if (App.currentUser.getMobileCashReceipts() == 0) {
+            binding.mainActivity.receipts.setEnabled(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                binding.mainActivity.receipts.setBackground(getDrawable(R.drawable.gray_rounded));
+            }
         }
     }
 

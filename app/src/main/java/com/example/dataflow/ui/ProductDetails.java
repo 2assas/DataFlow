@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -33,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Objects;
 
 public class ProductDetails extends AppCompatActivity implements View.OnFocusChangeListener {
     ProductScreenBinding binding;
@@ -68,6 +70,10 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             addButton();
             quantityWatchers();
             discount();
+            Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                handleDefaultBarcodePrice();
+            }, 1000);
         }
     }
 
@@ -81,6 +87,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
         uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         binding.item.setText(Integer.toString(App.product.getItemISN()));
         binding.itemBranchISN.setText(Long.toString(App.product.getItemISNBranch()));
+
         if (App.product.getQuantity() > 1) {
             quantity = App.product.getActualQuantity();
             if (App.product.getBonusQuantity() > 1) {
@@ -88,7 +95,12 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             }
             binding.totalQuantity.setText(String.format(Locale.US, "%.3f", quantity + bonus) + "");
             binding.textView26.setText(String.format(Locale.US, "%.3f", App.product.getActualQuantity()) + "");
+        } else if (!Objects.equals(App.product.getxQuanFromBarcode(), "0") && !App.isEditing) {
+            quantity = Float.parseFloat(App.product.getxQuanFromBarcode());
+            binding.totalQuantity.setText(String.format(Locale.US, "%.3f", quantity) + "");
+            binding.textView26.setText(String.format(Locale.US, "%.3f", quantity) + "");
         }
+
         if (App.product.getDiscount1() != 0) {
             binding.itemDiscPer.setText(App.product.getDiscount1() + "");
         }
@@ -121,6 +133,30 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
     }
 
     @SuppressLint("SetTextI18n")
+    public void handleDefaultBarcodePrice() {
+        if (!App.isEditing && App.product.getxPriceFromBarcode() != 0) {
+            if (binding.itemDiscPer.getText().toString().isEmpty()) {
+                binding.price2.setText(String.format(Locale.US, "%.3f", App.product.getxPriceFromBarcode() * quantity) + " جنيه");
+                binding.price.setText(String.format(Locale.US, "%.3f", App.product.getxPriceFromBarcode() * quantity) + " جنيه");
+                App.product.setNetPrice(App.product.getxPriceFromBarcode() * quantity);
+                Log.e("checkItemPrice", App.product.getxPriceFromBarcode() * quantity + " ");
+            } else {
+                binding.price2.setText(String.format(Locale.US, "%.3f", (App.product.getxPriceFromBarcode() * quantity) - ((App.product.getxPriceFromBarcode() * quantity) / 100) * Double.parseDouble(
+                        binding.itemDiscPer.getText().toString()
+                )) + " جنيه");
+                App.product.setNetPrice((measureUnit.getPrice() * quantity) - ((measureUnit.getPrice() * quantity) / 100) * Double.parseDouble(
+                        binding.itemDiscPer.getText().toString()));
+                binding.itemDiscVal.setText(String.format(Locale.US, "%.2f", ((App.product.getxPriceFromBarcode() * quantity) / 100) * Double.parseDouble(
+                        binding.itemDiscPer.getText().toString())) + "");
+            }
+            binding.price3.setText("نسبة: " + String.format(Locale.ENGLISH, "%.2f", Double.parseDouble(App.product.getItemTax())) + "% ");
+            binding.price4.setText("قيمة: " + String.format(Locale.ENGLISH, "%.2f",
+                    (App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax()))) + "جنيه ");
+
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
     public void handleSpinners() {
         if (App.product.getColors()) {
             binding.colorSpinner.setVisibility(View.VISIBLE);
@@ -143,6 +179,15 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                     App.product.setSelectedColor(App.product.getColorsList().get(0));
                 }
             });
+            if (!App.isEditing && App.product.getxBarCodeColorBranchISN() != 0 && App.product.getxBarCodeColorISN() != 0 && !Objects.equals(App.product.getxBarCodeColorName(), "")) {
+                for (int i = 0; i < App.product.getColorsList().size(); i++) {
+                    if (App.product.getColorsList().get(i).getBranchISN() == App.product.getxBarCodeColorBranchISN() &&
+                            App.product.getColorsList().get(i).getStoreColorISN() == App.product.getxBarCodeColorISN() &&
+                            Objects.equals(App.product.getColorsList().get(i).getStoreColorName(), App.product.getxBarCodeColorName())) {
+                        binding.colorSpinner.setSelection(i);
+                    }
+                }
+            }
         }
         if (App.product.getSeasons()) {
             binding.seasonSpinner.setVisibility(View.VISIBLE);
@@ -165,6 +210,15 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                     App.product.setSelectedSeason(App.product.getSeasonsLists().get(0));
                 }
             });
+            if (!App.isEditing && App.product.getxBarCodeSeasonBranchISN() != 0 && App.product.getxBarCodeSeasonISN() != 0 && !Objects.equals(App.product.getxBarCodeSeasonName(), "")) {
+                for (int i = 0; i < App.product.getSeasonsLists().size(); i++) {
+                    if (App.product.getSeasonsLists().get(i).getBranchISN() == App.product.getxBarCodeSeasonBranchISN() &&
+                            App.product.getSeasonsLists().get(i).getStoreSeasonISN() == App.product.getxBarCodeSeasonISN() &&
+                            Objects.equals(App.product.getSeasonsLists().get(i).getStoreSeasonName(), App.product.getxBarCodeSeasonName())) {
+                        binding.seasonSpinner.setSelection(i);
+                    }
+                }
+            }
         }
         if (App.product.getSizes()) {
             binding.sizeSpinner.setVisibility(View.VISIBLE);
@@ -188,6 +242,15 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                     App.product.setSelectedSize(App.product.getSizesList().get(0));
                 }
             });
+            if (!App.isEditing && App.product.getxBarCodeSizeBranchISN() != 0 && App.product.getxBarCodeSizeISN() != 0 && !Objects.equals(App.product.getxBarCodeSizeName(), "")) {
+                for (int i = 0; i < App.product.getSizesList().size(); i++) {
+                    if (App.product.getSizesList().get(i).getBranchISN() == App.product.getxBarCodeSizeBranchISN() &&
+                            App.product.getSizesList().get(i).getStoreSizeISN() == App.product.getxBarCodeSizeISN() &&
+                            Objects.equals(App.product.getSizesList().get(i).getStoreSizeName(), App.product.getxBarCodeSizeName())) {
+                        binding.sizeSpinner.setSelection(i);
+                    }
+                }
+            }
         }
         if (App.product.getGroup1()) {
             binding.group1Spinner.setVisibility(View.VISIBLE);
@@ -212,6 +275,15 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                     App.product.setSelectedGroup1(App.product.getGroup1List().get(0));
                 }
             });
+            if (!App.isEditing && App.product.getxBarCodeGroup1BranchISN() != 0 && App.product.getxBarCodeGroup1ISN() != 0 && !Objects.equals(App.product.getxBarCodeGroup1Name(), "")) {
+                for (int i = 0; i < App.product.getGroup1List().size(); i++) {
+                    if (App.product.getGroup1List().get(i).getBranchISN() == App.product.getxBarCodeGroup1BranchISN() &&
+                            App.product.getGroup1List().get(i).getStoreGroup1ISN() == App.product.getxBarCodeGroup1ISN() &&
+                            Objects.equals(App.product.getGroup1List().get(i).getStoreGroup1Name(), App.product.getxBarCodeGroup1Name())) {
+                        binding.group1Spinner.setSelection(i);
+                    }
+                }
+            }
         }
         if (App.product.getGroup2()) {
             binding.group2Spinner.setVisibility(View.VISIBLE);
@@ -236,11 +308,23 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                     App.product.setSelectedGroup2(App.product.getGroup2List().get(0));
                 }
             });
+            if (!App.isEditing && App.product.getxBarCodeGroup2BranchISN() != 0 && App.product.getxBarCodeGroup2ISN() != 0 && !Objects.equals(App.product.getxBarCodeGroup2Name(), "")) {
+                for (int i = 0; i < App.product.getGroup2List().size(); i++) {
+                    if (App.product.getGroup2List().get(i).getBranchISN() == App.product.getxBarCodeGroup2BranchISN() &&
+                            App.product.getGroup2List().get(i).getStoreGroup2ISN() == App.product.getxBarCodeGroup2ISN() &&
+                            Objects.equals(App.product.getGroup2List().get(i).getStoreGroup2Name(), App.product.getxBarCodeGroup2Name())) {
+                        binding.group2Spinner.setSelection(i);
+                    }
+                }
+            }
         }
         if (App.product.getExpireDate()) {
             binding.expirePicker.setVisibility(View.VISIBLE);
             binding.textView25.setVisibility(View.VISIBLE);
             datePicker();
+            if (!App.isEditing && !App.product.getxBarCodeExpireDate().isEmpty()) {
+                binding.expirePicker.setText(App.product.getxBarCodeExpireDate());
+            }
         }
         if (App.product.getSerial()) {
             binding.serial.setVisibility(View.VISIBLE);
@@ -270,7 +354,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 double value = 0;
-                if (!charSequence.toString().isEmpty()&&!charSequence.toString().equals(".")) {
+                if (!charSequence.toString().isEmpty() && !charSequence.toString().equals(".")) {
                     if (Double.parseDouble(charSequence.toString()) <= 100) {
                         value = (measureUnit.getPrice() / 100) * Double.parseDouble(binding.itemDiscPer.getText().toString());
                         binding.itemDiscVal.setText(String.format(Locale.US, "%.2f", value * quantity) + "");
@@ -310,7 +394,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 double value = 0;
-                if (!charSequence.toString().isEmpty()&&!charSequence.toString().equals(".")) {
+                if (!charSequence.toString().isEmpty() && !charSequence.toString().equals(".")) {
                     if (Double.parseDouble(charSequence.toString()) <= (measureUnit.getPrice() * quantity)) {
                         value = (Double.parseDouble(binding.itemDiscVal.getText().toString()) / (measureUnit.getPrice() * quantity));
                         double value1 = (measureUnit.getPrice() / 100) * value * 100 * quantity;
@@ -375,6 +459,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             @SuppressLint("SetTextI18n")
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.e("checkItemSelect", "clicked");
                 measureUnit = App.product.getMeasureUnits().get(i);
                 App.product.setNetPrice(measureUnit.getPrice());
                 binding.price.setText(String.format(Locale.US, "%.3f", measureUnit.getPrice() * quantity) + " جنيه");
@@ -418,6 +503,8 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                 App.product.setSelectedUnit(App.product.getMeasureUnits().get(0));
                 App.product.setPriceItem(measureUnit.getPrice());
             }
+
+
         });
         if (App.product.getSelectedUnit() != null) {
             for (int i = 0; i < App.product.getMeasureUnits().size(); i++) {
@@ -425,6 +512,15 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                     binding.measureUnitSpinner.setSelection(i);
             }
         }
+        if (!App.isEditing && App.product.getxBarCodeMeasureUnitBranchISN() != 0 && App.product.getxBarCodeMeasureUnitISN() != 0 && !Objects.equals(App.product.getxBarCodeMeasureUnitName(), "")) {
+            for (int i = 0; i < App.product.getMeasureUnits().size(); i++) {
+                if (App.product.getMeasureUnits().get(i).getMeasureUnitBranchISN() == App.product.getxBarCodeMeasureUnitBranchISN() &&
+                        App.product.getMeasureUnits().get(i).getMeasureUnitISN() == App.product.getxBarCodeMeasureUnitISN()) {
+                    binding.measureUnitSpinner.setSelection(i);
+                }
+            }
+        }
+
     }
 
     public void stores_priceTypeSpinner() {
@@ -583,7 +679,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 //                charSequence.toString().replaceAll(".","");
-                if (!charSequence.toString().isEmpty()&&!charSequence.toString().equals(".")) {
+                if (!charSequence.toString().isEmpty() && !charSequence.toString().equals(".")) {
                     try {
                         quantity = Float.parseFloat(charSequence.toString());
                     } catch (Exception e) {
@@ -636,7 +732,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             @SuppressLint("SetTextI18n")
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (!charSequence.toString().isEmpty()&&!charSequence.toString().equals(".")) {
+                if (!charSequence.toString().isEmpty() && !charSequence.toString().equals(".")) {
 //                   charSequence.toString().replaceAll(".","");
                     bonus = Float.parseFloat(charSequence.toString());
                     binding.totalQuantity.setText(quantity + bonus + "");

@@ -63,69 +63,70 @@ public class SearchProductsCashing extends AppCompatActivity {
         if (savedInstanceState != null) {
             startActivity(new Intent(this, SplashScreen.class));
             finishAffinity();
-        }else{
-        binding = DataBindingUtil.setContentView(this, R.layout.add_products);
-        productVM = new ViewModelProvider(this).get(ProductVM.class);
-        settingVM = new ViewModelProvider(this).get(SettingVM.class);
-        checkoutVM = new ViewModelProvider(this).get(CheckoutVM.class);
-        uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        moveType = getIntent().getIntExtra("moveType", 16);
-        writeSaveButton();
-        settingVM.getStoresCashing(App.currentUser.getBranchISN(), uuid);
-        observeStores();
-        requiredData();
-        binding.searchProducts.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                if (App.isNetworkAvailable(SearchProductsCashing.this))
-                    productVM.getProduct(s, uuid, null);
-                else {
-                    App.noConnectionDialog(SearchProductsCashing.this);
-                }
-                BottomSheetFragmentCashing bottomSheetFragment = new BottomSheetFragmentCashing(moveType);
-                bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
-                writeSaveButton();
-
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                binding.invoice.setText("بحث عن صنف");
-                binding.invoice.setOnClickListener(view -> {
+        } else {
+            binding = DataBindingUtil.setContentView(this, R.layout.add_products);
+            productVM = new ViewModelProvider(this).get(ProductVM.class);
+            settingVM = new ViewModelProvider(this).get(SettingVM.class);
+            checkoutVM = new ViewModelProvider(this).get(CheckoutVM.class);
+            uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            moveType = getIntent().getIntExtra("moveType", 16);
+            writeSaveButton();
+            settingVM.getStoresCashing(App.currentUser.getBranchISN(), uuid);
+            observeStores();
+            requiredData();
+            binding.searchProducts.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
                     if (App.isNetworkAvailable(SearchProductsCashing.this))
-                        productVM.getProduct(s, uuid, null);
+                        productVM.getProduct(s, uuid, null, moveType);
                     else {
                         App.noConnectionDialog(SearchProductsCashing.this);
                     }
                     BottomSheetFragmentCashing bottomSheetFragment = new BottomSheetFragmentCashing(moveType);
                     bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
                     writeSaveButton();
-                });
-                return false;
-            }
-        });
-        binding.productsRecycler.setLayoutManager(new LinearLayoutManager(this));
-        selectedProductsAdapter = new SelectedProductsCashingAdapter(App.selectedProducts, this, moveType);
-        selectedProductsAdapter.notifyDataSetChanged();
-        binding.productsRecycler.setAdapter(selectedProductsAdapter);
-        binding.invoice.setOnClickListener(view -> {
-            if (requiredData()) {
-                binding.invoice.setClickable(false);
-                if (lat == 0 && _long == 0) {
-                    Handler handler = new Handler();
-                    handler.postDelayed(() -> {
-                        invoicePost();
-                    }, 1000);
-                } else{
-                    invoicePost();
+
+                    return false;
                 }
-                binding.progress.setVisibility(View.VISIBLE);
-            }
-        });
-        recyclerSwipe();
-        barCodeScan();
-    }}
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    binding.invoice.setText("بحث عن صنف");
+                    binding.invoice.setOnClickListener(view -> {
+                        if (App.isNetworkAvailable(SearchProductsCashing.this))
+                            productVM.getProduct(s, uuid, null, moveType);
+                        else {
+                            App.noConnectionDialog(SearchProductsCashing.this);
+                        }
+                        BottomSheetFragmentCashing bottomSheetFragment = new BottomSheetFragmentCashing(moveType);
+                        bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+                        writeSaveButton();
+                    });
+                    return false;
+                }
+            });
+            binding.productsRecycler.setLayoutManager(new LinearLayoutManager(this));
+            selectedProductsAdapter = new SelectedProductsCashingAdapter(App.selectedProducts, this, moveType);
+            selectedProductsAdapter.notifyDataSetChanged();
+            binding.productsRecycler.setAdapter(selectedProductsAdapter);
+            binding.invoice.setOnClickListener(view -> {
+                if (requiredData()) {
+                    binding.invoice.setClickable(false);
+                    if (lat == 0 && _long == 0) {
+                        Handler handler = new Handler();
+                        handler.postDelayed(() -> {
+                            invoicePost();
+                        }, 1000);
+                    } else {
+                        invoicePost();
+                    }
+                    binding.progress.setVisibility(View.VISIBLE);
+                }
+            });
+            recyclerSwipe();
+            barCodeScan();
+        }
+    }
 
 
     @Override
@@ -203,7 +204,7 @@ public class SearchProductsCashing extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 String contents = data.getStringExtra("SCAN_RESULT");
                 if (App.isNetworkAvailable(SearchProductsCashing.this))
-                    productVM.getProduct(contents, uuid, null);
+                    productVM.getProduct(contents, uuid, null, moveType);
                 else {
                     App.noConnectionDialog(SearchProductsCashing.this);
                 }

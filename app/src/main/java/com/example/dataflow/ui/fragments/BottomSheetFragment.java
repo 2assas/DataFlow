@@ -93,6 +93,8 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Pr
             if (product.getStatus() == 1) {
                 if (isSerial) {
                     App.product = product.getData().get(0);
+                    if (!App.product.getxBarCodeSerial().isEmpty())
+                        binding.serialDialog.serialNumberInput.setText(App.product.getxBarCodeSerial());
                     App.serialNumber = binding.serialDialog.serialNumberInput.getText().toString();
                     isSerial = false;
                     startActivity(new Intent(getActivity(), ProductDetails.class));
@@ -119,7 +121,10 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Pr
     public void serialClicked(int position) {
         binding.serialDialog.serialContainer.setVisibility(View.VISIBLE);
         binding.serialDialog.confirm.setOnClickListener(view -> {
-            productVM.getProduct(App.product.getItemName(), uuid, binding.serialDialog.serialNumberInput.getText().toString());
+            if (!binding.serialDialog.serialNumberInput.getText().toString().isEmpty())
+                productVM.getProduct(App.product.getItemName(), uuid, binding.serialDialog.serialNumberInput.getText().toString(), 1);
+            else
+                binding.serialDialog.serialNumberInput.setError("مطلوب");
             isSerial = true;
         });
     }

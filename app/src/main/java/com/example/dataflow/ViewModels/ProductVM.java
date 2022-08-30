@@ -27,15 +27,15 @@ public class  ProductVM extends ViewModel {
             ApiClient.class, Constants.BASE_URL);
 
 
-    public void getProduct(String productName, String uuid, String serial){
+    public void getProduct(String productName, String uuid, String serial, int moveType){
         if(App.customer.getDealerName()==null){
-            Observable<Product> productObservable = apiClient.getProduct(productName, uuid, App.priceType.getBranchISN(), App.priceType.getPricesType_ISN(), App.currentUser.getAllowSpecificDealersPrices(),(int) App.currentUser.getBranchISN(), serial)
+            Observable<Product> productObservable = apiClient.getProduct(productName, uuid, App.priceType.getBranchISN(), App.priceType.getPricesType_ISN(), App.currentUser.getAllowSpecificDealersPrices(),(int) App.currentUser.getBranchISN(),moveType, serial)
                     .subscribeOn(Schedulers.io()).subscribeOn(AndroidSchedulers.mainThread());
             productObservable.subscribe(product -> {
                 productMutableLiveData.postValue(product);
             });
         }else{
-            Observable<Product> productObservable = apiClient.getProductCustomer(productName, uuid, App.priceType.getBranchISN(), App.priceType.getPricesType_ISN(), App.customer.getDealerType(), App.customer.getDealer_ISN(), App.customer.getBranchISN(), (int) App.currentUser.getBranchISN(), App.currentUser.getAllowSpecificDealersPrices(),serial)
+            Observable<Product> productObservable = apiClient.getProductCustomer(productName, uuid, App.priceType.getBranchISN(), App.priceType.getPricesType_ISN(), App.customer.getDealerType(), App.customer.getDealer_ISN(), App.customer.getBranchISN(), (int) App.currentUser.getBranchISN(), App.currentUser.getAllowSpecificDealersPrices(),moveType,serial)
                     .subscribeOn(Schedulers.io()).subscribeOn(AndroidSchedulers.mainThread());
             productObservable.subscribe(product -> {
                 productMutableLiveData.postValue(product);

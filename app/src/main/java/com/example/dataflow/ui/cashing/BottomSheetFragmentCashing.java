@@ -93,6 +93,9 @@ public class BottomSheetFragmentCashing extends BottomSheetDialogFragment implem
             if (product.getStatus() == 1) {
                 if (isSerial) {
                     App.product = product.getData().get(0);
+                    if (!App.product.getxBarCodeSerial().isEmpty())
+                        binding.serialDialog.serialNumberInput.setText(App.product.getxBarCodeSerial());
+
                     App.serialNumber = binding.serialDialog.serialNumberInput.getText().toString();
                     isSerial = false;
                     Intent intent = new Intent(requireActivity(), ProductScreenCashing.class);
@@ -121,7 +124,7 @@ public class BottomSheetFragmentCashing extends BottomSheetDialogFragment implem
     public void serialClicked(int position) {
         binding.serialDialog.serialContainer.setVisibility(View.VISIBLE);
         binding.serialDialog.confirm.setOnClickListener(view -> {
-            productVM.getProduct(App.product.getItemName(), uuid, binding.serialDialog.serialNumberInput.getText().toString());
+            productVM.getProduct(App.product.getItemName(), uuid, binding.serialDialog.serialNumberInput.getText().toString(), moveType);
             isSerial = true;
         });
     }

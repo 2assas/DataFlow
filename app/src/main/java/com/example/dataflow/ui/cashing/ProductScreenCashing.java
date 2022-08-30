@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Objects;
 
 public class ProductScreenCashing extends AppCompatActivity {
     ProductScreenCashingBinding binding;
@@ -84,6 +85,9 @@ public class ProductScreenCashing extends AppCompatActivity {
         if (App.product.getQuantity() != 0) {
             quantity = App.product.getQuantity();
             binding.textView26.setText(String.format(Locale.US, "%.2f", quantity) + "");
+        } else if(!Objects.equals(App.product.getxQuanFromBarcode(), "0") && !App.isEditing) {
+            quantity = Float.parseFloat(App.product.getxQuanFromBarcode());
+            binding.textView26.setText(String.format(Locale.US, "%.3f", quantity) + "");
         } else
             App.product.setQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
         App.product.setActualQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
@@ -125,6 +129,15 @@ public class ProductScreenCashing extends AppCompatActivity {
                     App.product.setSelectedColor(App.product.getColorsList().get(0));
                 }
             });
+            if (!App.isEditing && App.product.getxBarCodeColorBranchISN() != 0 && App.product.getxBarCodeColorISN() != 0 && !Objects.equals(App.product.getxBarCodeColorName(), "")) {
+                for (int i = 0; i < App.product.getColorsList().size(); i++) {
+                    if (App.product.getColorsList().get(i).getBranchISN() == App.product.getxBarCodeColorBranchISN() &&
+                            App.product.getColorsList().get(i).getStoreColorISN() == App.product.getxBarCodeColorISN() &&
+                            Objects.equals(App.product.getColorsList().get(i).getStoreColorName(), App.product.getxBarCodeColorName())) {
+                        binding.colorSpinner.setSelection(i);
+                    }
+                }
+            }
         }
         if (App.product.getSeasons()) {
             binding.seasonSpinner.setVisibility(View.VISIBLE);
@@ -147,6 +160,15 @@ public class ProductScreenCashing extends AppCompatActivity {
                     App.product.setSelectedSeason(App.product.getSeasonsLists().get(0));
                 }
             });
+            if (!App.isEditing && App.product.getxBarCodeSeasonBranchISN() != 0 && App.product.getxBarCodeSeasonISN() != 0 && !Objects.equals(App.product.getxBarCodeSeasonName(), "")) {
+                for (int i = 0; i < App.product.getSeasonsLists().size(); i++) {
+                    if (App.product.getSeasonsLists().get(i).getBranchISN() == App.product.getxBarCodeSeasonBranchISN() &&
+                            App.product.getSeasonsLists().get(i).getStoreSeasonISN() == App.product.getxBarCodeSeasonISN() &&
+                            Objects.equals(App.product.getSeasonsLists().get(i).getStoreSeasonName(), App.product.getxBarCodeSeasonName())) {
+                        binding.seasonSpinner.setSelection(i);
+                    }
+                }
+            }
         }
         if (App.product.getSizes()) {
             binding.sizeSpinner.setVisibility(View.VISIBLE);
@@ -170,6 +192,15 @@ public class ProductScreenCashing extends AppCompatActivity {
                     App.product.setSelectedSize(App.product.getSizesList().get(0));
                 }
             });
+            if (!App.isEditing && App.product.getxBarCodeSizeBranchISN() != 0 && App.product.getxBarCodeSizeISN() != 0 && !Objects.equals(App.product.getxBarCodeSizeName(), "")) {
+                for (int i = 0; i < App.product.getSizesList().size(); i++) {
+                    if (App.product.getSizesList().get(i).getBranchISN() == App.product.getxBarCodeSizeBranchISN() &&
+                            App.product.getSizesList().get(i).getStoreSizeISN() == App.product.getxBarCodeSizeISN() &&
+                            Objects.equals(App.product.getSizesList().get(i).getStoreSizeName(), App.product.getxBarCodeSizeName())) {
+                        binding.sizeSpinner.setSelection(i);
+                    }
+                }
+            }
         }
         if (App.product.getGroup1()) {
             binding.group1Spinner.setVisibility(View.VISIBLE);
@@ -193,6 +224,15 @@ public class ProductScreenCashing extends AppCompatActivity {
                     App.product.setSelectedGroup1(App.product.getGroup1List().get(0));
                 }
             });
+            if (!App.isEditing && App.product.getxBarCodeGroup1BranchISN() != 0 && App.product.getxBarCodeGroup1ISN() != 0 && !Objects.equals(App.product.getxBarCodeGroup1Name(), "")) {
+                for (int i = 0; i < App.product.getGroup1List().size(); i++) {
+                    if (App.product.getGroup1List().get(i).getBranchISN() == App.product.getxBarCodeGroup1BranchISN() &&
+                            App.product.getGroup1List().get(i).getStoreGroup1ISN() == App.product.getxBarCodeGroup1ISN() &&
+                            Objects.equals(App.product.getGroup1List().get(i).getStoreGroup1Name(), App.product.getxBarCodeGroup1Name())) {
+                        binding.group1Spinner.setSelection(i);
+                    }
+                }
+            }
         }
         if (App.product.getGroup2()) {
             binding.group2Spinner.setVisibility(View.VISIBLE);
@@ -217,11 +257,23 @@ public class ProductScreenCashing extends AppCompatActivity {
                     App.product.setSelectedGroup2(App.product.getGroup2List().get(0));
                 }
             });
+            if (!App.isEditing && App.product.getxBarCodeGroup2BranchISN() != 0 && App.product.getxBarCodeGroup2ISN() != 0 && !Objects.equals(App.product.getxBarCodeGroup2Name(), "")) {
+                for (int i = 0; i < App.product.getGroup2List().size(); i++) {
+                    if (App.product.getGroup2List().get(i).getBranchISN() == App.product.getxBarCodeGroup2BranchISN() &&
+                            App.product.getGroup2List().get(i).getStoreGroup2ISN() == App.product.getxBarCodeGroup2ISN() &&
+                            Objects.equals(App.product.getGroup2List().get(i).getStoreGroup2Name(), App.product.getxBarCodeGroup2Name())) {
+                        binding.group2Spinner.setSelection(i);
+                    }
+                }
+            }
         }
         if (App.product.getExpireDate()) {
             binding.expirePicker.setVisibility(View.VISIBLE);
             binding.textView25.setVisibility(View.VISIBLE);
             datePicker();
+            if (!App.isEditing && !App.product.getxBarCodeExpireDate().isEmpty()) {
+                binding.expirePicker.setText(App.product.getxBarCodeExpireDate());
+            }
         }
         if (App.product.getSerial()) {
             binding.serial.setVisibility(View.VISIBLE);
@@ -261,6 +313,14 @@ public class ProductScreenCashing extends AppCompatActivity {
                 App.product.setSelectedUnit(App.product.getMeasureUnits().get(0));
             }
         });
+        if (!App.isEditing && App.product.getxBarCodeMeasureUnitBranchISN() != 0 && App.product.getxBarCodeMeasureUnitISN() != 0 && !Objects.equals(App.product.getxBarCodeMeasureUnitName(), "")) {
+            for (int i = 0; i < App.product.getMeasureUnits().size(); i++) {
+                if (App.product.getMeasureUnits().get(i).getMeasureUnitBranchISN() == App.product.getxBarCodeMeasureUnitBranchISN() &&
+                        App.product.getMeasureUnits().get(i).getMeasureUnitISN() == App.product.getxBarCodeMeasureUnitISN()) {
+                    binding.measureUnitSpinner.setSelection(i);
+                }
+            }
+        }
     }
 
     public void stores_priceTypeSpinner() {

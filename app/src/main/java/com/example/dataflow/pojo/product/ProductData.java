@@ -73,7 +73,7 @@ public class ProductData implements Serializable {
     private String itemTax;
 
     @SerializedName("xPriceFromBarcode")
-    private int xPriceFromBarcode;
+    private double xPriceFromBarcode;
 
     @SerializedName("xBarCodeColorISN")
     private int xBarCodeColorISN;
@@ -143,13 +143,11 @@ public class ProductData implements Serializable {
     private String xBarCodeGroup2Name;
 
 
-    public int getxPriceFromBarcode() {
+    public double getxPriceFromBarcode() {
         return xPriceFromBarcode;
     }
 
-    public void setxPriceFromBarcode(int xPriceFromBarcode) {
-        this.xPriceFromBarcode = xPriceFromBarcode;
-    }
+
 
     public int getxBarCodeColorISN() {
         return xBarCodeColorISN;

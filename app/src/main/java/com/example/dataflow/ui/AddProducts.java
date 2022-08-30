@@ -53,7 +53,7 @@ public class AddProducts extends AppCompatActivity {
                 @Override
                 public boolean onQueryTextSubmit(String s) {
                     if (App.isNetworkAvailable(AddProducts.this))
-                        productVM.getProduct(s, uuid, null);
+                        productVM.getProduct(s, uuid, null,1);
                     else {
                         App.noConnectionDialog(AddProducts.this);
                     }
@@ -68,7 +68,7 @@ public class AddProducts extends AppCompatActivity {
                     binding.invoice.setText("بحث عن صنف");
                     binding.invoice.setOnClickListener(view -> {
                         if (App.isNetworkAvailable(AddProducts.this))
-                            productVM.getProduct(s, uuid, null);
+                            productVM.getProduct(s, uuid, null,1);
                         else {
                             App.noConnectionDialog(AddProducts.this);
                         }
@@ -126,7 +126,7 @@ public class AddProducts extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 String contents = data.getStringExtra("SCAN_RESULT");
                 if (App.isNetworkAvailable(AddProducts.this))
-                    productVM.getProduct(contents, uuid, null);
+                    productVM.getProduct(contents, uuid, null,1);
                 else {
                     App.noConnectionDialog(AddProducts.this);
                 }
