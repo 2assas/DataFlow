@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DataFlow</string>
+    <string name="app_name">DataFlow Stores</string>
     <string name="date_error">من فضلك أدخل التاريخ</string>
     <string name="serial_error">من فضلك أدخل الرقم التسلسلى</string>
     <string name="remember_me">تذكرنى</string>
@@ -24,4 +24,11 @@
     <string name="connect_first">من فضلك قم بالإتصال أولا</string>
     <string name="confirm">تأكيد</string>
     <string name="item_serial_number">رقم تسلسلى للصنف</string>
+    <string name="demo_version">النسخة التجريبية</string>
+    <string name="add_workstation">إضافة محطة عمل</string>
+    <string name="password">كلمة السر</string>
+    <string name="sign_in">تسجيل الدخول</string>
+    <string name="username">إسم المستخدم</string>
+
+
 </resources>

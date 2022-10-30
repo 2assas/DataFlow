@@ -3,34 +3,71 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-
     <item
-        android:id="@+id/searchSaleInvoice"
+        android:id="@+id/invoices_cat"
         android:icon="@drawable/sale_invoice"
-        android:title="طباعة فاتورة مبيعات" />
+        android:title="طباعة الفواتير"
+        >
+        <menu>
+            <item
+                android:id="@+id/searchSaleInvoice"
+                android:title="فاتورة مبيعات" />
+            <item
+                android:id="@+id/mobileResales"
+                android:title="مرتجع فاتورة مبيعات" />
 
+        </menu>
+    </item>
+ <item
+        android:id="@+id/financialCat"
+        android:title="طباعة الماليات">
+        <menu>
+            <item
+                android:id="@+id/searchReceiptsInvoice"
+                android:title="مقبوضات" />
+
+            <item
+                android:id="@+id/searchExpensesInvoice"
+                android:title="مصروفات" />
+        </menu>
+    </item>
 
     <item
-        android:id="@+id/searchReceiptsInvoice"
-        android:icon="@drawable/ic_receipt"
-        android:title="طباعة مقبوضات" />
-    <item
-        android:id="@+id/searchCashingPermission"
-        android:icon="@drawable/ic_cashing"
-        android:title="طباعة إذن صرف" />
-    <item
-        android:id="@+id/searchReceivingPermission"
-        android:icon="@drawable/ic_receiving"
-        android:title="طباعة إذن إستلام" />
-    <item
-        android:id="@+id/searchStoreTransfer"
-        android:icon="@drawable/ic_transfering"
-        android:title="طباعة تحويل مخزني" />
+        android:id="@+id/storeCat"
+        android:title="طباعة عمليات المخازن">
+        <menu>
+            <item
+                android:id="@+id/searchCashingPermission"
+                android:title="إذن صرف" />
+            <item
+                android:id="@+id/searchReceivingPermission"
+                android:title="إذن إستلام" />
+            <item
+                android:id="@+id/searchStoreTransfer"
+                android:title="تحويل مخزني" />
 
+            <item
+                android:id="@+id/mobileFirstPeriod"
+                android:title="كميات اول المده" />
+
+            <item
+                android:id="@+id/mobileLoses"
+                android:title="إهلاكات الأصناف" />
+
+            <item
+                android:id="@+id/itemCreate"
+                android:title=" تكوين صنف" />
+            <item
+                android:id="@+id/mobileInventory"
+                android:title="جرد الأصناف" />
+
+        </menu>
+    </item>
     <item android:title="App Version">
         <menu>
-            <item android:id="@+id/nav_item_six"
-                android:title="22.0819" />
+            <item
+                android:id="@+id/nav_item_six"
+                android:title="22.1031" />
         </menu>
     </item>
 </menu>

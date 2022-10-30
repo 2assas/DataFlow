@@ -1,0 +1,131 @@
+package com.dataflowstores.dataflow.ui.home;
+
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.dataflowstores.dataflow.App;
+import com.dataflowstores.dataflow.ui.SearchCustomerBalance;
+import com.dataflowstores.dataflow.ui.StoreReportScreen;
+import com.dataflowstores.dataflow.ui.reports.FinancialReport;
+import com.dataflowstores.dataflow.ui.searchItemPrice.SearchItemPrice;
+import com.dataflowstores.dataflow.R;
+import com.dataflowstores.dataflow.databinding.FragmentReportsBinding;
+
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link ReportsFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class ReportsFragment extends Fragment {
+    FragmentReportsBinding binding;
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
+
+    public ReportsFragment() {
+        // Required empty public constructor
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment ReportsFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static ReportsFragment newInstance(String param1, String param2) {
+        ReportsFragment fragment = new ReportsFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_reports, container, false);
+        permissions();
+        setupViews();
+        return binding.getRoot();
+    }
+
+    private void setupViews() {
+        binding.back.setOnClickListener(view -> back());
+        binding.financialReport.setOnClickListener(view -> {
+            startActivity(new Intent(requireActivity(), FinancialReport.class));
+        });
+        binding.storeReport.setOnClickListener(view -> {
+            startActivity(new Intent(requireActivity(), StoreReportScreen.class));
+        });
+        binding.searchCustomer.setOnClickListener(view -> {
+            startActivity(new Intent(requireActivity(), SearchCustomerBalance.class));
+        });
+        binding.priceEnquiry.setOnClickListener(view -> {
+            startActivity(new Intent(requireActivity(), SearchItemPrice.class));
+        });
+    }
+
+    private void permissions() {
+        if (App.currentUser.getMobileDealersBalanceEnquiry() == 0) {
+            binding.searchCustomer.setEnabled(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                binding.searchCustomer.setBackground(requireActivity().getDrawable(R.drawable.gray_rounded));
+            }
+        }
+        if (App.currentUser.getMobileMoneyReport() == 0) {
+            binding.financialReport.setEnabled(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                binding.financialReport.setBackground(requireActivity().getDrawable(R.drawable.gray_rounded));
+            }
+        }
+        if (App.currentUser.getMobileItemPricesEnquiry() == 0) {
+            binding.priceEnquiry.setEnabled(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                binding.priceEnquiry.setBackground(requireActivity().getDrawable(R.drawable.gray_rounded));
+            }
+        }
+        if (App.currentUser.getMobileInventoryReport() == 0) {
+            binding.storeReport.setEnabled(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                binding.storeReport.setBackground(requireActivity().getDrawable(R.drawable.gray_rounded));
+            }
+        }
+    }
+
+    private void back() {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.container, new HomeFragment());
+        fragmentTransaction.commit();
+    }
+
+}
