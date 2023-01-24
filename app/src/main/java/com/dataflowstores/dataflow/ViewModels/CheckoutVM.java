@@ -14,7 +14,9 @@ import com.dataflowstores.dataflow.utils.SingleLiveEvent;
 import com.dataflowstores.dataflow.webService.ApiClient;
 import com.dataflowstores.dataflow.webService.Constants;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -22,6 +24,8 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import okhttp3.ResponseBody;
+import retrofit2.HttpException;
 
 public class CheckoutVM extends ViewModel {
     public SingleLiveEvent<InvoiceResponse> responseDataMutableLiveData = new SingleLiveEvent<>();
@@ -29,6 +33,7 @@ public class CheckoutVM extends ViewModel {
     ApiClient apiClient = ServiceGenerator.tokenService(
             ApiClient.class, Constants.BASE_URL);
     public MutableLiveData<CustomerBalance> customerBalanceLiveData = new MutableLiveData<>();
+    public MutableLiveData<String> toastErrorMutableLiveData = new MutableLiveData<>();
 
 
     public void placeInvoice(long BranchISN, String uuid, int CashType, int SaleType, int DealerType, int DealerBranchISN, long DealerISN, long SalesManBranchISN,
@@ -73,8 +78,18 @@ public class CheckoutVM extends ViewModel {
             }
 
             @Override
-            public void onError(@NonNull Throwable e) {
-                Log.e("ERRORR !!", String.valueOf(e));
+            public void onError(@NonNull Throwable throwable) {
+                Log.e("ERRORR !!", String.valueOf(throwable));
+                if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                    try {
+                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }else{
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+                }
             }
 
             @Override
@@ -115,10 +130,19 @@ public class CheckoutVM extends ViewModel {
             }
 
             @Override
-            public void onError(@NonNull Throwable e) {
+            public void onError(@NonNull Throwable throwable) {
 
-
-                Log.e("ERRORR !!", String.valueOf(e));
+                if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                    try {
+                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }else{
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+                }
+                Log.e("ERRORR !!", String.valueOf(throwable));
             }
 
             @Override
@@ -144,8 +168,17 @@ public class CheckoutVM extends ViewModel {
             }
 
             @Override
-            public void onError(@NonNull Throwable e) {
-
+            public void onError(@NonNull Throwable throwable) {
+                if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                    try {
+                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }else{
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+                }
             }
 
             @Override

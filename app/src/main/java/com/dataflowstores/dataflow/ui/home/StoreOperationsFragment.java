@@ -179,6 +179,12 @@ public class StoreOperationsFragment extends Fragment {
                 binding.createItem.setBackground(requireActivity().getDrawable(R.drawable.gray_rounded));
             }
         }
+        if (App.currentUser.getMobileItemQuanModify() == 0) {
+            binding.mobileInventory.setEnabled(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                binding.mobileInventory.setBackground(requireActivity().getDrawable(R.drawable.gray_rounded));
+            }
+        }
 
     }
 

@@ -19,7 +19,9 @@ import com.dataflowstores.dataflow.utils.Conts;
 import com.dataflowstores.dataflow.webService.ApiClient;
 import com.dataflowstores.dataflow.webService.Constants;
 
+import java.io.IOException;
 import java.net.InetAddress;
+import java.util.Objects;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -27,6 +29,8 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import okhttp3.ResponseBody;
+import retrofit2.HttpException;
 
 public class GateWayViewModel extends ViewModel {
     public MutableLiveData<LoginStatus> loginLiveData = new MutableLiveData<>();
@@ -34,6 +38,7 @@ public class GateWayViewModel extends ViewModel {
     public MutableLiveData<Workstation> insertWorkstationLiveData = new MutableLiveData<>();
     public MutableLiveData<Branch> insertBranchLiveData = new MutableLiveData<>();
     public MutableLiveData<BranchStaffModel> branchStaffMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<String> toastErrorMutableLiveData = new MutableLiveData<>();
 
 
     ApiClient apiClient = ServiceGenerator.newService(
@@ -45,9 +50,19 @@ public class GateWayViewModel extends ViewModel {
         Observable<LoginStatus> login = apiClient.loginGateWay(uuid, user_name, password, foundation_name, phone, 2, Conts.APP_VERSION,
                 selectedBranchISN, selectedSafeDepositBranchISN, selectedSafeDepositISN, selectedStoreBranchISN, selectedStoreISN, demo).subscribeOn(
                 Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-
         login.subscribe(loginStatus -> {
             loginLiveData.setValue(loginStatus);
+        },throwable -> {
+            if (throwable instanceof HttpException) {
+                ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                try {
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }else{
+                toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+            }
         });
     }
 
@@ -55,6 +70,17 @@ public class GateWayViewModel extends ViewModel {
         Observable<WorkstationList> workstation = apiClient.createWorkstation(uuid, 2).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         workstation.subscribe(workstationObserver -> {
             workStationLiveData.setValue(workstationObserver);
+        },throwable -> {
+            if (throwable instanceof HttpException) {
+                ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                try {
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }else{
+                toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+            }
         });
     }
 
@@ -63,6 +89,17 @@ public class GateWayViewModel extends ViewModel {
                 Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         insertWorkstation.subscribe(workstation -> {
             insertWorkstationLiveData.setValue(workstation);
+        },throwable -> {
+            if (throwable instanceof HttpException) {
+                ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                try {
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }else{
+                toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+            }
         });
     }
 
@@ -71,6 +108,17 @@ public class GateWayViewModel extends ViewModel {
         Observable<Branch> insertBranch = apiClient.insertBranch(branchNumber, branchName, uuid, 2).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         insertBranch.subscribe(branch -> {
             insertBranchLiveData.setValue(branch);
+        },throwable -> {
+            if (throwable instanceof HttpException) {
+                ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                try {
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }else{
+                toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+            }
         });
     }
 
@@ -105,8 +153,18 @@ public class GateWayViewModel extends ViewModel {
             }
 
             @Override
-            public void onError(@NonNull Throwable e) {
-                Log.e("checkError", e.toString());
+            public void onError(@NonNull Throwable throwable) {
+                Log.e("checkError", throwable.toString());
+                if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                    try {
+                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }else{
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+                }
             }
 
             @Override

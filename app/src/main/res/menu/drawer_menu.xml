@@ -6,8 +6,7 @@
     <item
         android:id="@+id/invoices_cat"
         android:icon="@drawable/sale_invoice"
-        android:title="طباعة الفواتير"
-        >
+        android:title="طباعة الفواتير">
         <menu>
             <item
                 android:id="@+id/searchSaleInvoice"
@@ -31,7 +30,6 @@
                 android:title="مصروفات" />
         </menu>
     </item>
-
     <item
         android:id="@+id/storeCat"
         android:title="طباعة عمليات المخازن">
@@ -60,14 +58,22 @@
             <item
                 android:id="@+id/mobileInventory"
                 android:title="جرد الأصناف" />
-
         </menu>
     </item>
     <item android:title="App Version">
         <menu>
             <item
                 android:id="@+id/nav_item_six"
-                android:title="22.1031" />
+                android:title="23.0125" />
+        </menu>
+    </item>
+    <item
+        android:id="@+id/nav_device_id_title"
+        android:title="Device ID">
+        <menu>
+            <item
+                android:id="@+id/nav_device_id"
+                android:title="" />
         </menu>
     </item>
 </menu>

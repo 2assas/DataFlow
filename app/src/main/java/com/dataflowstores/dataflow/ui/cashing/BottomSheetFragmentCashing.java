@@ -10,6 +10,7 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -84,6 +85,7 @@ public class BottomSheetFragmentCashing extends BottomSheetDialogFragment implem
 
     public void getProduct() {
         productVM = new ViewModelProvider(getActivity()).get(ProductVM.class);
+        productVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(requireActivity(), s, Toast.LENGTH_LONG).show());
         productVM.productMutableLiveData = new MutableLiveData<>();
         productVM.productMutableLiveData.observe(getActivity(), product -> {
             binding.serialDialog.serialContainer.setVisibility(View.GONE);

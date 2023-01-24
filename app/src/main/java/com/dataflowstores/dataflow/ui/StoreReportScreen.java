@@ -63,6 +63,8 @@ public class StoreReportScreen extends AppCompatActivity implements MyDialogClos
             reportViewModel = new ViewModelProvider(this).get(ReportViewModel.class);
             productVM = new ViewModelProvider(this).get(ProductVM.class);
             uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            productVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
+
             searchProducts();
             barCodeScan();
             handleCheckboxes();
@@ -89,7 +91,9 @@ public class StoreReportScreen extends AppCompatActivity implements MyDialogClos
                 }
                 observeReport();
             });
+            reportViewModel.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
         }
+
     }
 
     private void handleCheckboxes() {

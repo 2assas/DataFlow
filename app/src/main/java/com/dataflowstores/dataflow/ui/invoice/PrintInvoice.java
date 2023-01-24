@@ -111,7 +111,7 @@ public class PrintInvoice extends AppCompatActivity implements Runnable {
         } else {
             binding = DataBindingUtil.setContentView(this, R.layout.print_invoice);
             printInvoiceVM = new ViewModelProvider(this).get(PrintInvoiceVM.class);
-
+            printInvoiceVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
             @SuppressLint("HardwareIds")
             String uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
             try {

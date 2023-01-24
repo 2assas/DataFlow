@@ -7,6 +7,15 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -18,15 +27,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.provider.Settings;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.SettingVM;
@@ -36,6 +36,8 @@ import com.dataflowstores.dataflow.ui.SearchReceipts;
 import com.dataflowstores.dataflow.ui.cashing.SearchCashing;
 import com.dataflowstores.dataflow.ui.expenses.SearchExpenses;
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -121,7 +123,12 @@ public class HomeFragment extends Fragment {
         binding.home.textView.setText(getString(R.string.welcome) + " " + App.currentUser.getWorkerName());
         binding.home.foundationName.setText(App.currentUser.getFoundationName());
         binding.home.branchName.setText(App.currentUser.getBranchName());
-
+        if (!Objects.equals(App.currentUser.getDeviceID(), "0")) {
+            binding.home.deviceId.setText(getString(R.string.device_id)+ App.currentUser.getDeviceID());
+        } else {
+            binding.home.deviceId.setVisibility(View.GONE);
+        }
+        settingVM.toastErrorMutableLiveData.observe(requireActivity(), s -> Toast.makeText(requireActivity(), s, Toast.LENGTH_LONG).show());
     }
 
     public void handleFragments() {
@@ -292,6 +299,11 @@ public class HomeFragment extends Fragment {
         }
         if (App.currentUser.getMobileStoreTransfer() == 0) {
             nav_Menu.findItem(R.id.searchStoreTransfer).setVisible(false);
+        }
+        if (!Objects.equals(App.currentUser.getDeviceID(), "0")) {
+            nav_Menu.findItem(R.id.nav_device_id).setTitle(App.currentUser.getDeviceID());
+        } else {
+            nav_Menu.findItem(R.id.nav_device_id_title).setVisible(false);
         }
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @SuppressLint("NonConstantResourceId")

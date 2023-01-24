@@ -12,6 +12,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -122,12 +124,12 @@
 
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dataflowstores.dataflow.ui.reports.FinancialReport"
+            android:name="com.dataflowstores.dataflow.ui.reports.financialReport.FinancialReport"
             android:exported="true"
 
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dataflowstores.dataflow.ui.reports.FinancialReportPrintScreen"
+            android:name="com.dataflowstores.dataflow.ui.reports.financialReport.FinancialReportPrintScreen"
             android:exported="true"
 
             android:screenOrientation="portrait" />
@@ -152,7 +154,7 @@
 
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dataflowstores.dataflow.ui.SearchCustomerBalance"
+            android:name="com.dataflowstores.dataflow.ui.reports.SearchCustomerBalance"
             android:exported="true"
 
             android:screenOrientation="portrait" />
@@ -174,6 +176,8 @@
             android:name="com.dataflowstores.dataflow.ui.searchItemPrice.SearchItemPrice"
             android:exported="true"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.reports.itemSalesReport.ItemSalesReport" />
+        <activity android:name=".ui.reports.itemSalesReport.ItemSalesPrintScreen" />
 
         <service android:name="net.posprinter.service.PosprinterService" />
 

@@ -31,6 +31,7 @@ public class SplashScreen extends AppCompatActivity {
         // value// .
         String uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         gateWayViewModel = new ViewModelProvider(this).get(GateWayViewModel.class);
+        gateWayViewModel.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
         if (!userName.isEmpty() && !password.isEmpty()) {
             if (App.isNetworkAvailable(this))
                 gateWayViewModel.getLoginStatus(uuid, userName, password, null, null, "-1", null, null, null, null,0);

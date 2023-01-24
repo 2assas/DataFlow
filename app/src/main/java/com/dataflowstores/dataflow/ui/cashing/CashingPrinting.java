@@ -109,6 +109,8 @@ public class CashingPrinting extends AppCompatActivity implements Runnable {
         Intent intent = new Intent(this, PosprinterService.class);
         bindService(intent, conn, BIND_AUTO_CREATE);
         getInvoiceData();
+        printInvoiceVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
+
     }
 
 

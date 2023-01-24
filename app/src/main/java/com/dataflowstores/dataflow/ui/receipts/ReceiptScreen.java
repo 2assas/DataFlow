@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -104,6 +105,8 @@ public class ReceiptScreen extends AppCompatActivity implements MyDialogCloseLis
         binding.showProgress.setVisibility(View.GONE);
         if (checkPermission()) getLocation(this);
         else requestPermission();
+        invoiceVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
+
         invoiceVM.customerBalanceLiveData.observe(this, customerBalance -> {
             App.customerBalance = customerBalance.getMessage();
             new AlertDialog.Builder(this).setTitle("عملية ناجحة")

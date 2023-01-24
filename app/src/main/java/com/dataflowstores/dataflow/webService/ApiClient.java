@@ -3,6 +3,7 @@ package com.dataflowstores.dataflow.webService;
 import com.dataflowstores.dataflow.pojo.expenses.MainExpResponse;
 import com.dataflowstores.dataflow.pojo.expenses.SubExpResponse;
 import com.dataflowstores.dataflow.pojo.expenses.WorkerResponse;
+import com.dataflowstores.dataflow.pojo.report.itemSalesReport.ItemSalesResponse;
 import com.dataflowstores.dataflow.pojo.searchItemPrice.ItemPriceResponse;
 import com.dataflowstores.dataflow.pojo.expenses.ExpensesResponse;
 import com.dataflowstores.dataflow.pojo.financialReport.FinancialReportResponse;
@@ -169,100 +170,6 @@ public interface ApiClient {
     @POST("invoices/store2")
     Observable<InvoiceResponse> placeInvoice(@Body InvoiceBody invoiceBody);
 
-//    @POST("invoices/storeTest")
-//    @FormUrlEncoded
-//    Observable<InvoiceResponse> placeInvoice(
-//            @Field("BranchISN") long BranchISN,
-//            @Field("uiid") String uuid,
-//            @Field("CashType") int CashType,
-//            @Field("SaleType") int SaleType,
-//            @Field("DealerType") int DealerType,
-//            @Field("DealerBranchISN") int DealerBranchISN,
-//            @Field("DealerISN") long DealerISN,
-//            @Field("SalesManBranchISN") long SalesManBranchISN,
-//            @Field("SalesManISN") long SalesManISN,
-//            @Field("HeaderNotes") String HeaderNotes,
-//            @Field("TotalLinesValue") double TotalLinesValue,
-//            @Field("ServiceValue") double ServiceValue,
-//            @Field("ServicePer") double ServicePer,
-//            @Field("DeliveryValue") double DeliveryValue,
-//            @Field("TotalValueAfterServices") double TotalValueAfterServices,
-//            @Field("BasicDiscountVal") double BasicDiscountVal,
-//            @Field("BasicDiscountPer") double BasicDiscountPer,
-//            @Field("TotalValueAfterDisc") double TotalValueAfterDisc,
-//            @Field("BasicTaxVal") double BasicTaxVal,
-//            @Field("BasicTaxPer") double BasicTaxPer,
-//            @Field("TotalValueAfterTax") double TotalValueAfterTax,
-//            @Field("NetValue") double NetValue,
-//            @Field("PaidValue") double PaidValue,
-//            @Field("RemainValue") double RemainValue,
-//            @Field("SafeDepositeBranchISN") long SafeDepositeBranchISN,
-//            @Field("SafeDepositeISN") long SafeDepositeISN,
-//            @Field("BankBranchISN") long BankBranchISN,
-//            @Field("BankISN") long BankISN,
-//            @Field("TableNumber") String TableNumber,
-//            @Field("DeliveryPhone") String DeliveryPhone,
-//            @Field("DeliveryAddress") String DeliveryAddress,
-//            @Field("WorkerCBranchISN") long WorkerCBranchISN,
-//            @Field("WorkerCISN") long WorkerCISN,
-//            @Field("CheckNumber") String CheckNumber,
-//            @Field("CheckDueDate") String CheckDueDate,//HERE
-//            @Field("CheckBankBranchISN") long CheckBankBranchISN,
-//            @Field("CheckBankISN") long CheckBankISN,
-//            @Field("ItemBranchISN[]") ArrayList<Long> ItemBranchISN,
-//            @Field("ItemISN[]") ArrayList<Long> ItemISN,
-//            @Field("PriceTypeBranchISN[]") ArrayList<Long> PriceTypeBranchISN,
-//            @Field("PriceTypeISN[]") ArrayList<Long> PriceTypeISN,
-//            @Field("StoreBranchISN[]") ArrayList<Long> StoreBranchISN,
-//            @Field("StoreISN[]") ArrayList<Long> StoreISN,
-//            @Field("BasicQuantity[]") ArrayList<Float> BasicQuantity,
-//            @Field("BonusQuantity[]") ArrayList<Float> BonusQuantity,
-//            @Field("TotalQuantity[]") ArrayList<Float> TotalQuantity,
-//            @Field("Price[]") ArrayList<Double> Price,
-//            @Field("MeasureUnitBranchISN[]") ArrayList<Long> MeasureUnitBranchISN,
-//            @Field("MeasureUnitISN[]") ArrayList<Long> MeasureUnitISN,
-//            @Field("BasicMeasureUnitBranchISN[]") ArrayList<Long> BasicMeasureUnitBranchISN,
-//            @Field("BasicMeasureUnitISN[]") ArrayList<Long> BasicMeasureUnitISN,
-//            @Field("ItemSerial[]") ArrayList<String> ItemSerial,
-//            @Field("itemExpireDate[]") ArrayList<String> ExpireDateItem,
-//            @Field("ColorBranchISN[]") ArrayList<Long> ColorBranchISN,
-//            @Field("ColorISN[]") ArrayList<Long> ColorISN,
-//            @Field("SizeBranchISN[]") ArrayList<Long> SizeBranchISN,
-//            @Field("SizeISN[]") ArrayList<Long> SizeISN,
-//            @Field("SeasonBranchISN[]") ArrayList<Long> SeasonBranchISN,
-//            @Field("SeasonISN[]") ArrayList<Long> SeasonISN,
-//            @Field("Group1BranchISN[]") ArrayList<Long> Group1BranchISN,
-//            @Field("Group1ISN[]") ArrayList<Long> Group1ISN,
-//            @Field("Group2BranchISN[]") ArrayList<Long> Group2BranchISN,
-//            @Field("Group2ISN[]") ArrayList<Long> Group2ISN,
-//            @Field("LineNotes[]") ArrayList<String> LineNotes,
-//            @Field("numberOFItems") Long numberOFItems,
-//            @Field("CreateSource") int createSource,
-//            @Field("NetPrice[]") ArrayList<Double> NetPrice,
-//            @Field("BasicMeasureUnitQuantity[]") ArrayList<Double> BasicMeasureUnitQuantity,
-//            @Field("ExpireDate[]") ArrayList<Boolean> ExpireDate,
-//            @Field("Colors[]") ArrayList<Boolean> Colors,
-//            @Field("Seasons[]") ArrayList<Boolean> Seasons,
-//            @Field("Sizes[]") ArrayList<Boolean> Sizes,
-//            @Field("Serial[]") ArrayList<Boolean> Serial,
-//            @Field("Group1[]") ArrayList<Boolean> Group1,
-//            @Field("Group2[]") ArrayList<Boolean> Group2,
-//            @Field("ServiceItem[]") ArrayList<Boolean> ServiceItem,
-//            @Field("ItemTax[]") ArrayList<Double> ItemTax,
-//            @Field("TaxValue[]") ArrayList<Double> TaxValue,
-//            @Field("TotalLinesTaxVal") Double TotalLinesTaxVal,
-//            @Field("AllowStoreMinus") Integer allowStoreMinus,
-//            @Field("ItemName[]") ArrayList<String> itemName,
-//            @Field("Discount1[]") ArrayList<Double> discount1,
-//            @Field("AllowStoreMinusConfirm") Integer AllowStoreMinusConfirm,
-//            @Field("Latitude") float latitude,
-//            @Field("Longitude") float longitude,
-//            @Field("invoiceType") String invoiceType,
-//            @Field("MoveType") Integer moveType,
-//            @Field("StoreBranchISN2[]") ArrayList<Long> StoreBranchISN2,
-//            @Field("StoreISN2[]") ArrayList<Long> StoreISN2
-//    );
-
     @POST("invoices/check_item_quantity")
     @FormUrlEncoded
     Observable<InvoiceResponse> checkItem(
@@ -317,7 +224,6 @@ public interface ApiClient {
             @Field("WorkStationBranchISN") String WorkStationBranchISN
     );
 
-
     @GET("invoices/query")
     Observable<Invoice> getPrintingData(
             @Query("BranchISN") String branchISN,
@@ -327,9 +233,7 @@ public interface ApiClient {
             @Query("WorkerCISN") String WorkerCISN,
             @Query("permission") Integer permission,
             @Query("MoveType") Integer MoveType
-
     );
-
 
     @GET("reports/warehouse_report")
     Observable<StoreReportModel> getStoresReport(
@@ -348,7 +252,7 @@ public interface ApiClient {
             @Query("WorkStationBranchISN") String WorkStationBranchISN
     );
 
-
+// TODO:: complete error handling..
     @POST("invoices/cash_receipt")
     @FormUrlEncoded
     Observable<ReceiptResponse> createReceipt(
@@ -483,6 +387,29 @@ public interface ApiClient {
                                                            @Query("WorkStationName") String WorkStationName,
                                                            @Query("WorkStation_ISN") String WorkStation_ISN,
                                                            @Query("WorkStationBranchISN") String WorkStationBranchISN);
+
+    @POST("reports/money_report")
+    Observable<FinancialReportResponse> getCashierMovesReport(@Body ReportBody reportBody, @Query("uiid") String uuid,
+                                                           @Query("StoreBranchISN") long storeBranchISN,
+                                                           @Query("StoreISN") long storeISN,
+                                                           @Query("WorkerBranchISN") long workerBranchISN,
+                                                           @Query("WorkerName") String WorkerName,
+                                                           @Query("user_name") String user_name,
+                                                           @Query("WorkStationName") String WorkStationName,
+                                                           @Query("WorkStation_ISN") String WorkStation_ISN,
+                                                           @Query("WorkStationBranchISN") String WorkStationBranchISN);
+
+    @GET("reports/itemssales_report")
+    Observable<ItemSalesResponse> getItemSalesReport(@Query("uiid") String uuid,
+                                                     @Query("Branch_ISN") Long storeBranchISN,
+                                                     @Query("from_workday") String from_workday,
+                                                     @Query("to_workday") String to_workday,
+                                                     @Query("Shift_ISN") String Shift_ISN,
+                                                     @Query("WorkerBranchISN") Long workerBranchISN,
+                                                     @Query("Worker_ISN") String Worker_ISN,
+                                                     @Query("from") String from,
+                                                     @Query("to") String to,
+                                                     @Query("VendorID") Long vendorId);
 
     @GET("invoices/Get_Main_Expenses")
     Observable<MainExpResponse> getMainExpenses(@Query("uiid") String uiid);

@@ -16,12 +16,17 @@ import com.dataflowstores.dataflow.webService.ApiClient;
 import com.dataflowstores.dataflow.webService.Constants;
 import com.dataflowstores.dataflow.webService.ServiceGenerator;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import okhttp3.ResponseBody;
+import retrofit2.HttpException;
 
 public class SettingVM extends ViewModel {
     public MutableLiveData<Stores> storesMutableLiveData = new MutableLiveData<>();
@@ -30,6 +35,7 @@ public class SettingVM extends ViewModel {
     public MutableLiveData<PriceType> allPriceTypeMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<SafeDeposit> safeDepositMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<Branches> branchesMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<String> toastErrorMutableLiveData = new MutableLiveData<>();
 
 
     ApiClient apiClient = ServiceGenerator.tokenService(
@@ -39,6 +45,17 @@ public class SettingVM extends ViewModel {
                     = apiClient.getStores(branchISN, App.currentUser.getPermission(), uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getAllBranchesWorker(), moveType).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
             getStores.subscribe(stores -> {
                 storesMutableLiveData.setValue(stores);
+            },throwable -> {
+                if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                    try {
+                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }else{
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+                }
             });
     }
     public void getStoresCashing(long branchISN, String uuid, int moveType){
@@ -46,16 +63,49 @@ public class SettingVM extends ViewModel {
                     = apiClient.getStores(branchISN, 1, uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getAllBranchesWorker(), moveType).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
             getStores.subscribe(stores -> {
                 storesMutableLiveData.setValue(stores);
+            },throwable -> {
+                if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                    try {
+                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }else{
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+                }
             });
     }
     public void getBanks(long branchISN, String uuid){
         Observable<Banks> getBanks = apiClient.getBanks(branchISN, App.currentUser.getPermission(),uuid).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-        getBanks.subscribe(banks -> {banksMutableLiveData.setValue(banks);});
+        getBanks.subscribe(banks -> {banksMutableLiveData.setValue(banks);},throwable -> {
+            if (throwable instanceof HttpException) {
+                ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                try {
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }else{
+                toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+            }
+        });
     }
     public void getSafeDeposit(long branchISN, String uuid, int moveType){
             Observable<SafeDeposit> getSafeDeposit = apiClient.getSafeDeposit(branchISN, App.currentUser.getPermission(), uuid, App.currentUser.getSafeDepositBranchISN(), App.currentUser.getSafeDepositISN(), App.currentUser.getAllBranchesWorker(), moveType).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
             getSafeDeposit.subscribe(safeDeposit -> {
                 safeDepositMutableLiveData.setValue(safeDeposit);
+            },throwable -> {
+                if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                    try {
+                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }else{
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+                }
             });
          }
     public void getPriceType(String uuid){
@@ -69,6 +119,17 @@ public class SettingVM extends ViewModel {
                 }
             }
            App.allPriceType= priceType.getData();
+        },throwable -> {
+            if (throwable instanceof HttpException) {
+                ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                try {
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }else{
+                toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+            }
         });
     }
 
@@ -86,8 +147,18 @@ public class SettingVM extends ViewModel {
             }
 
             @Override
-            public void onError(@NonNull Throwable e) {
-                Log.e("branchesError", e.toString());
+            public void onError(@NonNull Throwable throwable) {
+                Log.e("branchesError", throwable.toString());
+                if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                    try {
+                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }else{
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+                }
             }
 
             @Override

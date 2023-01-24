@@ -14,9 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dataflowstores.dataflow.App;
-import com.dataflowstores.dataflow.ui.SearchCustomerBalance;
+import com.dataflowstores.dataflow.ui.reports.SearchCustomerBalance;
 import com.dataflowstores.dataflow.ui.StoreReportScreen;
-import com.dataflowstores.dataflow.ui.reports.FinancialReport;
+import com.dataflowstores.dataflow.ui.reports.financialReport.FinancialReport;
+import com.dataflowstores.dataflow.ui.reports.itemSalesReport.ItemSalesReport;
 import com.dataflowstores.dataflow.ui.searchItemPrice.SearchItemPrice;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.FragmentReportsBinding;
@@ -83,6 +84,9 @@ public class ReportsFragment extends Fragment {
         binding.financialReport.setOnClickListener(view -> {
             startActivity(new Intent(requireActivity(), FinancialReport.class));
         });
+        binding.itemSalesReport.setOnClickListener(view -> {
+            startActivity(new Intent(requireActivity(), ItemSalesReport.class));
+        });
         binding.storeReport.setOnClickListener(view -> {
             startActivity(new Intent(requireActivity(), StoreReportScreen.class));
         });
@@ -107,6 +111,13 @@ public class ReportsFragment extends Fragment {
                 binding.financialReport.setBackground(requireActivity().getDrawable(R.drawable.gray_rounded));
             }
         }
+        if (App.currentUser.getMobileItemsSalesReport() == 0) {
+            binding.itemSalesReport.setEnabled(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                binding.itemSalesReport.setBackground(requireActivity().getDrawable(R.drawable.gray_rounded));
+            }
+        }
+
         if (App.currentUser.getMobileItemPricesEnquiry() == 0) {
             binding.priceEnquiry.setEnabled(false);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

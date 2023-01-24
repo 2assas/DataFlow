@@ -23,8 +23,8 @@ import com.dataflowstores.dataflow.pojo.settings.SafeDeposit;
 import com.dataflowstores.dataflow.pojo.settings.Stores;
 import com.dataflowstores.dataflow.pojo.users.CustomerData;
 import com.dataflowstores.dataflow.pojo.users.SalesManData;
-import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.pojo.workStation.BranchData;
+import com.dataflowstores.dataflow.ui.reports.itemSalesReport.ItemSalesReport;
 //import com.mazenrashed.printooth.Printooth;
 
 import java.util.ArrayList;
@@ -55,6 +55,7 @@ public class App extends Application {
     public static Integer resales=-1;
     public static String headerNotes="";
     public static BranchData currentBranch;
+    public static ItemSalesReport itemSalesReport;
 
 
     public static boolean isNetworkAvailable(Context context) {

@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -55,6 +56,7 @@ public class FirstInvoice extends AppCompatActivity implements MyDialogCloseList
             binding.salesNameCheck.setChecked(true);
             binding.clientNameCheck.setChecked(true);
             resales = getIntent().getBooleanExtra("resales", false);
+            invoiceVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
             checkboxes();
             searchButtons();
             handlePriceTypeSpinner();

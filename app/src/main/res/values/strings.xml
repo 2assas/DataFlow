@@ -29,6 +29,7 @@
     <string name="password">Password</string>
     <string name="sign_in">Sign In</string>
     <string name="username">Username</string>
+    <string name="device_id">"Device ID: "</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

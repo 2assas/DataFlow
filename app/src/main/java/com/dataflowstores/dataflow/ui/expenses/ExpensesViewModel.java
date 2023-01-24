@@ -17,19 +17,24 @@ import com.dataflowstores.dataflow.webService.ApiClient;
 import com.dataflowstores.dataflow.webService.Constants;
 import com.dataflowstores.dataflow.webService.ServiceGenerator;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import okhttp3.ResponseBody;
+import retrofit2.HttpException;
 
 public class ExpensesViewModel extends ViewModel {
 
     public MutableLiveData<AllExpensesResponse> allExpResponseMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<ExpensesResponse> expensesModelMutableLiveData= new MutableLiveData<>();
     public MutableLiveData<ReceiptResponse> expensesResponseMutableLiveData= new MutableLiveData<>();
-
+    public MutableLiveData<String> toastErrorMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<CustomerBalance> customerBalanceLiveData = new MutableLiveData<>();
 
     ApiClient tokenService = ServiceGenerator.tokenService(
@@ -54,6 +59,16 @@ public class ExpensesViewModel extends ViewModel {
             @Override
             public void onError(@NonNull Throwable e) {
                 Log.e("checkError", e.toString());
+                if (e instanceof HttpException) {
+                    ResponseBody errorBody = ((HttpException) e).response().errorBody();
+                    try {
+                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }else{
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(e.getMessage()));
+                }
             }
 
             @Override
@@ -92,6 +107,17 @@ public class ExpensesViewModel extends ViewModel {
             @Override
             public void onError(@NonNull Throwable e) {
                 Log.e("ERROR Receipts", ""+e);
+                Log.e("error ", e.toString());
+                if (e instanceof HttpException) {
+                    ResponseBody errorBody = ((HttpException) e).response().errorBody();
+                    try {
+                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }else{
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(e.getMessage()));
+                }
             }
 
             @Override
@@ -117,6 +143,16 @@ public class ExpensesViewModel extends ViewModel {
             @Override
             public void onError(@NonNull Throwable e) {
                 Log.e("ERROR get Receipts",""+e);
+                if (e instanceof HttpException) {
+                    ResponseBody errorBody = ((HttpException) e).response().errorBody();
+                    try {
+                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }else{
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(e.getMessage()));
+                }
             }
 
             @Override
@@ -140,7 +176,16 @@ public class ExpensesViewModel extends ViewModel {
 
             @Override
             public void onError(@NonNull Throwable e) {
-
+                if (e instanceof HttpException) {
+                    ResponseBody errorBody = ((HttpException) e).response().errorBody();
+                    try {
+                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }else{
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(e.getMessage()));
+                }
             }
 
             @Override

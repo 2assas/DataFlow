@@ -64,6 +64,7 @@ public class GateWay extends AppCompatActivity {
             Log.e("getID", uuid);
             gateWayViewModel = new ViewModelProvider(this).get(GateWayViewModel.class);
             binding.appVersion.setText("رقم الإصدار" + Conts.APP_VERSION);
+            gateWayViewModel.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
             handleLoginCases();
             checkSavePassword();
             observeSelectBranch();
@@ -115,6 +116,7 @@ public class GateWay extends AppCompatActivity {
     public void handleLoginCases() {
         gateWayViewModel.loginLiveData.observe(this, loginStatus -> {
             binding.login.setClickable(true);
+
             switch (loginStatus.getMessage()) {
                 case "please add foundation name and phone": {
                     Toast.makeText(this, "Please Insert Foundation Name and Phone Number", Toast.LENGTH_LONG).show();
@@ -181,6 +183,7 @@ public class GateWay extends AppCompatActivity {
                             }).show();
                     break;
             }
+
         });
         gateWayViewModel.workStationLiveData.observe(this, workstation -> {
             if (workstation.getStatus() == 1) {

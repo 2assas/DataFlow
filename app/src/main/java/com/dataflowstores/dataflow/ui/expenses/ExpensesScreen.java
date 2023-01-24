@@ -93,6 +93,7 @@ public class ExpensesScreen extends AppCompatActivity implements LocationListene
     }
 
     private void setupView() {
+        expensesViewModel.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
         expensesViewModel.SelectBranchStaff(uuid);
         binding.showProgress.setVisibility(View.GONE);
         binding.back.setOnClickListener(view -> finish());

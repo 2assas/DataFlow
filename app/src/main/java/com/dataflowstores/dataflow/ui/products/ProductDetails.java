@@ -86,6 +86,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
     @SuppressLint("SetTextI18n")
     public void fillViews() {
         productDataOriginal = App.product;
+        productVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
         binding.textView10.setText(App.product.getItemName());
         binding.orderNotes.setText(App.product.getItemNotes());
         binding.branchISN.setText(Integer.toString(App.product.getBranchISN()));

@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -108,6 +109,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
             userRestricts();
             customer_agent();
             calculations();
+            checkoutVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
 
             binding.checkout.setOnClickListener(view -> {
                 binding.progress.setVisibility(View.VISIBLE);

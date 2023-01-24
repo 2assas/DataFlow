@@ -76,6 +76,7 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
     //    =====================================================================================================================
     @SuppressLint("SetTextI18n")
     public void fillViews() {
+        productVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
         productDataOriginal = App.product;
         binding.textView10.setText(App.product.getItemName());
         binding.orderNotes.setText(App.product.getItemNotes());

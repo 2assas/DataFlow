@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -84,6 +85,7 @@ public class SearchProductsCashing extends AppCompatActivity {
     }
 
     public void setupViews() {
+        settingVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
         binding.notes.setVisibility(View.VISIBLE);
         writeSaveButton();
         binding.invoice.setOnClickListener(view -> {

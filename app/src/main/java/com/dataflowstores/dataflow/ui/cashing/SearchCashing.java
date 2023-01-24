@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -77,7 +78,7 @@ public class SearchCashing extends AppCompatActivity {
     public void setupViews() {
         @SuppressLint("HardwareIds")
         String uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-
+        printInvoiceVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
         binding.invoiceTemplate.printButton.setVisibility(View.GONE);
         binding.searchInvoices.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

@@ -16,6 +16,9 @@ public class UserData implements Serializable {
     private String branchName = "";
     @SerializedName("FoundationName")
     private String foundationName;
+    @SerializedName("DeviceID")
+    private String DeviceID;
+
     @SerializedName("Worker_ISN")
     private long workerISN;
     @SerializedName("WorkerBranchISN")
@@ -81,6 +84,8 @@ public class UserData implements Serializable {
     private int ReSalesDefaultStoreBranchISN;
     @SerializedName("ReSalesDefaultStoreISN")
     private int ReSalesDefaultStoreISN;
+    @SerializedName("VendorID")
+    private long vendorID;
 
 
     @SerializedName("FirstPeriodDefaultStoreBranchISN")
@@ -153,13 +158,51 @@ public class UserData implements Serializable {
     private int MobileInventoryReport = 0;
     @SerializedName("AllBranchesWorker")
     private int AllBranchesWorker = 0;
+    @SerializedName("MobileCashierMovesReport")
+    private int MobileCashierMovesReport = 0;
+
+    @SerializedName("MobileItemsSalesReport")
+    private int MobileItemsSalesReport = 0;
+
+    public int getMobileItemsSalesReport() {
+        return MobileItemsSalesReport;
+    }
+
+    public void setMobileItemsSalesReport(int mobileItemsSalesReport) {
+        MobileItemsSalesReport = mobileItemsSalesReport;
+    }
+
+    public int getMobileCashierMovesReport() {
+        return MobileCashierMovesReport;
+    }
+
+    public void setMobileCashierMovesReport(int mobileCashierMovesReport) {
+        MobileCashierMovesReport = mobileCashierMovesReport;
+    }
 
     public int getAllBranchesWorker() {
         return AllBranchesWorker;
     }
 
+
+    public long getVendorID() {
+        return vendorID;
+    }
+
+    public void setVendorID(long vendorID) {
+        this.vendorID = vendorID;
+    }
+
     public void setAllBranchesWorker(int allBranchesWorker) {
         AllBranchesWorker = allBranchesWorker;
+    }
+
+    public String getDeviceID() {
+        return DeviceID;
+    }
+
+    public void setDeviceID(String deviceID) {
+        DeviceID = deviceID;
     }
 
     public int getSalesDefaultStoreBranchISN() {

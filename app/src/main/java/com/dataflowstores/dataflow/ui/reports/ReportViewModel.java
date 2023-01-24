@@ -11,11 +11,16 @@ import com.dataflowstores.dataflow.pojo.financialReport.ReportBody;
 import com.dataflowstores.dataflow.pojo.report.Branches;
 import com.dataflowstores.dataflow.pojo.report.StoreReportModel;
 import com.dataflowstores.dataflow.pojo.report.WorkersResponse;
+import com.dataflowstores.dataflow.pojo.report.itemSalesReport.ItemSalesResponse;
 import com.dataflowstores.dataflow.pojo.settings.Banks;
 import com.dataflowstores.dataflow.pojo.settings.SafeDeposit;
+import com.dataflowstores.dataflow.utils.SingleLiveEvent;
 import com.dataflowstores.dataflow.webService.ApiClient;
 import com.dataflowstores.dataflow.webService.Constants;
 import com.dataflowstores.dataflow.webService.ServiceGenerator;
+
+import java.io.IOException;
+import java.util.Objects;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -23,6 +28,8 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import okhttp3.ResponseBody;
+import retrofit2.HttpException;
 
 public class ReportViewModel extends ViewModel {
 
@@ -32,13 +39,16 @@ public class ReportViewModel extends ViewModel {
     public MutableLiveData<SafeDeposit> safeDepositMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<Banks> banksMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<FinancialReportResponse> financialReportResponseMutableLiveData = new MutableLiveData<>();
+    public SingleLiveEvent<ItemSalesResponse> itemSalesResponseMutableLiveData = new SingleLiveEvent<>();
+    public MutableLiveData<String> toastErrorMutableLiveData = new MutableLiveData<>();
+
     ApiClient apiClient = ServiceGenerator.tokenService(
             ApiClient.class, Constants.BASE_URL);
 
-    public void getStoreReport(String uuid, Integer storeBranchISN, Integer storeISN, Integer itemBranchISN, Integer itemISN, String itemName){
-        Observable<StoreReportModel> storeReportModelObservable= apiClient.getStoresReport(uuid, storeBranchISN, storeISN,itemBranchISN, itemISN, null, itemName, 0,
+    public void getStoreReport(String uuid, Integer storeBranchISN, Integer storeISN, Integer itemBranchISN, Integer itemISN, String itemName) {
+        Observable<StoreReportModel> storeReportModelObservable = apiClient.getStoresReport(uuid, storeBranchISN, storeISN, itemBranchISN, itemISN, null, itemName, 0,
                         App.currentUser.getWorkerName(),
-                        App.currentUser.getUserName(),App.currentUser.getWorkStationName(),String.valueOf( App.currentUser.getWorkStationISN()),String.valueOf( App.currentUser.getWorkerBranchISN()))
+                        App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()))
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         storeReportModelObservable.subscribe(new Observer<StoreReportModel>() {
@@ -53,8 +63,18 @@ public class ReportViewModel extends ViewModel {
             }
 
             @Override
-            public void onError(@NonNull Throwable e) {
-                Log.e("error ", e.toString());
+            public void onError(@NonNull Throwable throwable) {
+                Log.e("error ", throwable.toString());
+                if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                    try {
+                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+                }
             }
 
             @Override
@@ -79,8 +99,18 @@ public class ReportViewModel extends ViewModel {
             }
 
             @Override
-            public void onError(@NonNull Throwable e) {
-                Log.e("ErrorGetBranches", e.toString());
+            public void onError(@NonNull Throwable throwable) {
+                Log.e("ErrorGetBranches", throwable.toString());
+                if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                    try {
+                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+                }
             }
 
             @Override
@@ -104,8 +134,18 @@ public class ReportViewModel extends ViewModel {
             }
 
             @Override
-            public void onError(@NonNull Throwable e) {
-                Log.e("ErrorGetBranches", e.toString());
+            public void onError(@NonNull Throwable throwable) {
+                Log.e("ErrorGetBranches", throwable.toString());
+                if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                    try {
+                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+                }
             }
 
             @Override
@@ -118,11 +158,35 @@ public class ReportViewModel extends ViewModel {
         Observable<SafeDeposit> getSafeDeposit = apiClient.getSafeDeposit(branchISN, App.currentUser.getPermission(), uuid, App.currentUser.getSafeDepositBranchISN(), App.currentUser.getSafeDepositISN(), App.currentUser.getAllBranchesWorker(), moveType).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         getSafeDeposit.subscribe(safeDeposit -> {
             safeDepositMutableLiveData.setValue(safeDeposit);
+        }, throwable -> {
+            if (throwable instanceof HttpException) {
+                ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                try {
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+            }
         });
     }
-    public void getBanks(long branchISN, String uuid){
-        Observable<Banks> getBanks = apiClient.getBanks(branchISN, App.currentUser.getPermission(),uuid).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-        getBanks.subscribe(banks -> {banksMutableLiveData.setValue(banks);});
+    public void getBanks(long branchISN, String uuid) {
+        Observable<Banks> getBanks = apiClient.getBanks(branchISN, App.currentUser.getPermission(), uuid).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        getBanks.subscribe(banks -> {
+            banksMutableLiveData.setValue(banks);
+        }, throwable -> {
+            if (throwable instanceof HttpException) {
+                ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                try {
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+            }
+        });
     }
 
     public void getFinancialReport(ReportBody reportBody,String uuid, long storeBranchISN, long storeISN, long workerBranch){
@@ -142,8 +206,56 @@ public class ReportViewModel extends ViewModel {
             }
 
             @Override
-            public void onError(@NonNull Throwable e) {
-                Log.e("ERRORpostReport", e.toString());
+            public void onError(@NonNull Throwable throwable) {
+                Log.e("ERRORpostReport", throwable.toString());
+                if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                    try {
+                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+                }
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+    }
+
+    public void getItemSalesReport(String uuid, long branchISN, String fromWorkday, String toWorkday, String shiftISN,
+                                   long workerBranchISN, String workerISN, String from, String to, Long vendorId) {
+        Observable<ItemSalesResponse> observable = apiClient.getItemSalesReport(uuid, branchISN, fromWorkday, toWorkday,
+                        shiftISN, workerBranchISN, workerISN, from, to, vendorId)
+                .subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread());
+        observable.subscribe(new Observer<ItemSalesResponse>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@NonNull ItemSalesResponse itemSalesResponse) {
+                itemSalesResponseMutableLiveData.postValue(itemSalesResponse);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable throwable) {
+                Log.e("ERRORpostReport", throwable.toString());
+                if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                    try {
+                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+                }
             }
 
             @Override

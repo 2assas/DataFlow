@@ -11,6 +11,7 @@ import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.ReportScreenBinding;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.StoreReportScreen;
+import com.dataflowstores.dataflow.ui.reports.financialReport.FinancialReport;
 
 public class ReportsScreen extends AppCompatActivity {
     ReportScreenBinding binding;
