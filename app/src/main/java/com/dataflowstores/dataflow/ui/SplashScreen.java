@@ -11,11 +11,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.dataflowstores.dataflow.ui.home.MainActivity;
 import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.GateWayViewModel;
 import com.dataflowstores.dataflow.databinding.SplashScreenBinding;
+import com.dataflowstores.dataflow.ui.gateway.GateWay;
+import com.dataflowstores.dataflow.ui.home.MainActivity;
 
 public class SplashScreen extends AppCompatActivity {
     SplashScreenBinding binding;
@@ -28,6 +29,7 @@ public class SplashScreen extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("SaveLogin", MODE_PRIVATE);
         String userName = prefs.getString("userName", "");//"No name defined" is the default value.
         String password = prefs.getString("password", ""); //0 is the default
+
         // value// .
         String uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         gateWayViewModel = new ViewModelProvider(this).get(GateWayViewModel.class);
@@ -46,11 +48,13 @@ public class SplashScreen extends AppCompatActivity {
             if (loginStatus.getMessage().equals("Login successfully")) {
                 App.currentUser = loginStatus.getData();
                 startActivity(new Intent(this, MainActivity.class));
-            } else if (loginStatus.getMessage().equals("Please Choose Branch")) {
+            } else if (loginStatus.getMessage().equals("Please Choose Branch") || loginStatus.getMessage().equals("Please Select Foundation")) {
                 App.currentUser = loginStatus.getData();
                 Intent intent = new Intent(this, GateWay.class);
                 intent.putExtra("userName", userName);
                 intent.putExtra("password", password);
+                if (loginStatus.getMessage().equals("Please Select Foundation"))
+                    intent.putExtra("multiFoundation", "true");
                 startActivity(intent);
                 Toast.makeText(this, loginStatus.getMessage(), Toast.LENGTH_LONG).show();
             } else {

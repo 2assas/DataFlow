@@ -164,6 +164,129 @@ public class UserData implements Serializable {
     @SerializedName("MobileItemsSalesReport")
     private int MobileItemsSalesReport = 0;
 
+    @SerializedName("MobilePreviousDatesInReports")
+    private int MobilePreviousDatesInReports = 0;
+
+
+    @SerializedName("LogIn_BISN")
+    String LogIn_BISN;
+    @SerializedName("LogIn_UID")
+    String LogIn_UID;
+    @SerializedName("LogIn_WBISN")
+    String LogIn_WBISN;
+    @SerializedName("LogIn_WISN")
+    String LogIn_WISN;
+    @SerializedName("LogIn_WName")
+    String LogIn_WName;
+    @SerializedName("LogIn_WSBISN")
+    String LogIn_WSBISN;
+    @SerializedName("LogIn_WSISN")
+    String LogIn_WSISN;
+    @SerializedName("LogIn_WSName")
+    String LogIn_WSName;
+    @SerializedName("LogIn_CS")
+    String LogIn_CS;
+    @SerializedName("LogIn_VN")
+    String LogIn_VN;
+    @SerializedName("LogIn_FAlternative")
+    String LogIn_FAlternative;
+
+    public String getLogIn_BISN() {
+        return LogIn_BISN;
+    }
+
+    public void setLogIn_BISN(String logIn_BISN) {
+        LogIn_BISN = logIn_BISN;
+    }
+
+    public String getLogIn_UID() {
+        return LogIn_UID;
+    }
+
+    public void setLogIn_UID(String logIn_UID) {
+        LogIn_UID = logIn_UID;
+    }
+
+    public String getLogIn_WBISN() {
+        return LogIn_WBISN;
+    }
+
+    public void setLogIn_WBISN(String logIn_WBISN) {
+        LogIn_WBISN = logIn_WBISN;
+    }
+
+    public String getLogIn_WISN() {
+        return LogIn_WISN;
+    }
+
+    public void setLogIn_WISN(String logIn_WISN) {
+        LogIn_WISN = logIn_WISN;
+    }
+
+    public String getLogIn_WName() {
+        return LogIn_WName;
+    }
+
+    public void setLogIn_WName(String logIn_WName) {
+        LogIn_WName = logIn_WName;
+    }
+
+    public String getLogIn_WSBISN() {
+        return LogIn_WSBISN;
+    }
+
+    public void setLogIn_WSBISN(String logIn_WSBISN) {
+        LogIn_WSBISN = logIn_WSBISN;
+    }
+
+    public String getLogIn_WSISN() {
+        return LogIn_WSISN;
+    }
+
+    public void setLogIn_WSISN(String logIn_WSISN) {
+        LogIn_WSISN = logIn_WSISN;
+    }
+
+    public String getLogIn_WSName() {
+        return LogIn_WSName;
+    }
+
+    public void setLogIn_WSName(String logIn_WSName) {
+        LogIn_WSName = logIn_WSName;
+    }
+
+    public String getLogIn_CS() {
+        return LogIn_CS;
+    }
+
+    public void setLogIn_CS(String logIn_CS) {
+        LogIn_CS = logIn_CS;
+    }
+
+    public String getLogIn_VN() {
+        return LogIn_VN;
+    }
+
+    public void setLogIn_VN(String logIn_VN) {
+        LogIn_VN = logIn_VN;
+    }
+
+    public String getLogIn_FAlternative() {
+        return LogIn_FAlternative;
+    }
+
+    public void setLogIn_FAlternative(String logIn_FAlternative) {
+        LogIn_FAlternative = logIn_FAlternative;
+    }
+
+    public int getMobilePreviousDatesInReports() {
+        return MobilePreviousDatesInReports;
+    }
+
+    public void setMobilePreviousDatesInReports(int mobilePreviousDatesInReports) {
+        MobilePreviousDatesInReports = mobilePreviousDatesInReports;
+    }
+
     public int getMobileItemsSalesReport() {
         return MobileItemsSalesReport;
     }

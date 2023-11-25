@@ -22,12 +22,12 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.PrintInvoiceVM;
 import com.dataflowstores.dataflow.databinding.SearchInvoiceBinding;
 import com.dataflowstores.dataflow.ui.adapters.PrintingLinesAdapter;
+import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 
 import java.text.DecimalFormat;
 import java.util.Locale;
@@ -38,6 +38,11 @@ public class SearchInvoice extends AppCompatActivity {
     SearchInvoiceBinding binding;
     String uuid;
     int moveType = 1;
+
+    Long branchISN;
+    Long workerCBranchISN;
+    Long workerCISN;
+
 
     @SuppressLint("HardwareIds")
     @Override
@@ -59,13 +64,12 @@ public class SearchInvoice extends AppCompatActivity {
         binding.invoiceTemplate.printButton.setVisibility(View.GONE);
         moveType = getIntent().getIntExtra("moveType", 1);
         printInvoiceVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
-
         binding.searchInvoices.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 if (App.isNetworkAvailable(SearchInvoice.this)) {
-                    printInvoiceVM.getPrintingData(String.valueOf(App.currentUser.getBranchISN()), uuid, s,
-                            String.valueOf(App.currentUser.getWorkerBranchISN()), String.valueOf(App.currentUser.getWorkerISN()), SearchInvoice.this, moveType);
+                    printInvoiceVM.getPrintingData(String.valueOf(branchISN), uuid, s,
+                            String.valueOf(workerCBranchISN), String.valueOf(workerCISN), SearchInvoice.this, moveType);
                     binding.progressBar.setVisibility(View.VISIBLE);
                 } else {
                     App.noConnectionDialog(SearchInvoice.this);
@@ -86,6 +90,26 @@ public class SearchInvoice extends AppCompatActivity {
                 return false;
             }
         });
+        checkPrintMoves();
+    }
+
+    private void checkPrintMoves() {
+        if (getIntent().getStringExtra("moveId") != null) {
+            branchISN = getIntent().getLongExtra("branchISN", 0);
+            workerCBranchISN = getIntent().getLongExtra("workerCBranchISN", 0);
+            workerCISN = getIntent().getLongExtra("workerCISN", 0);
+            String query = getIntent().getStringExtra("moveId");
+            binding.searchInvoices.setQuery(query, true);
+            binding.searchInvoices.setVisibility(View.GONE);
+            binding.back.setVisibility(View.VISIBLE);
+            binding.back.setOnClickListener(v -> {
+                onBackPressed();
+            });
+        } else {
+            branchISN = App.currentUser.getBranchISN();
+            workerCBranchISN = App.currentUser.getWorkerBranchISN();
+            workerCISN = App.currentUser.getWorkerISN();
+        }
     }
 
     private void takeScreenShot() {
@@ -136,15 +160,16 @@ public class SearchInvoice extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     public void displayPrintingData() {
-        binding.invoiceTemplate.foundationName.setText(App.currentUser.getFoundationName());
-        binding.invoiceTemplate.branchName.setText(App.currentUser.getBranchName());
+
         if (App.resales == 1) {
             binding.invoiceTemplate.invoiceNumber.setVisibility(View.GONE);
             binding.invoiceTemplate.resales.setVisibility(View.VISIBLE);
         } else
             binding.invoiceTemplate.invoiceNumber.setText("رقم  الشيك: " + App.printInvoice.getMoveHeader().getBillNumber());
-
+        binding.invoiceTemplate.foundationName.setText(App.currentUser.getFoundationName());
+        binding.invoiceTemplate.branchName.setText(App.printInvoice.getMoveHeader().getBranchName());
         binding.invoiceTemplate.moveId.setText("رقم الفاتورة: " + App.printInvoice.getMoveHeader().getMove_ID());
+        App.pdfName = "رقم الفاتورة: " + App.printInvoice.getMoveHeader().getMove_ID();
         binding.invoiceTemplate.SellingType.setText("نوع الدفع: " + App.printInvoice.getMoveHeader().getCashTypeName());
         binding.invoiceTemplate.invoiceDate.setText("التاريخ: " + App.printInvoice.getMoveHeader().getCreateDate().replace(".000", ""));
         binding.invoiceTemplate.dealerName.setText("المستخدم: " + App.printInvoice.getMoveHeader().getWorkerName());

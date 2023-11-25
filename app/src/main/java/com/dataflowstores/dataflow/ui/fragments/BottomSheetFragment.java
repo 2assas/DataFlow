@@ -105,6 +105,8 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Pr
                     if (getActivity() instanceof StoreReportScreen) {
                     } else {
                         startActivity(new Intent(getActivity(), ProductDetails.class));
+                        App.editingPos=0;
+
                         getActivity().finish();
                     }
                     dismiss();

@@ -1,5 +1,7 @@
 package com.dataflowstores.dataflow.ViewModels;
 
+import static com.dataflowstores.dataflow.App.selectedFoundation;
+
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -7,7 +9,6 @@ import androidx.lifecycle.ViewModel;
 
 import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.pojo.login.BranchStaffModel;
-import com.dataflowstores.dataflow.webService.ServiceGenerator;
 import com.dataflowstores.dataflow.pojo.login.LoginStatus;
 import com.dataflowstores.dataflow.pojo.report.Branches;
 import com.dataflowstores.dataflow.pojo.settings.SafeDeposit;
@@ -18,6 +19,7 @@ import com.dataflowstores.dataflow.pojo.workStation.WorkstationList;
 import com.dataflowstores.dataflow.utils.Conts;
 import com.dataflowstores.dataflow.webService.ApiClient;
 import com.dataflowstores.dataflow.webService.Constants;
+import com.dataflowstores.dataflow.webService.ServiceGenerator;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -48,56 +50,59 @@ public class GateWayViewModel extends ViewModel {
     public void getLoginStatus(String uuid, String user_name, String password, String foundation_name, String phone, String selectedBranchISN, String selectedSafeDepositBranchISN,
                                String selectedSafeDepositISN, String selectedStoreBranchISN, String selectedStoreISN, int demo) {
         Observable<LoginStatus> login = apiClient.loginGateWay(uuid, user_name, password, foundation_name, phone, 2, Conts.APP_VERSION,
-                selectedBranchISN, selectedSafeDepositBranchISN, selectedSafeDepositISN, selectedStoreBranchISN, selectedStoreISN, demo).subscribeOn(
-                Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                selectedBranchISN, selectedSafeDepositBranchISN, selectedSafeDepositISN, selectedStoreBranchISN, selectedStoreISN, demo, selectedFoundation
+        ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         login.subscribe(loginStatus -> {
             loginLiveData.setValue(loginStatus);
         },throwable -> {
-            if (throwable instanceof HttpException) {
-                ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
-                try {
-                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }else{
+            if (throwable instanceof IOException) {
+                //handle network error
+                toastErrorMutableLiveData.postValue("No Internet Connection!");
+            } else if (throwable instanceof HttpException) {
+                ResponseBody errorBody = Objects.requireNonNull(((HttpException) throwable).response()).errorBody();
+                toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                //handle HTTP error response code
+            } else {
+                //handle other exceptions
                 toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
             }
         });
     }
 
     public void createWorkstation(String uuid) {
-        Observable<WorkstationList> workstation = apiClient.createWorkstation(uuid, 2).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<WorkstationList> workstation = apiClient.createWorkstation(uuid, 2, selectedFoundation).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         workstation.subscribe(workstationObserver -> {
             workStationLiveData.setValue(workstationObserver);
-        },throwable -> {
-            if (throwable instanceof HttpException) {
-                ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
-                try {
-                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }else{
+        }, throwable -> {
+            if (throwable instanceof IOException) {
+                //handle network error
+                toastErrorMutableLiveData.postValue("No Internet Connection!");
+            } else if (throwable instanceof HttpException) {
+                ResponseBody errorBody = Objects.requireNonNull(((HttpException) throwable).response()).errorBody();
+                toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                //handle HTTP error response code
+            } else {
+                //handle other exceptions
                 toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
             }
         });
     }
 
     public void insertWorkstation(String uuid, long branchId, String workStationName) {
-        Observable<Workstation> insertWorkstation = apiClient.insertWorkstation(uuid, branchId, workStationName, 2).subscribeOn(
+        Observable<Workstation> insertWorkstation = apiClient.insertWorkstation(uuid, branchId, workStationName, 2, selectedFoundation).subscribeOn(
                 Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         insertWorkstation.subscribe(workstation -> {
             insertWorkstationLiveData.setValue(workstation);
-        },throwable -> {
-            if (throwable instanceof HttpException) {
-                ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
-                try {
-                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }else{
+        }, throwable -> {
+            if (throwable instanceof IOException) {
+                //handle network error
+                toastErrorMutableLiveData.postValue("No Internet Connection!");
+            } else if (throwable instanceof HttpException) {
+                ResponseBody errorBody = Objects.requireNonNull(((HttpException) throwable).response()).errorBody();
+                toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                //handle HTTP error response code
+            } else {
+                //handle other exceptions
                 toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
             }
         });
@@ -105,18 +110,19 @@ public class GateWayViewModel extends ViewModel {
 
     public void insertBranch(int branchNumber, String branchName, String uuid) {
 
-        Observable<Branch> insertBranch = apiClient.insertBranch(branchNumber, branchName, uuid, 2).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<Branch> insertBranch = apiClient.insertBranch(branchNumber, branchName, uuid, 2, selectedFoundation).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         insertBranch.subscribe(branch -> {
             insertBranchLiveData.setValue(branch);
-        },throwable -> {
-            if (throwable instanceof HttpException) {
-                ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
-                try {
-                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }else{
+        }, throwable -> {
+            if (throwable instanceof IOException) {
+                //handle network error
+                toastErrorMutableLiveData.postValue("No Internet Connection!");
+            } else if (throwable instanceof HttpException) {
+                ResponseBody errorBody = Objects.requireNonNull(((HttpException) throwable).response()).errorBody();
+                toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                //handle HTTP error response code
+            } else {
+                //handle other exceptions
                 toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
             }
         });
@@ -135,9 +141,42 @@ public class GateWayViewModel extends ViewModel {
     public void SelectBranchStaff(String uuid, int moveType) {
         ApiClient tokenService = ServiceGenerator.tokenService(
                 ApiClient.class, Constants.BASE_URL);
-        Observable<Branches> getBranches = tokenService.getBranches(uuid).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-        Observable<Stores> getStores = tokenService.getStores(null, 1, uuid, null, null, -1, moveType).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-        Observable<SafeDeposit> getSafeDeposits = tokenService.getSafeDeposit(null, 1, uuid, null, null, -1, moveType).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<Branches> getBranches = tokenService.getBranches(uuid, selectedFoundation,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<Stores> getStores = tokenService.getStores(null, 1, uuid, null, null, -1, moveType, selectedFoundation,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<SafeDeposit> getSafeDeposits = tokenService.getSafeDeposit(null, 1, uuid, null, null, -1, moveType, selectedFoundation,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         Observable<BranchStaffModel> zipper = Observable.zip(getBranches, getStores, getSafeDeposits, BranchStaffModel::new);
 
@@ -154,15 +193,20 @@ public class GateWayViewModel extends ViewModel {
 
             @Override
             public void onError(@NonNull Throwable throwable) {
-                Log.e("checkError", throwable.toString());
-                if (throwable instanceof HttpException) {
-                    ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                Log.e("checkError", throwable.getMessage());
+                if (throwable instanceof IOException) {
+                    //handle network error
+                    toastErrorMutableLiveData.postValue("No Internet Connection!");
+                } else if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = Objects.requireNonNull(((HttpException) throwable).response()).errorBody();
                     try {
                         toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
-                }else{
+                    //handle HTTP error response code
+                } else {
+                    //handle other exceptions
                     toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
                 }
             }

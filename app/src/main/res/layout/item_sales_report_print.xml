@@ -62,7 +62,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/userName" />
+                    app:layout_constraintTop_toBottomOf="@+id/clientName" />
 
                 <TextView
                     android:id="@+id/userName"
@@ -82,6 +82,23 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/shiftNumber" />
 
+                <TextView
+                    android:id="@+id/clientName"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center"
+                    android:text="إسم العميل"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/userName" />
 
                 <TextView
                     android:id="@+id/branchName"
@@ -153,20 +170,22 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="80dp"
                     android:nestedScrollingEnabled="false"
-                    tools:listitem="@layout/item_sales_report_item"
+                    app:layout_constraintBottom_toTopOf="@+id/printReport"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/headerContainer"
+                    tools:listitem="@layout/item_sales_report_item"
                     tools:targetApi="lollipop" />
 
 
                 <Button
                     android:id="@+id/printReport"
                     android:layout_width="0dp"
+
                     android:layout_height="wrap_content"
                     android:layout_marginStart="50dp"
-                    android:layout_marginTop="30dp"
                     android:layout_marginEnd="50dp"
                     android:layout_marginBottom="20dp"
                     android:background="@drawable/blue_rounded"

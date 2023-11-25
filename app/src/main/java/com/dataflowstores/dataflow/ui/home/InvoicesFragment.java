@@ -4,20 +4,19 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.dataflowstores.dataflow.App;
-import com.dataflowstores.dataflow.ui.invoice.FirstInvoice;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.FragmentInvoicesBinding;
+import com.dataflowstores.dataflow.ui.invoice.FirstInvoice;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -82,53 +81,57 @@ public class InvoicesFragment extends Fragment {
             back();
         });
         binding.invoice.setOnClickListener(view -> {
-            if (App.currentUser.getSafeDepositBranchISN() == 0 || App.currentUser.getSafeDepositISN() == 0) {
-                new AlertDialog.Builder(requireActivity()).
-                        setTitle("لا تسطيع عمل فاتورة")
-                        .setMessage("برجاء فحص الخزنه الخاصة بكم.")
-                        .setCancelable(false)
-                        .setIcon(R.drawable.ic_baseline_error_outline_24)
-                        .setNegativeButton("حسنا", (dialogInterface, i) -> {
-                            dialogInterface.dismiss();
-                        }).show();
-            } else if (App.currentUser.getCashierStoreBranchISN() == 0 || App.currentUser.getCashierStoreISN() == 0) {
-                new AlertDialog.Builder(requireActivity()).
-                        setTitle("لا تسطيع عمل فاتورة")
-                        .setMessage("برجاء فحص المخزن الخاص بكم")
-                        .setCancelable(false)
-                        .setIcon(R.drawable.ic_baseline_error_outline_24)
-                        .setNegativeButton("حسنا", (dialogInterface, i) -> {
-                            dialogInterface.dismiss();
-                        }).show();
-            } else {
-                startActivity(new Intent(requireActivity(), FirstInvoice.class));
-                App.resales = 0;
+            if (App.isNetworkAvailable(requireActivity())) {
+                if (App.currentUser.getSafeDepositBranchISN() == 0 || App.currentUser.getSafeDepositISN() == 0) {
+                    new AlertDialog.Builder(requireActivity()).
+                            setTitle("لا تسطيع عمل فاتورة")
+                            .setMessage("برجاء فحص الخزنه الخاصة بكم.")
+                            .setCancelable(false)
+                            .setIcon(R.drawable.ic_baseline_error_outline_24)
+                            .setNegativeButton("حسنا", (dialogInterface, i) -> {
+                                dialogInterface.dismiss();
+                            }).show();
+                } else if (App.currentUser.getCashierStoreBranchISN() == 0 || App.currentUser.getCashierStoreISN() == 0) {
+                    new AlertDialog.Builder(requireActivity()).
+                            setTitle("لا تسطيع عمل فاتورة")
+                            .setMessage("برجاء فحص المخزن الخاص بكم")
+                            .setCancelable(false)
+                            .setIcon(R.drawable.ic_baseline_error_outline_24)
+                            .setNegativeButton("حسنا", (dialogInterface, i) -> {
+                                dialogInterface.dismiss();
+                            }).show();
+                } else {
+                    startActivity(new Intent(requireActivity(), FirstInvoice.class));
+                    App.resales = 0;
+                }
             }
         });
 
         binding.Resales.setOnClickListener(view -> {
-            if (App.currentUser.getSafeDepositBranchISN() == 0 || App.currentUser.getSafeDepositISN() == 0) {
-                new AlertDialog.Builder(requireActivity()).
-                        setTitle("لا تسطيع عمل فاتورة")
-                        .setMessage("برجاء فحص الخزنه الخاصة بكم.")
-                        .setCancelable(false)
-                        .setIcon(R.drawable.ic_baseline_error_outline_24)
-                        .setNegativeButton("حسنا", (dialogInterface, i) -> {
-                            dialogInterface.dismiss();
-                        }).show();
-            } else if (App.currentUser.getCashierStoreBranchISN() == 0 || App.currentUser.getCashierStoreISN() == 0) {
-                new AlertDialog.Builder(requireActivity()).
-                        setTitle("لا تسطيع عمل فاتورة")
-                        .setMessage("برجاء فحص المخزن الخاص بكم")
-                        .setCancelable(false)
-                        .setIcon(R.drawable.ic_baseline_error_outline_24)
-                        .setNegativeButton("حسنا", (dialogInterface, i) -> {
-                            dialogInterface.dismiss();
-                        }).show();
-            } else {
-                Intent intent = new Intent(requireActivity(), FirstInvoice.class);
-                startActivity(intent);
-                App.resales = 1;
+            if (App.isNetworkAvailable(requireActivity())) {
+                if (App.currentUser.getSafeDepositBranchISN() == 0 || App.currentUser.getSafeDepositISN() == 0) {
+                    new AlertDialog.Builder(requireActivity()).
+                            setTitle("لا تسطيع عمل فاتورة")
+                            .setMessage("برجاء فحص الخزنه الخاصة بكم.")
+                            .setCancelable(false)
+                            .setIcon(R.drawable.ic_baseline_error_outline_24)
+                            .setNegativeButton("حسنا", (dialogInterface, i) -> {
+                                dialogInterface.dismiss();
+                            }).show();
+                } else if (App.currentUser.getCashierStoreBranchISN() == 0 || App.currentUser.getCashierStoreISN() == 0) {
+                    new AlertDialog.Builder(requireActivity()).
+                            setTitle("لا تسطيع عمل فاتورة")
+                            .setMessage("برجاء فحص المخزن الخاص بكم")
+                            .setCancelable(false)
+                            .setIcon(R.drawable.ic_baseline_error_outline_24)
+                            .setNegativeButton("حسنا", (dialogInterface, i) -> {
+                                dialogInterface.dismiss();
+                            }).show();
+                } else {
+                    Intent intent = new Intent(requireActivity(), FirstInvoice.class);
+                    startActivity(intent);
+                    App.resales = 1;
+                }
             }
         });
     }
@@ -149,9 +152,10 @@ public class InvoicesFragment extends Fragment {
     }
 
     private void back() {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.container, new HomeFragment());
-        fragmentTransaction.commit();
+//        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.replace(R.id.container, new HomeFragment());
+//        fragmentTransaction.commit();
+        requireActivity().onBackPressed();
     }
 }

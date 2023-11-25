@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -53,6 +54,7 @@ public class FinancialReportPrintScreen extends AppCompatActivity {
         binding.foundationName.setText(App.currentUser.getFoundationName());
         binding.safeDepositName.setText("");
         binding.back.setOnClickListener(v -> finish());
+        App.pdfName = "تقرير الورديات والخزائن";
         if (App.financialReportData.getShift() == null) {
             binding.shiftNumber.setVisibility(View.GONE);
             binding.shiftContainer.setVisibility(View.GONE);
@@ -60,6 +62,7 @@ public class FinancialReportPrintScreen extends AppCompatActivity {
             binding.finalTotal.setVisibility(View.GONE);
         } else {
             binding.shiftNumber.setText("وردية رقم: " + App.financialReportData.getShift().getShiftISN());
+
             binding.shiftStatus.setText(App.financialReportData.getShift().getShiftStatus());
             binding.openShiftAmount.setText(String.format(Locale.US, "%.2f", Double.parseDouble(App.financialReportData.getShift().getOpenCash())));
             binding.closeShiftAmount.setText(String.format(Locale.US, "%.2f", Double.parseDouble(App.financialReportData.getShift().getCloseCash())));
@@ -122,6 +125,7 @@ public class FinancialReportPrintScreen extends AppCompatActivity {
         } else
             binding.timeFromTo.setVisibility(View.GONE);
 
+        Log.e("CheckWorkdays", getIntent().getStringExtra("workdayStart") + " ----  " + getIntent().getStringExtra("workdayEnd"));
         if (getIntent().getStringExtra("workdayStart") != null && getIntent().getStringExtra("workdayEnd") != null)
             binding.workdayTime.setText("اليومية من: " + getIntent().getStringExtra("workdayStart") + " إلى: " + getIntent().getStringExtra("workdayEnd"));
         else

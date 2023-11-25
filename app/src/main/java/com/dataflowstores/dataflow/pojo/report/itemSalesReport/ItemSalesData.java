@@ -37,7 +37,7 @@ public class ItemSalesData implements Serializable {
 	private String itemISN;
 
 	@SerializedName("TotalQuan")
-	private int totalQuan;
+	private double totalQuan;
 
 	public String getTCount(){
 		return tCount;
@@ -79,7 +79,7 @@ public class ItemSalesData implements Serializable {
 		return itemISN;
 	}
 
-	public int getTotalQuan(){
+	public double getTotalQuan(){
 		return totalQuan;
 	}
 }

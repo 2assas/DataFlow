@@ -59,7 +59,7 @@ public class ItemSalesPrintScreen extends AppCompatActivity {
         binding.foundationName.setText(App.currentUser.getFoundationName());
         binding.back.setOnClickListener(v -> finish());
         shiftNum = getIntent().getStringExtra("shiftNum");
-
+        App.pdfName = "تقرير مبيعات الاصناف";
         itemSalesDataList = (List<ItemSalesData>) getIntent().getExtras().getSerializable("dataList");
 
         if (shiftNum == null) {
@@ -80,11 +80,17 @@ public class ItemSalesPrintScreen extends AppCompatActivity {
         } else {
             binding.recyclerView2.setVisibility(View.GONE);
         }
-        if (clientName != null) {
+        if (getIntent().getStringExtra("userName") != null) {
             binding.userName.setVisibility(View.VISIBLE);
             binding.userName.setText("الموظف: " + getIntent().getStringExtra("userName"));
         } else {
             binding.userName.setVisibility(View.GONE);
+        }
+        if (getIntent().getStringExtra("clientName") != null) {
+            binding.clientName.setVisibility(View.VISIBLE);
+            binding.clientName.setText("العميل: " + getIntent().getStringExtra("clientName"));
+        } else {
+            binding.clientName.setVisibility(View.GONE);
         }
 
 

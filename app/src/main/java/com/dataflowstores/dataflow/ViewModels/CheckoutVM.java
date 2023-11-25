@@ -1,18 +1,20 @@
 package com.dataflowstores.dataflow.ViewModels;
 
+import static com.dataflowstores.dataflow.App.selectedFoundation;
+
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.dataflowstores.dataflow.App;
-import com.dataflowstores.dataflow.webService.ServiceGenerator;
 import com.dataflowstores.dataflow.pojo.invoice.InvoiceBody;
 import com.dataflowstores.dataflow.pojo.invoice.InvoiceResponse;
 import com.dataflowstores.dataflow.pojo.users.CustomerBalance;
 import com.dataflowstores.dataflow.utils.SingleLiveEvent;
 import com.dataflowstores.dataflow.webService.ApiClient;
 import com.dataflowstores.dataflow.webService.Constants;
+import com.dataflowstores.dataflow.webService.ServiceGenerator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,16 +56,7 @@ public class CheckoutVM extends ViewModel {
     ) {
         Log.e("checkInvoice", "Triggered request");
 
-        Observable<InvoiceResponse> invoiceResponse = apiClient.placeInvoice(new InvoiceBody( BranchISN, uuid, CashType, SaleType, DealerType, DealerBranchISN, DealerISN, SalesManBranchISN, SalesManISN,
-                        HeaderNotes, TotalLinesValue, ServiceValue, ServicePer, DeliveryValue, TotalValueAfterServices, BasicDiscountVal, BasicDiscountPer, TotalValueAfterDisc,
-                        BasicTaxVal, BasicTaxPer, TotalValueAfterTax, NetValue, PaidValue, RemainValue, SafeDepositeBranchISN, SafeDepositeISN, BankBranchISN, BankISN, TableNumber, DeliveryPhone, DeliveryAddress, WorkerCBranchISN,
-                        WorkerCISN, CheckNumber, CheckDueDate, CheckBankBranchISN, CheckBankISN, ItemBranchISN, ItemISN, PriceTypeBranchISN, PriceTypeISN, StoreBranchISN, StoreISN, BasicQuantity, BonusQuantity,
-                        TotalQuantity, Price, MeasureUnitBranchISN, MeasureUnitISN, BasicMeasureUnitBranchISN, BasicMeasureUnitISN, ItemSerial, ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN,
-                        SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes, numberOFItems, 2, NetPrice, BasicMeasureUnitQuantity, ExpireDateBool,
-                        ColorsBool, SeasonsBool, SizesBool, SerialBool, Group1Bool, Group2Bool, ServiceItem, ItemTax, TaxValue, TotalLinesTaxVal, allowStoreMinus, itemName, discount1, AllowStoreMinusConfirm,
-                        latitude, longitude, invoiceType, moveType, StoreBranchISN2, StoreISN2, App.currentUser.getWorkerName(),
-                        App.currentUser.getUserName(),App.currentUser.getWorkStationName(),String.valueOf( App.currentUser.getWorkStationISN()),String.valueOf( App.currentUser.getWorkerBranchISN()), BranchISNStockMove
-                ))
+        Observable<InvoiceResponse> invoiceResponse = apiClient.placeInvoice(new InvoiceBody(BranchISN, uuid, CashType, SaleType, DealerType, DealerBranchISN, DealerISN, SalesManBranchISN, SalesManISN, HeaderNotes, TotalLinesValue, ServiceValue, ServicePer, DeliveryValue, TotalValueAfterServices, BasicDiscountVal, BasicDiscountPer, TotalValueAfterDisc, BasicTaxVal, BasicTaxPer, TotalValueAfterTax, NetValue, PaidValue, RemainValue, SafeDepositeBranchISN, SafeDepositeISN, BankBranchISN, BankISN, TableNumber, DeliveryPhone, DeliveryAddress, WorkerCBranchISN, WorkerCISN, CheckNumber, CheckDueDate, CheckBankBranchISN, CheckBankISN, ItemBranchISN, ItemISN, PriceTypeBranchISN, PriceTypeISN, StoreBranchISN, StoreISN, BasicQuantity, BonusQuantity, TotalQuantity, Price, MeasureUnitBranchISN, MeasureUnitISN, BasicMeasureUnitBranchISN, BasicMeasureUnitISN, ItemSerial, ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN, SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes, numberOFItems, 2, NetPrice, BasicMeasureUnitQuantity, ExpireDateBool, ColorsBool, SeasonsBool, SizesBool, SerialBool, Group1Bool, Group2Bool, ServiceItem, ItemTax, TaxValue, TotalLinesTaxVal, allowStoreMinus, itemName, discount1, AllowStoreMinusConfirm, latitude, longitude, invoiceType, moveType, StoreBranchISN2, StoreISN2, App.currentUser.getWorkerName(), App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()), BranchISNStockMove, selectedFoundation, App.currentUser.getLogIn_BISN(), App.currentUser.getLogIn_UID(), App.currentUser.getLogIn_WBISN(), App.currentUser.getLogIn_WISN(), App.currentUser.getLogIn_WName(), App.currentUser.getLogIn_WSBISN(), App.currentUser.getLogIn_WSISN(), App.currentUser.getLogIn_WSName(), App.currentUser.getLogIn_CS(), App.currentUser.getLogIn_VN(), App.currentUser.getLogIn_FAlternative()))
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         Observer<InvoiceResponse> observer = new Observer<InvoiceResponse>() {
@@ -79,15 +72,19 @@ public class CheckoutVM extends ViewModel {
 
             @Override
             public void onError(@NonNull Throwable throwable) {
-                Log.e("ERRORR !!", String.valueOf(throwable));
-                if (throwable instanceof HttpException) {
-                    ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                if (throwable instanceof IOException) {
+                    //handle network error
+                    toastErrorMutableLiveData.postValue("No Internet Connection!");
+                } else if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = Objects.requireNonNull(((HttpException) throwable).response()).errorBody();
                     try {
                         toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
-                }else{
+                    //handle HTTP error response code
+                } else {
+                    //handle other exceptions
                     toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
                 }
             }
@@ -111,12 +108,7 @@ public class CheckoutVM extends ViewModel {
                           ArrayList<Boolean> Group1Bool, ArrayList<Boolean> Group2Bool, ArrayList<Boolean> ServiceItem, ArrayList<Double> ItemTax, ArrayList<Double> TaxValue,
                           ArrayList<String> itemName, ArrayList<Double> discount1, int allowStoreMinus, Integer AllowStoreMinusConfirm) {
 
-        Observable<InvoiceResponse> checkItem = apiClient.checkItem(uuid, ItemBranchISN, ItemISN, PriceTypeBranchISN, PriceTypeISN, StoreBranchISN, StoreISN, BasicQuantity, BonusQuantity,
-                        TotalQuantity, Price, MeasureUnitBranchISN, MeasureUnitISN, BasicMeasureUnitBranchISN, BasicMeasureUnitISN, ItemSerial, ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN,
-                        SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes, NetPrice, BasicMeasureUnitQuantity, ExpireDateBool,
-                        ColorsBool, SeasonsBool, SizesBool, SerialBool, Group1Bool, Group2Bool, ServiceItem, ItemTax, TaxValue, itemName, discount1, allowStoreMinus, AllowStoreMinusConfirm,App.currentUser.getWorkerName(),
-                        App.currentUser.getUserName(),App.currentUser.getWorkStationName(),String.valueOf( App.currentUser.getWorkStationISN()),String.valueOf( App.currentUser.getWorkerBranchISN())
-                )
+        Observable<InvoiceResponse> checkItem = apiClient.checkItem(uuid, ItemBranchISN, ItemISN, PriceTypeBranchISN, PriceTypeISN, StoreBranchISN, StoreISN, BasicQuantity, BonusQuantity, TotalQuantity, Price, MeasureUnitBranchISN, MeasureUnitISN, BasicMeasureUnitBranchISN, BasicMeasureUnitISN, ItemSerial, ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN, SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes, NetPrice, BasicMeasureUnitQuantity, ExpireDateBool, ColorsBool, SeasonsBool, SizesBool, SerialBool, Group1Bool, Group2Bool, ServiceItem, ItemTax, TaxValue, itemName, discount1, allowStoreMinus, AllowStoreMinusConfirm, App.currentUser.getWorkerName(), App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()), selectedFoundation, App.currentUser.getLogIn_BISN(), App.currentUser.getLogIn_UID(), App.currentUser.getLogIn_WBISN(), App.currentUser.getLogIn_WISN(), App.currentUser.getLogIn_WName(), App.currentUser.getLogIn_WSBISN(), App.currentUser.getLogIn_WSISN(), App.currentUser.getLogIn_WSName(), App.currentUser.getLogIn_CS(), App.currentUser.getLogIn_VN(), App.currentUser.getLogIn_FAlternative())
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observer<InvoiceResponse> observer = new Observer<InvoiceResponse>() {
             @Override
@@ -132,14 +124,19 @@ public class CheckoutVM extends ViewModel {
             @Override
             public void onError(@NonNull Throwable throwable) {
 
-                if (throwable instanceof HttpException) {
-                    ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                if (throwable instanceof IOException) {
+                    //handle network error
+                    toastErrorMutableLiveData.postValue("No Internet Connection!");
+                } else if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = Objects.requireNonNull(((HttpException) throwable).response()).errorBody();
                     try {
                         toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
-                }else{
+                    //handle HTTP error response code
+                } else {
+                    //handle other exceptions
                     toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
                 }
                 Log.e("ERRORR !!", String.valueOf(throwable));
@@ -155,7 +152,7 @@ public class CheckoutVM extends ViewModel {
 
 
     public void getCustomerBalance(String uuid, String dealerISN, String branchISN, String dealerType, String dealerName) {
-        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(uuid, dealerISN, branchISN, dealerType).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(uuid, dealerISN, branchISN, dealerType, selectedFoundation, App.currentUser.getLogIn_BISN(), App.currentUser.getLogIn_UID(), App.currentUser.getLogIn_WBISN(), App.currentUser.getLogIn_WISN(), App.currentUser.getLogIn_WName(), App.currentUser.getLogIn_WSBISN(), App.currentUser.getLogIn_WSISN(), App.currentUser.getLogIn_WSName(), App.currentUser.getLogIn_CS(), App.currentUser.getLogIn_VN(), App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observer<CustomerBalance> observer = new Observer<CustomerBalance>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
@@ -169,14 +166,19 @@ public class CheckoutVM extends ViewModel {
 
             @Override
             public void onError(@NonNull Throwable throwable) {
-                if (throwable instanceof HttpException) {
-                    ResponseBody errorBody = ((HttpException) throwable).response().errorBody();
+                if (throwable instanceof IOException) {
+                    //handle network error
+                    toastErrorMutableLiveData.postValue("No Internet Connection!");
+                } else if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = Objects.requireNonNull(((HttpException) throwable).response()).errorBody();
                     try {
                         toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
-                }else{
+                    //handle HTTP error response code
+                } else {
+                    //handle other exceptions
                     toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
                 }
             }

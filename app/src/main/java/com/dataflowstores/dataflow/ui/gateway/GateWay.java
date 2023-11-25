@@ -1,4 +1,4 @@
-package com.dataflowstores.dataflow.ui;
+package com.dataflowstores.dataflow.ui.gateway;
 
 
 import android.annotation.SuppressLint;
@@ -21,20 +21,22 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.dataflowstores.dataflow.App;
-import com.dataflowstores.dataflow.ui.home.MainActivity;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.GateWayViewModel;
 import com.dataflowstores.dataflow.databinding.GatewayBinding;
+import com.dataflowstores.dataflow.pojo.login.UserData;
 import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
 import com.dataflowstores.dataflow.pojo.settings.StoresData;
 import com.dataflowstores.dataflow.pojo.workStation.BranchData;
 import com.dataflowstores.dataflow.pojo.workStation.WorkstationListData;
+import com.dataflowstores.dataflow.ui.SplashScreen;
+import com.dataflowstores.dataflow.ui.home.MainActivity;
 import com.dataflowstores.dataflow.utils.Conts;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GateWay extends AppCompatActivity {
+public class GateWay extends AppCompatActivity implements SelectFoundationDialog.DialogListener {
     GatewayBinding binding;
     GateWayViewModel gateWayViewModel;
     String uuid;
@@ -76,11 +78,15 @@ public class GateWay extends AppCompatActivity {
         if (getIntent().getStringExtra("userName") != null) {
             binding.userName.setText(getIntent().getStringExtra("userName"));
             binding.password.setText(getIntent().getStringExtra("password"));
-            binding.selectBranch.getRoot().setVisibility(View.VISIBLE);
-            gateWayViewModel.SelectBranchStaff(uuid,0);
-            binding.progress.setVisibility(View.VISIBLE);
-            selectBranchStaff = true;
-            binding.login.setEnabled(false);
+            if (getIntent().getStringExtra("multiFoundation") == null) {
+                binding.selectBranch.getRoot().setVisibility(View.VISIBLE);
+                gateWayViewModel.SelectBranchStaff(uuid, 0);
+                selectBranchStaff = true;
+                binding.progress.setVisibility(View.VISIBLE);
+                binding.login.setEnabled(false);
+            } else {
+                binding.login.performClick();
+            }
         }
     }
 
@@ -88,6 +94,7 @@ public class GateWay extends AppCompatActivity {
 
 
     public void loginButton(View view) {
+        binding.progress.setVisibility(View.VISIBLE);
         binding.login.setClickable(false);
         if (binding.foundation.getText().toString().isEmpty() && binding.phone.getText().toString().isEmpty()) {
             if (App.isNetworkAvailable(this))
@@ -116,7 +123,7 @@ public class GateWay extends AppCompatActivity {
     public void handleLoginCases() {
         gateWayViewModel.loginLiveData.observe(this, loginStatus -> {
             binding.login.setClickable(true);
-
+            binding.progress.setVisibility(View.GONE);
             switch (loginStatus.getMessage()) {
                 case "please add foundation name and phone": {
                     Toast.makeText(this, "Please Insert Foundation Name and Phone Number", Toast.LENGTH_LONG).show();
@@ -154,10 +161,19 @@ public class GateWay extends AppCompatActivity {
                     binding.selectBranch.getRoot().setVisibility(View.VISIBLE);
                     App.currentUser = loginStatus.getData();
                     Log.e("checkToken", "Activity " + App.currentUser.getToken());
-                    gateWayViewModel.SelectBranchStaff(uuid,0);
+                    gateWayViewModel.SelectBranchStaff(uuid, 0);
                     binding.progress.setVisibility(View.VISIBLE);
                     selectBranchStaff = true;
                     binding.login.setEnabled(false);
+                }
+                break;
+                case "Please Select Foundation": {
+                    SelectFoundationDialog selectFoundationDialog = new SelectFoundationDialog();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("FCount", loginStatus.getfCount());
+                    selectFoundationDialog.setArguments(bundle);
+                    selectFoundationDialog.show(getSupportFragmentManager(), selectFoundationDialog.getTag());
+                    selectFoundationDialog.setListener(this);
                 }
                 break;
                 case "Login successfully": {
@@ -406,5 +422,10 @@ public class GateWay extends AppCompatActivity {
                     && App.currentUser.getSafeDepositBranchISN() == safeDepositList.get(i).getBranchISN())
                 binding.selectBranch.safeDepositSpinner.setSelection(i);
         }
+    }
+
+    @Override
+    public void onDialogDismissed() {
+        binding.login.performClick();
     }
 }

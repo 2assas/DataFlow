@@ -25,18 +25,18 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
-import com.dataflowstores.dataflow.ui.reports.ReportViewModel;
 import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.ProductVM;
-import com.dataflowstores.dataflow.pojo.product.ProductData;
-import com.dataflowstores.dataflow.pojo.users.CustomerData;
-import com.dataflowstores.dataflow.ui.fragments.BottomSheetFragment;
-import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
 import com.dataflowstores.dataflow.databinding.StoreReportBinding;
+import com.dataflowstores.dataflow.pojo.product.ProductData;
 import com.dataflowstores.dataflow.pojo.settings.StoresData;
+import com.dataflowstores.dataflow.pojo.users.CustomerData;
 import com.dataflowstores.dataflow.ui.adapters.StoreReportAdapter;
+import com.dataflowstores.dataflow.ui.fragments.BottomSheetFragment;
+import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
+import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
+import com.dataflowstores.dataflow.ui.reports.ReportViewModel;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -226,6 +226,7 @@ public class StoreReportScreen extends AppCompatActivity implements MyDialogClos
         binding.printReportButton.setVisibility(View.GONE);
         binding.printReportName.setVisibility(View.VISIBLE);
         binding.printReportName.setText("تقرير " + storesData.getStoreName());
+        App.pdfName = "تقرير " + storesData.getStoreName();
         Handler handler = new Handler();
         handler.postDelayed(() -> {
             takeScreenShot();

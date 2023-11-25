@@ -62,6 +62,7 @@ public class ProductAdapterCashing extends RecyclerView.Adapter<ProductAdapterCa
                 clickListener.serialClicked(getAdapterPosition());
             } else {
                 Intent intent = new Intent(context, ProductScreenCashing.class);
+                App.editingPos=0;
                 intent.putExtra("moveType", moveType);
                 context.startActivity(intent);
                 ((Activity)context).finish();

@@ -1,10 +1,14 @@
 package com.dataflowstores.dataflow.webService;
+
+import android.util.Log;
+
 import com.dataflowstores.dataflow.App;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -21,7 +25,7 @@ public class ServiceGenerator {
     private ServiceGenerator() {
     }
 
-    public static <S> S newService(Class<S> serviceClass,String baseUrl){
+    public static <S> S newService(Class<S> serviceClass,String baseUrl) {
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
@@ -30,8 +34,8 @@ public class ServiceGenerator {
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         Retrofit.Builder builder = new Retrofit.Builder();
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder().addInterceptor(logging);
-        clientBuilder.connectTimeout(50, TimeUnit.SECONDS);
-        clientBuilder.readTimeout(50,TimeUnit.SECONDS);
+        clientBuilder.connectTimeout(30, TimeUnit.SECONDS);
+        clientBuilder.readTimeout(30, TimeUnit.SECONDS);
         OkHttpClient client = clientBuilder.build();
         builder.baseUrl(baseUrl);
         builder.client(client);
@@ -49,18 +53,15 @@ public class ServiceGenerator {
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         Retrofit.Builder builder = new Retrofit.Builder();
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder().addInterceptor(logging);
-        clientBuilder.addInterceptor(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request original = chain.request();
-
-                // Request customization: add request headers
-                Request.Builder requestBuilder = original.newBuilder()
-                        .addHeader("Authorization", "Bearer "+ App.currentUser.getToken())
-                        .addHeader("Accept", "application/json");
-                Request request = requestBuilder.build();
-                return chain.proceed(request);
-            }
+        clientBuilder.addInterceptor(chain -> {
+            Request original = chain.request();
+            Log.e("checkToken","App token = "+ App.currentUser.getToken());
+            // Request customization: add request headers
+            Request.Builder requestBuilder = original.newBuilder()
+                    .addHeader("Authorization", "Bearer "+ App.currentUser.getToken())
+                    .addHeader("Accept", "application/json");
+            Request request = requestBuilder.build();
+            return chain.proceed(request);
         });
         clientBuilder.connectTimeout(50, TimeUnit.SECONDS);
         clientBuilder.readTimeout(50,TimeUnit.SECONDS);

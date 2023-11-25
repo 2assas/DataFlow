@@ -14,10 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.dataflowstores.dataflow.App;
-import com.dataflowstores.dataflow.ui.SplashScreen;
-import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.PrintReceiptBinding;
+import com.dataflowstores.dataflow.ui.SplashScreen;
+import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 
 import java.util.Locale;
 
@@ -87,6 +87,7 @@ public class PrintReceipt extends AppCompatActivity {
                 App.receiptModel.getData().get(0).getTaxeCardNo());
         binding.foundationName.setText(App.currentUser.getFoundationName());
         binding.moveId.setText("رقم المقبوض: " + App.receiptModel.getData().get(0).getMoveId());
+        App.pdfName = "رقم المقبوض: " + App.receiptModel.getData().get(0).getMoveId();
         binding.clientAddress.setText(App.receiptModel.getData().get(0).getBranchAddress());
         if(App.receiptModel.getData().get(0).getTel1()!=null||App.receiptModel.getData().get(0).getTel1().isEmpty())
          binding.tel1.setText(App.receiptModel.getData().get(0).getTel1());

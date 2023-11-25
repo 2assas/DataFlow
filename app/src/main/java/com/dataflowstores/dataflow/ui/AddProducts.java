@@ -1,5 +1,7 @@
 package com.dataflowstores.dataflow.ui;
 
+import static android.telephony.MbmsDownloadSession.RESULT_CANCELLED;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -26,8 +28,6 @@ import com.dataflowstores.dataflow.utils.SwipeHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.telephony.MbmsDownloadSession.RESULT_CANCELLED;
 
 public class AddProducts extends AppCompatActivity {
     AddProductsBinding binding;
@@ -74,13 +74,13 @@ public class AddProducts extends AppCompatActivity {
                 public boolean onQueryTextChange(String s) {
                     binding.invoice.setText("بحث عن صنف");
                     binding.invoice.setOnClickListener(view -> {
-                        if (App.isNetworkAvailable(AddProducts.this))
+                        if (App.isNetworkAvailable(AddProducts.this)) {
                             productVM.getProduct(s, uuid, null, 1);
-                        else {
+                            BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
+                            bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+                        } else {
                             App.noConnectionDialog(AddProducts.this);
                         }
-                        BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
-                        bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
                         if (App.resales == 1)
                             binding.invoice.setText("متابعة مرتجع المبيعات");
                         else

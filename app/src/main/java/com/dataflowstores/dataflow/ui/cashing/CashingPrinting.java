@@ -133,6 +133,7 @@ public class CashingPrinting extends AppCompatActivity implements Runnable {
         switch (moveType) {
             case 16: {
                 binding.cashingNumber.setText("إذن صرف رقم " + App.printInvoice.getMoveHeader().getMove_ID());
+                App.pdfName = "إذن صرف رقم " + App.printInvoice.getMoveHeader().getMove_ID();
                 if (App.printInvoice.getMoveHeader().getBranchNameStockMove() != null && !App.printInvoice.getMoveHeader().getBranchNameStockMove().isEmpty()) {
                     binding.branch.setVisibility(View.VISIBLE);
                     binding.branch.setText("فرع الإستلام: " + App.printInvoice.getMoveHeader().getBranchNameStockMove());
@@ -144,11 +145,14 @@ public class CashingPrinting extends AppCompatActivity implements Runnable {
             case 8: {
                 binding.cashingNumber.setText("إهلاكات أصناف رقم " + App.printInvoice.getMoveHeader().getMove_ID());
                 binding.fromStore.setText("المخزن");
+                App.pdfName = "إهلاكات أصناف رقم " + App.printInvoice.getMoveHeader().getMove_ID();
+
                 binding.toStore.setVisibility(View.GONE);
             }
             break;
             case 17: {
                 binding.cashingNumber.setText("إذن إستلام رقم " + App.printInvoice.getMoveHeader().getMove_ID());
+                App.pdfName = "إذن إستلام رقم " + App.printInvoice.getMoveHeader().getMove_ID();
                 binding.fromStore.setText("المخزن");
                 if (App.printInvoice.getMoveHeader().getBranchNameStockMove() != null && !App.printInvoice.getMoveHeader().getBranchNameStockMove().isEmpty()) {
                     binding.branch.setVisibility(View.VISIBLE);
@@ -159,24 +163,28 @@ public class CashingPrinting extends AppCompatActivity implements Runnable {
             break;
             case 15: {
                 binding.cashingNumber.setText("تكوين صنف رقم " + App.printInvoice.getMoveHeader().getMove_ID());
+                App.pdfName = "تكوين صنف رقم " + App.printInvoice.getMoveHeader().getMove_ID();
                 binding.fromStore.setText("المخزن");
                 binding.toStore.setVisibility(View.GONE);
             }
             break;
             case 12: {
                 binding.cashingNumber.setText("كميات أول مدة رقم " + App.printInvoice.getMoveHeader().getMove_ID());
+                App.pdfName = "كميات أول مدة رقم " + App.printInvoice.getMoveHeader().getMove_ID();
                 binding.fromStore.setText("المخزن");
                 binding.toStore.setVisibility(View.GONE);
             }
             break;
             case 7: {
                 binding.cashingNumber.setText("جرد أصناف رقم " + App.printInvoice.getMoveHeader().getMove_ID());
+                App.pdfName = "جرد أصناف رقم " + App.printInvoice.getMoveHeader().getMove_ID();
                 binding.fromStore.setText("المخزن");
                 binding.toStore.setVisibility(View.GONE);
             }
             break;
             case 14: {
                 binding.cashingNumber.setText("تحويل مخزنى رقم " + App.printInvoice.getMoveHeader().getMove_ID());
+                App.pdfName = "تحويل مخزنى رقم " + App.printInvoice.getMoveHeader().getMove_ID();
                 binding.fromStore.setText("من مخزن");
                 binding.toStore.setVisibility(View.VISIBLE);
             }

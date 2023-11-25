@@ -20,5 +20,5 @@ public class Conts {
     public static final int TAKE_PICTURE = 100;
     public static final int LOAD_PICTURE_KITKAK = 101;
     public static final int LOAD_PICTURE = 102;
-    public static final double APP_VERSION = 23.0125;
+    public static final double APP_VERSION = 23.1024;
 }

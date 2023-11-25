@@ -91,6 +91,23 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/financialReport" />
+            <Button
+                android:id="@+id/cashierMovesReport"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="40dp"
+                android:background="@drawable/blue_rounded"
+                android:gravity="center"
+                android:text="تقرير حركة الورديات والخزائن"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/itemSalesReport" />
 
             <Button
                 android:id="@+id/priceEnquiry"
@@ -108,7 +125,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/itemSalesReport" />
+                app:layout_constraintTop_toBottomOf="@+id/cashierMovesReport" />
 
         <Button
             android:id="@+id/searchCustomer"
@@ -118,7 +135,7 @@
             android:layout_marginTop="30dp"
             android:layout_marginEnd="40dp"
             android:background="@drawable/blue_rounded"
-            android:text="بحث عن رصيد عميل"
+            android:text="إستعلام عن رصيد عميل"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"

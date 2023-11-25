@@ -11,11 +11,11 @@ android {
         applicationId "com.dataflowstores.dataflow"
         minSdkVersion 19
         targetSdkVersion 33
-        versionCode 13
-        versionName "23.0125"
+        versionCode 24
+        versionName "23.1024"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-        ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86_64'
+        ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
     }
     dataBinding {
         enabled = true
@@ -47,16 +47,19 @@ repositories {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'com.android.support.constraint:constraint-layout:2.0.4'
     implementation 'androidx.print:print:1.0.0'
-    implementation 'com.google.android.gms:play-services-location:18.0.0'
-    testImplementation 'junit:junit:4.13'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'com.google.android.material:material:1.8.0'
     def lifecycle_version = "2.2.0"
     implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.google.guava:guava:31.0.1-jre'
+    //printer
+    implementation 'androidx.print:print:1.0.0'
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
@@ -66,10 +69,10 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     //Retrofit`
-    implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.okhttp3:okhttp:3.14.9'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.6'
     // RxJava
     implementation "com.github.akarnokd:rxjava3-retrofit-adapter:3.0.0"
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
@@ -82,9 +85,9 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     implementation files('libs/posprinterconnectandsendsdk.jar')
-//    implementation 'com.github.open-android:Zxing:v1.0.3'
+//    implementation 'com.github.open-android:Zxing:v1.0.3'r
 //    implementation 'com.zxy.android:tiny:0.0.6'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.6'
 
     //firebase
 

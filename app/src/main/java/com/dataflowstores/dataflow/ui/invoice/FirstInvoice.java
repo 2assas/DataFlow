@@ -102,22 +102,23 @@ public class FirstInvoice extends AppCompatActivity implements MyDialogCloseList
 
     public void searchButtons() {
         binding.searchAgent.setOnClickListener(view -> {
-            if (App.isNetworkAvailable(this))
+            if (App.isNetworkAvailable(this)) {
                 invoiceVM.getSalesMan(uuid, binding.getAgent.getText().toString(), App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN());
-            else {
+                BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
+                bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+            } else {
                 App.noConnectionDialog(this);
             }
-            BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
-            bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
         });
         binding.searchClient.setOnClickListener(view -> {
-            if (App.isNetworkAvailable(this))
+            if (App.isNetworkAvailable(this)) {
                 invoiceVM.getCustomer(uuid, binding.getClient.getText().toString(), App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN());
-            else {
+                BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
+                bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+
+            } else {
                 App.noConnectionDialog(this);
             }
-            BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
-            bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
         });
     }
 

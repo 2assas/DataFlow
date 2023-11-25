@@ -39,6 +39,7 @@ import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.PrintInvoiceVM;
 import com.dataflowstores.dataflow.databinding.PrintInvoiceBinding;
+import com.dataflowstores.dataflow.pojo.invoice.MoveLines;
 import com.dataflowstores.dataflow.ui.DeviceListActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.adapters.PrintingLinesAdapter;
@@ -50,6 +51,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Locale;
 import java.util.Set;
@@ -148,6 +150,7 @@ public class PrintInvoice extends AppCompatActivity implements Runnable {
         } else
             binding.invoiceNumber.setText("رقم  الشيك: " + App.printInvoice.getMoveHeader().getBillNumber());
         binding.moveId.setText("رقم الفاتورة: " + App.printInvoice.getMoveHeader().getMove_ID());
+        App.pdfName = "رقم الفاتورة: " + App.printInvoice.getMoveHeader().getMove_ID();
         binding.SellingType.setText("نوع الدفع: " + App.printInvoice.getMoveHeader().getCashTypeName());
         binding.invoiceDate.setText("التاريخ: " + App.printInvoice.getMoveHeader().getCreateDate().replace(".000", ""));
         binding.dealerName.setText("المستخدم: " + App.printInvoice.getMoveHeader().getWorkerName());
@@ -172,6 +175,12 @@ public class PrintInvoice extends AppCompatActivity implements Runnable {
             binding.tableNumber.setText("رقم السفرة: " + App.printInvoice.getMoveHeader().getTableNumber());
         else
             binding.tableNumber.setText("نوع البيع: " + App.printInvoice.getMoveHeader().getSaleTypeName());
+
+//        ArrayList<MoveLines> testList= new ArrayList<>();
+//        for(int i=0; i<50; i++)
+//            testList.addAll(App.printInvoice.getMoveLines());
+//
+//        App.printInvoice.setMoveLines(testList);
 
         binding.recyclerView.setAdapter(new PrintingLinesAdapter(App.printInvoice.getMoveLines()));
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));

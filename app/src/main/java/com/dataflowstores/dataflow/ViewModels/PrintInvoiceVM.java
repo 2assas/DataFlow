@@ -1,5 +1,7 @@
 package com.dataflowstores.dataflow.ViewModels;
 
+import static com.dataflowstores.dataflow.App.selectedFoundation;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -38,7 +40,18 @@ public class PrintInvoiceVM extends ViewModel {
 
 
     public void getPrintingData(String branchISN, String uuid, String moveID, String workerCBranchISN, String workerCISN, Context context, Integer moveType){
-        Observable<Invoice> invoiceObservable = apiClient.getPrintingData(branchISN,uuid, moveID, workerCBranchISN,workerCISN, App.currentUser.getPermission(), moveType).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<Invoice> invoiceObservable = apiClient.getPrintingData(branchISN,uuid, moveID, workerCBranchISN,workerCISN, App.currentUser.getPermission(), moveType,selectedFoundation,
+                App.currentUser.getLogIn_BISN(),
+                App.currentUser.getLogIn_UID(),
+                App.currentUser.getLogIn_WBISN(),
+                App.currentUser.getLogIn_WISN(),
+                App.currentUser.getLogIn_WName(),
+                App.currentUser.getLogIn_WSBISN(),
+                App.currentUser.getLogIn_WSISN(),
+                App.currentUser.getLogIn_WSName(),
+                App.currentUser.getLogIn_CS(),
+                App.currentUser.getLogIn_VN(),
+                App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observer<Invoice> invoiceObserver = new Observer<Invoice>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
@@ -72,7 +85,18 @@ public class PrintInvoiceVM extends ViewModel {
     }
 
     public void getCustomerBalance(String uuid, String dealerISN, String branchISN, String dealerType, String dealerName) {
-        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(uuid, dealerISN, branchISN, dealerType).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(uuid, dealerISN, branchISN, dealerType,selectedFoundation,
+                App.currentUser.getLogIn_BISN(),
+                App.currentUser.getLogIn_UID(),
+                App.currentUser.getLogIn_WBISN(),
+                App.currentUser.getLogIn_WISN(),
+                App.currentUser.getLogIn_WName(),
+                App.currentUser.getLogIn_WSBISN(),
+                App.currentUser.getLogIn_WSISN(),
+                App.currentUser.getLogIn_WSName(),
+                App.currentUser.getLogIn_CS(),
+                App.currentUser.getLogIn_VN(),
+                App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observer<CustomerBalance> observer = new Observer<CustomerBalance>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
@@ -85,16 +109,21 @@ public class PrintInvoiceVM extends ViewModel {
             }
 
             @Override
-                public void onError(@NonNull Throwable e) {
-                if (e instanceof HttpException) {
-                    ResponseBody errorBody = ((HttpException) e).response().errorBody();
+                public void onError(@NonNull Throwable throwable) {
+                if (throwable instanceof IOException) {
+                    //handle network error
+                    toastErrorMutableLiveData.postValue("No Internet Connection!");
+                } else if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = Objects.requireNonNull(((HttpException) throwable).response()).errorBody();
                     try {
                         toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
-                }else{
-                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(e.getMessage()));
+                    //handle HTTP error response code
+                } else {
+                    //handle other exceptions
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
                 }
                 }
 

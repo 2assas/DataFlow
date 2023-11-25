@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -60,7 +61,7 @@ public class HomeFragment extends Fragment {
     NavigationView navigationView;
     boolean banksDone = false, priceTypeDone = false, safeDepositDone = false, storesDone = false;
     FragmentManager manager;
-
+    ProgressDialog progressDialog;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -117,6 +118,7 @@ public class HomeFragment extends Fragment {
                         editor.putString("userName", "");
                         editor.putString("password", "");
                         editor.apply();
+                        App.selectedFoundation = 0;
                         requireActivity().finish();
                     }).setNegativeButton("البقاء", ((dialogInterface, i) -> dialogInterface.dismiss())).show();
         });
@@ -140,48 +142,37 @@ public class HomeFragment extends Fragment {
 
     private void finance() {
         binding.home.finance.setOnClickListener(view -> {
-            if (banksDone && priceTypeDone && safeDepositDone && storesDone)
-                if (App.safeDeposit.getData() != null) {
+            if (App.isNetworkAvailable(requireActivity())) {
+                if (banksDone && priceTypeDone && safeDepositDone && storesDone)
+                    if (App.safeDeposit.getData() != null) {
 //                        Intent intent = new Intent(this, SearchProductsCashing.class);
-                    FinanceFragment financeFragment = new FinanceFragment();
-                    manager.beginTransaction().replace(R.id.container, financeFragment).addToBackStack("home").commit();
-                } else
-                    new AlertDialog.Builder(requireActivity()).
-                            setTitle("لا توجد لديكم خزنة")
-                            .setMessage("برجاء إضافة الخزنه الخاصة بكم.")
-                            .setCancelable(false)
-                            .setIcon(R.drawable.ic_baseline_error_outline_24)
-                            .setNegativeButton("حسنا", (dialogInterface, i) -> {
-                                dialogInterface.dismiss();
-                            }).show();
+                        FinanceFragment financeFragment = new FinanceFragment();
+                        manager.beginTransaction().replace(R.id.container, financeFragment).addToBackStack("home").commit();
+                    } else
+                        new AlertDialog.Builder(requireActivity()).setTitle("لا توجد لديكم خزنة").setMessage("برجاء إضافة الخزنه الخاصة بكم.").setCancelable(false).setIcon(R.drawable.ic_baseline_error_outline_24).setNegativeButton("حسنا", (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                        }).show();
+            }
         });
     }
 
     private void invoice() {
         binding.home.invoice.setOnClickListener(view -> {
-            if (banksDone && priceTypeDone && safeDepositDone && storesDone) {
-                if (App.currentUser.getSafeDepositBranchISN() == 0 || App.currentUser.getSafeDepositISN() == 0) {
-                    new AlertDialog.Builder(requireActivity()).
-                            setTitle("لا تسطيع عمل فاتورة")
-                            .setMessage("برجاء فحص الخزنه الخاصة بكم.")
-                            .setCancelable(false)
-                            .setIcon(R.drawable.ic_baseline_error_outline_24)
-                            .setNegativeButton("حسنا", (dialogInterface, i) -> {
-                                dialogInterface.dismiss();
-                            }).show();
-                } else if (App.currentUser.getCashierStoreBranchISN() == 0 || App.currentUser.getCashierStoreISN() == 0) {
-                    new AlertDialog.Builder(requireActivity()).
-                            setTitle("لا تسطيع عمل فاتورة")
-                            .setMessage("برجاء فحص المخزن الخاص بكم")
-                            .setCancelable(false)
-                            .setIcon(R.drawable.ic_baseline_error_outline_24)
-                            .setNegativeButton("حسنا", (dialogInterface, i) -> {
-                                dialogInterface.dismiss();
-                            }).show();
-                } else {
-                    InvoicesFragment invoicesFragment = new InvoicesFragment();
-                    manager.beginTransaction().replace(R.id.container, invoicesFragment).addToBackStack("home").commit();
+            if (App.isNetworkAvailable(requireActivity())) {
+                if (banksDone && priceTypeDone && safeDepositDone && storesDone) {
+                    if (App.currentUser.getSafeDepositBranchISN() == 0 || App.currentUser.getSafeDepositISN() == 0) {
+                        new AlertDialog.Builder(requireActivity()).setTitle("لا تسطيع عمل فاتورة").setMessage("برجاء فحص الخزنه الخاصة بكم.").setCancelable(false).setIcon(R.drawable.ic_baseline_error_outline_24).setNegativeButton("حسنا", (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                        }).show();
+                    } else if (App.currentUser.getCashierStoreBranchISN() == 0 || App.currentUser.getCashierStoreISN() == 0) {
+                        new AlertDialog.Builder(requireActivity()).setTitle("لا تسطيع عمل فاتورة").setMessage("برجاء فحص المخزن الخاص بكم").setCancelable(false).setIcon(R.drawable.ic_baseline_error_outline_24).setNegativeButton("حسنا", (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                        }).show();
+                    } else {
+                        InvoicesFragment invoicesFragment = new InvoicesFragment();
+                        manager.beginTransaction().replace(R.id.container, invoicesFragment).addToBackStack("home").commit();
 //                    startActivity(new Intent(requireActivity(), FirstInvoice.class));
+                    }
                 }
             }
         });
@@ -189,35 +180,29 @@ public class HomeFragment extends Fragment {
 
     private void storeOperations() {
         binding.home.storeOperations.setOnClickListener(view -> {
-            if (banksDone && priceTypeDone && safeDepositDone && storesDone)
-                if (App.safeDeposit.getData() != null) {
-                    manager.beginTransaction().replace(R.id.container, new StoreOperationsFragment()).addToBackStack("home").commit();
-                } else
-                    new AlertDialog.Builder(requireActivity()).
-                            setTitle("لا توجد لديكم خزنة")
-                            .setMessage("برجاء إضافة الخزنه الخاصة بكم.")
-                            .setCancelable(false)
-                            .setIcon(R.drawable.ic_baseline_error_outline_24)
-                            .setNegativeButton("حسنا", (dialogInterface, i) -> {
-                                dialogInterface.dismiss();
-                            }).show();
+            if (App.isNetworkAvailable(requireActivity())) {
+                if (banksDone && priceTypeDone && safeDepositDone && storesDone)
+                    if (App.safeDeposit.getData() != null) {
+                        manager.beginTransaction().replace(R.id.container, new StoreOperationsFragment()).addToBackStack("home").commit();
+                    } else
+                        new AlertDialog.Builder(requireActivity()).setTitle("لا توجد لديكم خزنة").setMessage("برجاء إضافة الخزنه الخاصة بكم.").setCancelable(false).setIcon(R.drawable.ic_baseline_error_outline_24).setNegativeButton("حسنا", (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                        }).show();
+            }
         });
     }
 
     private void reports() {
         binding.home.reports.setOnClickListener(view -> {
-            if (banksDone && priceTypeDone && safeDepositDone && storesDone)
-                if (App.safeDeposit.getData() != null) {
-                    manager.beginTransaction().replace(R.id.container, new ReportsFragment()).addToBackStack("home").commit();
-                } else
-                    new AlertDialog.Builder(requireActivity()).
-                            setTitle("لا توجد لديكم خزنة")
-                            .setMessage("برجاء إضافة الخزنه الخاصة بكم.")
-                            .setCancelable(false)
-                            .setIcon(R.drawable.ic_baseline_error_outline_24)
-                            .setNegativeButton("حسنا", (dialogInterface, i) -> {
-                                dialogInterface.dismiss();
-                            }).show();
+            if (App.isNetworkAvailable(requireActivity())) {
+                if (banksDone && priceTypeDone && safeDepositDone && storesDone)
+                    if (App.safeDeposit.getData() != null) {
+                        manager.beginTransaction().replace(R.id.container, new ReportsFragment()).addToBackStack("home").commit();
+                    } else
+                        new AlertDialog.Builder(requireActivity()).setTitle("لا توجد لديكم خزنة").setMessage("برجاء إضافة الخزنه الخاصة بكم.").setCancelable(false).setIcon(R.drawable.ic_baseline_error_outline_24).setNegativeButton("حسنا", (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                        }).show();
+            }
         });
     }
 
@@ -234,51 +219,54 @@ public class HomeFragment extends Fragment {
                     }).show();
         } else {
             if (App.isNetworkAvailable(requireActivity())) {
-                settingVM.getBanks(branchISN, uuid);
-                settingVM.getPriceType(uuid);
-                settingVM.getSafeDeposit(branchISN, uuid,0);
-                settingVM.getStores(branchISN, uuid,0);
+                progressDialog = new ProgressDialog(requireActivity());
+                progressDialog.setMessage(getString(R.string.loading_please_wait));
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+                settingVM.getInitialInvoiceApis(branchISN, uuid, 0);
             } else {
                 App.noConnectionDialog(requireActivity());
             }
         }
-        settingVM.banksMutableLiveData.observe(requireActivity(), banks -> {
-            App.banks = banks;
+        settingVM.allDone.observe(getViewLifecycleOwner(), aBoolean -> {
+            progressDialog.dismiss();
+        });
+
+        settingVM.initialAPIsMutableLiveData.observe(getViewLifecycleOwner(), initialAPIs -> {
+            App.banks = initialAPIs.getBanks();
             banksDone = true;
-        });
-        settingVM.priceTypeMutableLiveData.observe(requireActivity(), priceType -> {
-            App.priceType = priceType;
+            for (int i = 0; i < initialAPIs.getPriceType().getData().size(); i++) {
+                if (initialAPIs.getPriceType().getData().get(i).getBranchISN() == App.currentUser.getCashierSellPriceTypeBranchISN() && initialAPIs.getPriceType().getData().get(i).getPricesType_ISN() == App.currentUser.getCashierSellPriceTypeISN()) {
+                    App.priceType = initialAPIs.getPriceType().getData().get(i);
+                }
+            }
             priceTypeDone = true;
-        });
-        settingVM.safeDepositMutableLiveData.observe(requireActivity(), safeDeposit -> {
-            App.safeDeposit = safeDeposit;
+            App.safeDeposit = initialAPIs.getSafeDeposit();
             safeDepositDone = true;
-        });
-        settingVM.storesMutableLiveData.observe(requireActivity(), stores -> {
-            App.stores = stores;
+            App.stores = initialAPIs.getStores();
             storesDone = true;
         });
+
     }
 
     private void onBackPressed() {
-        requireActivity().getOnBackPressedDispatcher()
-                .addCallback(this, new OnBackPressedCallback(true) {
-                    @Override
-                    public void handleOnBackPressed() {
-                        Log.e("checkBack", "home pressed");
-                        new AlertDialog.Builder(requireActivity()).setTitle("تأكيد الخروج")
-                                .setMessage("هل تريد الخروج من التطبيق؟")
-                                .setPositiveButton("خروج", ((dialogInterface, i) -> requireActivity().finish()))
-                                .setNegativeButton("البقاء", ((dialogInterface, i) -> dialogInterface.dismiss())).show();
-                    }
-                });
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Log.e("checkBack", "home pressed");
+                new AlertDialog.Builder(requireActivity()).setTitle("تأكيد الخروج").setMessage("هل تريد الخروج من التطبيق؟").setPositiveButton("خروج", ((dialogInterface, i) -> {
+                    App.selectedFoundation = 0;
+                    requireActivity().finish();
+                })).setNegativeButton("البقاء", ((dialogInterface,                i) -> dialogInterface.dismiss())).show();
+            }
+        });
     }
 
     public void initToolBarAnNavMenu() {
         final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(requireActivity(), binding.drawerLayout, 0, 0);
         binding.drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
         binding.home.profileDialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -311,58 +299,78 @@ public class HomeFragment extends Fragment {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.searchSaleInvoice:
-                        Intent intent = new Intent(requireActivity(), SearchInvoice.class);
-                        intent.putExtra("moveType", 1);
-                        startActivity(intent);
-                        App.resales = 0;
-                        break;
+                        if (App.isNetworkAvailable(requireActivity())) {
+                            Intent intent = new Intent(requireActivity(), SearchInvoice.class);
+                            intent.putExtra("moveType", 1);
+                            startActivity(intent);
+                            App.resales = 0;
+                            break;
+                        }
                     case R.id.searchReceiptsInvoice:
-                        startActivity(new Intent(requireActivity(), SearchReceipts.class));
-                        break;
+                        if (App.isNetworkAvailable(requireActivity())) {
+                            startActivity(new Intent(requireActivity(), SearchReceipts.class));
+                            break;
+                        }
                     case R.id.searchExpensesInvoice:
-                        startActivity(new Intent(requireActivity(), SearchExpenses.class));
-                        break;
+                        if (App.isNetworkAvailable(requireActivity())) {
+                            startActivity(new Intent(requireActivity(), SearchExpenses.class));
+                            break;
+                        }
                     case R.id.searchCashingPermission:
-                        Intent intent1 = new Intent(requireActivity(), SearchCashing.class);
-                        intent1.putExtra("moveType", 16);
-                        startActivity(intent1);
-                        break;
+                        if (App.isNetworkAvailable(requireActivity())) {
+                            Intent intent1 = new Intent(requireActivity(), SearchCashing.class);
+                            intent1.putExtra("moveType", 16);
+                            startActivity(intent1);
+                            break;
+                        }
                     case R.id.searchReceivingPermission:
-                        Intent intent2 = new Intent(requireActivity(), SearchCashing.class);
-                        intent2.putExtra("moveType", 17);
-                        startActivity(intent2);
-                        break;
-                    case R.id.searchStoreTransfer:
+                        if (App.isNetworkAvailable(requireActivity())) {
+                            Intent intent2 = new Intent(requireActivity(), SearchCashing.class);
+                            intent2.putExtra("moveType", 17);
+                            startActivity(intent2);
+                            break;
+                        }
+                    case R.id.searchStoreTransfer: {
                         Intent intent3 = new Intent(requireActivity(), SearchCashing.class);
                         intent3.putExtra("moveType", 14);
                         startActivity(intent3);
                         break;
-                    case R.id.mobileFirstPeriod:
+                    }
+                    case R.id.mobileFirstPeriod: {
                         Intent intent4 = new Intent(requireActivity(), SearchCashing.class);
                         intent4.putExtra("moveType", 12);
                         startActivity(intent4);
                         break;
+                    }
                     case R.id.mobileLoses:
-                        Intent intent5 = new Intent(requireActivity(), SearchCashing.class);
-                        intent5.putExtra("moveType", 8);
-                        startActivity(intent5);
-                        break;
+                        if (App.isNetworkAvailable(requireActivity())) {
+                            Intent intent5 = new Intent(requireActivity(), SearchCashing.class);
+                            intent5.putExtra("moveType", 8);
+                            startActivity(intent5);
+                            break;
+                        }
                     case R.id.itemCreate:
-                        Intent intent6 = new Intent(requireActivity(), SearchCashing.class);
-                        intent6.putExtra("moveType", 15);
-                        startActivity(intent6);
-                        break;
+                        if (App.isNetworkAvailable(requireActivity())) {
+                            Intent intent6 = new Intent(requireActivity(), SearchCashing.class);
+                            intent6.putExtra("moveType", 15);
+                            startActivity(intent6);
+                            break;
+                        }
                     case R.id.mobileInventory:
-                        Intent intent7 = new Intent(requireActivity(), SearchCashing.class);
-                        intent7.putExtra("moveType", 7);
-                        startActivity(intent7);
-                        break;
+                        if (App.isNetworkAvailable(requireActivity())) {
+                            Intent intent7 = new Intent(requireActivity(), SearchCashing.class);
+                            intent7.putExtra("moveType", 7);
+                            startActivity(intent7);
+                            break;
+                        }
                     case R.id.mobileResales:
-                        Intent intent8 = new Intent(requireActivity(), SearchInvoice.class);
-                        intent8.putExtra("moveType", 3);
-                        startActivity(intent8);
-                        App.resales = 1;
-                        break;
+                        if (App.isNetworkAvailable(requireActivity())) {
+                            Intent intent8 = new Intent(requireActivity(), SearchInvoice.class);
+                            intent8.putExtra("moveType", 3);
+                            startActivity(intent8);
+                            App.resales = 1;
+                            break;
+                        }
                 }
                 return false;
             }

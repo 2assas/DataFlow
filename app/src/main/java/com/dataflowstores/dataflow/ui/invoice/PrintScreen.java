@@ -15,8 +15,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.pdf.PdfDocument;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,15 +37,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
 import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
-import com.dataflowstores.dataflow.ui.Checkout;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.utils.Conts;
 import com.dataflowstores.dataflow.utils.DeviceReceiver;
 import com.google.android.material.snackbar.Snackbar;
-//import com.zxy.tiny.Tiny;
 
 import net.posprinter.posprinterface.IMyBinder;
 import net.posprinter.posprinterface.UiExecute;
@@ -51,7 +52,10 @@ import net.posprinter.service.PosprinterService;
 import net.posprinter.utils.BitmapToByteData;
 import net.posprinter.utils.DataForSendToPrinterPos80;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -104,7 +108,7 @@ public class PrintScreen extends AppCompatActivity implements View.OnClickListen
     String mac;
     int pos;
     private DeviceReceiver myDevice;
-    ImageView printImg, invoicePic;
+    ImageView printImg, invoicePic, sharePdf;
     Receiver netReciever;
 
     @Override
@@ -148,6 +152,7 @@ public class PrintScreen extends AppCompatActivity implements View.OnClickListen
         BtSb = (Button) findViewById(R.id.buttonSB);
         showET = (EditText) findViewById(R.id.showET);
         printImg = (ImageView) findViewById(R.id.printButton);
+        sharePdf = (ImageView) findViewById(R.id.sharePDF);
         container = (CoordinatorLayout) findViewById(R.id.coordinator);
         invoicePic = findViewById(R.id.invoiceImage);
         App.printBitmap = convertGreyImg(App.printBitmap);
@@ -155,7 +160,7 @@ public class PrintScreen extends AppCompatActivity implements View.OnClickListen
 //        handleInvoiceHeight();
         invoicePic.setImageBitmap(App.printBitmap);
 
-        final List<Bitmap> imageList = new ArrayList<>(splitBitmap(App.printBitmap));
+        final List<Bitmap> imageList = new ArrayList<>(splitBitmap(App.printBitmap, 800));
         Handler handler = new Handler();
 
         printImg.setOnClickListener(view -> {
@@ -171,6 +176,72 @@ public class PrintScreen extends AppCompatActivity implements View.OnClickListen
                 showSnackbar(getString(R.string.connect_first));
             }
         });
+
+
+        sharePdf.setOnClickListener(view -> {
+            createAndSharePDF();
+        });
+
+
+    }
+
+    private void createAndSharePDF() {
+        final List<Bitmap> bitmapList = new ArrayList<>(splitBitmap(App.printBitmap, 1650));
+        // Create a new PdfDocument
+        PdfDocument pdfDocument = new PdfDocument();
+        String pdfName = App.pdfName.isEmpty() ? "generated_document" : App.pdfName;
+        // Set the file path where the PDF file will be saved
+        File pdfFile = new File(getExternalFilesDir(null), pdfName + ".pdf");
+
+        try {
+            for (int i = 0; i < bitmapList.size(); i++) {
+                Bitmap bitmap = bitmapList.get(i);
+                // Create a PageInfo for each bitmap
+                PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(bitmap.getWidth(), bitmap.getHeight(), i + 1).create();
+
+                // Start a page
+                PdfDocument.Page page = pdfDocument.startPage(pageInfo);
+
+                // Draw the bitmap on the page
+                Canvas canvas = page.getCanvas();
+                Paint paint = new Paint();
+                canvas.drawBitmap(bitmap, 0, 0, paint);
+
+                // Finish the page
+                pdfDocument.finishPage(page);
+            }
+
+            // Create an output stream
+            OutputStream outputStream = new FileOutputStream(pdfFile);
+
+            // Write the document content to the output stream
+            pdfDocument.writeTo(outputStream);
+
+            // Close the output stream
+            outputStream.close();
+
+            // Close the document
+            pdfDocument.close();
+
+            // Now you can share the generated PDF file via a chooser dialog
+
+            // Add the path of the PDF file to the intent
+            Uri uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", pdfFile);
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("application/pdf");
+            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+
+            // Use createChooser to present the available sharing options
+            Intent chooser = Intent.createChooser(shareIntent, "Share PDF via");
+
+            // Verify that the intent will resolve to at least one activity
+            if (shareIntent.resolveActivity(getPackageManager()) != null) {
+                startActivity(chooser);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setlistener() {
@@ -182,29 +253,7 @@ public class PrintScreen extends AppCompatActivity implements View.OnClickListen
         showET.setEnabled(false);
     }
 
-    private void handleInvoiceHeight() {
-        if (App.printBitmap.getHeight() > 1000) {
-            float desiredHeight = Float.parseFloat(String.valueOf(App.printBitmap.getHeight())) / 1000;
-            float actualHeight = Float.parseFloat(String.valueOf(App.printBitmap.getHeight()));
-            Log.e("CheckMath", "height " + math(desiredHeight) + " + " + desiredHeight + " + " + App.printBitmap.getHeight() / 1000 + " + " + App.printBitmap.getHeight());
-            for (int i = 0; i < math(desiredHeight); i++) {
-                if (i > 0)
-                    printBitmaps.add(Bitmap.createBitmap(App.printBitmap, 0, (App.printBitmap.getHeight() / i), App.printBitmap.getWidth(), (App.printBitmap.getHeight() / math(desiredHeight))));
-                else
-                    printBitmaps.add(Bitmap.createBitmap(App.printBitmap, 0, 0, App.printBitmap.getWidth(), (App.printBitmap.getHeight() / math(desiredHeight))));
-                Log.e("CheckMath", "height loop " + i);
-            }
-            for (int i = 0; i < printBitmaps.size(); i++) {
-                Log.e("checkBitmaps", "Bitmap Number " + i + " Height: " + printBitmaps.get(i).getHeight());
-            }
-        } else {
-            printBitmaps.add(App.printBitmap);
-        }
-
-    }
-
-
-    private List<Bitmap> splitBitmap(Bitmap printBitmap) {
+    private List<Bitmap> splitBitmap(Bitmap printBitmap, int pageHeight) {
         segments = new ArrayList<>();
         if (printBitmap == null)
             return segments;
@@ -212,9 +261,9 @@ public class PrintScreen extends AppCompatActivity implements View.OnClickListen
         int height = printBitmap.getHeight();
         int width = printBitmap.getWidth();
 
-        for (int i = 0; i < height; i += 800) {
+        for (int i = 0; i < height; i += pageHeight) {
             i = Math.min(i, height);
-            int limit = i + 800 >= height ? height - i : 800;
+            int limit = i + pageHeight >= height ? height - i : pageHeight;
             Bitmap bitmap = Bitmap.createBitmap(printBitmap, 0, i, width, limit);
             segments.add(bitmap);
         }

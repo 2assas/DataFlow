@@ -24,12 +24,17 @@
     <string name="connect_first">من فضلك قم بالإتصال أولا</string>
     <string name="confirm">تأكيد</string>
     <string name="item_serial_number">رقم تسلسلى للمنتج</string>
-    <string name="demo_version">Demo Version</string>
-    <string name="add_workstation">Add Workstation</string>
-    <string name="password">Password</string>
-    <string name="sign_in">Sign In</string>
-    <string name="username">Username</string>
+    <string name="demo_version">نسخه تجريبية</string>
+    <string name="add_workstation">إضافة محطة عمل</string>
+    <string name="password">كلمة السر</string>
+    <string name="sign_in">تسجيل دخول</string>
+    <string name="username">الاسم</string>
     <string name="device_id">"Device ID: "</string>
+    <string name="select_customer_error">Please select customer</string>
+    <string name="select_customer_toast">Please select customer or uncheck the customer checkbox.</string>
+    <string name="no_result">No results found!</string>
+    <string name="cannot_print_move">Cannot print this move</string>
+    <string name="loading_please_wait">Loading, Please wait...</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

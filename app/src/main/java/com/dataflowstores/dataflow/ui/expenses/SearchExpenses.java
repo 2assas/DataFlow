@@ -18,11 +18,11 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.dataflowstores.dataflow.App;
-import com.dataflowstores.dataflow.ui.SplashScreen;
-import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.SearchExpensesBinding;
 import com.dataflowstores.dataflow.pojo.expenses.ExpenseData;
+import com.dataflowstores.dataflow.ui.SplashScreen;
+import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -31,6 +31,10 @@ public class SearchExpenses extends AppCompatActivity {
     SearchExpensesBinding binding;
     ExpensesViewModel expensesViewModel;
     String uuid;
+    Long branchISN;
+    Long workerCBranchISN;
+    Long workerCISN;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,11 +53,31 @@ public class SearchExpenses extends AppCompatActivity {
 
     public void setupViews() {
         expensesViewModel.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
+        searchInvoice();
+        if (getIntent().getStringExtra("moveId") != null) {
+            branchISN = getIntent().getLongExtra("branchISN", 0);
+            workerCBranchISN = getIntent().getLongExtra("workerCBranchISN", 0);
+            workerCISN = getIntent().getLongExtra("workerCISN", 0);
+            String query = getIntent().getStringExtra("moveId");
+            binding.searchInvoices.setQuery(query, true);
+            binding.searchInvoices.setVisibility(View.GONE);
+            binding.back.setVisibility(View.VISIBLE);
+            binding.back.setOnClickListener(v -> {
+                onBackPressed();
+            });
+        } else {
+            branchISN = App.currentUser.getBranchISN();
+            workerCBranchISN = App.currentUser.getWorkerBranchISN();
+            workerCISN = App.currentUser.getWorkerISN();
+        }
+    }
+
+    private void searchInvoice() {
         binding.searchInvoices.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 if (App.isNetworkAvailable(SearchExpenses.this)) {
-                    expensesViewModel.getExpenses(App.currentUser.getBranchISN(), uuid, s, App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN(), 1);
+                    expensesViewModel.getExpenses(branchISN, uuid, s, workerCBranchISN, workerCISN, 1);
                     binding.progressBar.setVisibility(View.VISIBLE);
 
                 } else {
@@ -76,11 +100,12 @@ public class SearchExpenses extends AppCompatActivity {
                 return false;
             }
         });
+
     }
 
     public void observeData() {
         expensesViewModel.expensesModelMutableLiveData.observe(this, receiptModel -> {
-            if (receiptModel.getData()!= null) {
+            if (receiptModel.getData() != null) {
                 binding.noResults.setVisibility(View.GONE);
                 binding.progressBar.setVisibility(View.GONE);
                 binding.printButton.setVisibility(View.VISIBLE);
@@ -97,6 +122,7 @@ public class SearchExpenses extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     public void fillData(ExpenseData expenseData) {
         binding.expTemplate.mainExp.setText("المصروف الرئيسي: " + expenseData.getExpMenuName());
+        App.pdfName= "المصروف الرئيسي: " + expenseData.getExpMenuName();
         //TODO::
         if (expenseData.getSubExpMenuName() != null)
             binding.expTemplate.subExp.setText("المصروف الفرعي: " + expenseData.getSubExpMenuName());
@@ -106,6 +132,7 @@ public class SearchExpenses extends AppCompatActivity {
             binding.expTemplate.expNum.setText("رقم المصروف: " + expenseData.getMoveID());
         if (expenseData.getShiftISN() != null && !Objects.equals(expenseData.getShiftISN(), "0"))
             binding.expTemplate.shiftNum.setText("رقم الوردية: " + expenseData.getShiftISN());
+        binding.expTemplate.foundationName.setText(App.currentUser.getFoundationName());
 
         binding.expTemplate.date.setText("التاريخ: " + expenseData.getCreateDate());
 //        binding.expTemplate.
@@ -116,7 +143,6 @@ public class SearchExpenses extends AppCompatActivity {
 //                expenseData.getTradeRecoredNo());
 //        binding.expTemplate.taxCardNo2.setText("رقم التسجيل" + "\n" +
 //                expenseData.getTaxeCardNo());
-        binding.expTemplate.foundationName.setText(App.currentUser.getFoundationName());
     }
 
     private void takeScreenShot() {

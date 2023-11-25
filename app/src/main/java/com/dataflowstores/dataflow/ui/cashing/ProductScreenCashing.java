@@ -300,6 +300,8 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
             datePicker();
             if (!App.isEditing && !App.product.getxBarCodeExpireDate().isEmpty()) {
                 binding.expirePicker.setText(App.product.getxBarCodeExpireDate());
+                App.product.setSelectedExpireDate(App.product.getxBarCodeExpireDate());
+                dateValidation=true;
             }
         }
         if (App.product.getSerial()) {
@@ -310,9 +312,7 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
             binding.textView26.setEnabled(false);
             binding.serial.setText(App.serialNumber);
             App.product.setSelectedSerial(App.serialNumber);
-//          Log.e("Serial", "SS + "+binding.serial.getText().toString());
         }
-
     }
 
     public void unitSpinner() {
@@ -332,7 +332,6 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
                 App.product.setSelectedUnit(App.product.getMeasureUnits().get(i));
                 App.product.setPriceItem(measureUnit.getPrice());
             }
-
             @SuppressLint("SetTextI18n")
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -622,6 +621,7 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
                     App.product.setSelectedSerial(binding.serial.getText().toString());
                 }
                 if (App.product.getExpireDate() && !dateValidation) {
+//                    assas
                     binding.expirePicker.setError(getString(R.string.date_error));
                 } else if (App.product.getSerial() && binding.serial.getText().toString().isEmpty()) {
                     binding.serial.setError(getString(R.string.serial_error));

@@ -3,11 +3,13 @@ package com.dataflowstores.dataflow.ui.reports.cashierMovesReport;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
@@ -20,36 +22,44 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
+import com.dataflowstores.dataflow.ViewModels.InvoiceViewModel;
 import com.dataflowstores.dataflow.databinding.CashierMovesReportBinding;
-import com.dataflowstores.dataflow.databinding.FinancialReportBinding;
 import com.dataflowstores.dataflow.pojo.financialReport.PaymentMethods;
 import com.dataflowstores.dataflow.pojo.financialReport.ReportBody;
 import com.dataflowstores.dataflow.pojo.report.Branches;
 import com.dataflowstores.dataflow.pojo.report.DataItem;
 import com.dataflowstores.dataflow.pojo.report.WorkersResponse;
+import com.dataflowstores.dataflow.pojo.report.cashierMoves.moveTypes.MoveType;
+import com.dataflowstores.dataflow.pojo.report.cashierMoves.moveTypes.MoveTypesResponse;
 import com.dataflowstores.dataflow.pojo.settings.Banks;
 import com.dataflowstores.dataflow.pojo.settings.BanksData;
 import com.dataflowstores.dataflow.pojo.settings.SafeDeposit;
 import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
+import com.dataflowstores.dataflow.pojo.users.CustomerData;
 import com.dataflowstores.dataflow.pojo.workStation.BranchData;
 import com.dataflowstores.dataflow.ui.SplashScreen;
+import com.dataflowstores.dataflow.ui.fragments.BottomSheetFragment;
+import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
 import com.dataflowstores.dataflow.ui.reports.ReportViewModel;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class CashierMovesReport extends AppCompatActivity {
+public class CashierMovesReport extends AppCompatActivity implements MyDialogCloseListener {
     CashierMovesReportBinding binding;
     ReportBody reportBody = new ReportBody();
     ReportViewModel reportVM;
     Branches branches;
     Banks banks;
+    MoveTypesResponse moveTypesResponse;
     SafeDeposit safeDeposit;
     WorkersResponse workersResponse;
     BranchData selectedBranch;
     BanksData selectedBank;
+    MoveType selectedMove;
     DataItem selectedWorker;
     SafeDepositData selectedSafeDeposit;
     int cash = 1;
@@ -62,6 +72,8 @@ public class CashierMovesReport extends AppCompatActivity {
     String uuid;
     String startTime, endTime;
     private String workDayStart, workDayEnd;
+    InvoiceViewModel invoiceViewModel;
+    CustomerData customerData;
 
 
     @SuppressLint("HardwareIds")
@@ -74,6 +86,7 @@ public class CashierMovesReport extends AppCompatActivity {
         } else {
             binding = DataBindingUtil.setContentView(this, R.layout.cashier_moves_report);
             reportVM = new ViewModelProvider(this).get(ReportViewModel.class);
+            invoiceViewModel = new ViewModelProvider(this).get(InvoiceViewModel.class);
             uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
             initViews();
         }
@@ -83,9 +96,11 @@ public class CashierMovesReport extends AppCompatActivity {
         binding.progress.setVisibility(View.VISIBLE);
         binding.back.setOnClickListener(v -> finish());
         reportVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
+        reportVM.getMoveTypes(uuid);
         observers();
         collectData();
         fillDates();
+        searchButtons();
     }
 
     void fillDates() {
@@ -102,40 +117,93 @@ public class CashierMovesReport extends AppCompatActivity {
         reportVM.workersResponseMutableLiveData.observe(this, this::workerSpinner);
         reportVM.safeDepositMutableLiveData.observe(this, this::safeDepositSpinner);
         reportVM.banksMutableLiveData.observe(this, this::banksSpinner);
-        reportVM.financialReportResponseMutableLiveData.observe(this, financialReportResponse -> {
-            binding.progress.setVisibility(View.GONE);
-            if (financialReportResponse.getStatus() == 1) {
-                Intent intent = new Intent(this, CashierMovesReport.class);
-                App.financialReportData = financialReportResponse.getData();
-                if (binding.safeDepositCheckbox.isChecked())
-                    intent.putExtra("safeDeposit", selectedSafeDeposit);
-                if (binding.intervalCheckBox.isChecked()) {
-                    intent.putExtra("startTime", startTime);
-                    intent.putExtra("endTime", endTime);
-                }
-                if (binding.bankCheckbox.isChecked()) {
-                    intent.putExtra("bank", selectedBank.getBankName());
-                }
-                if (App.currentUser.getPermission() == 0) {
-                    intent.putExtra("userName", App.currentUser.getWorkerName());
-                } else if (binding.userCheckbox.isChecked()) {
-                    intent.putExtra("userName", selectedWorker.getWorkerName());
-                }
-                intent.putExtra("cash", String.valueOf(cash));
-                intent.putExtra("credit", String.valueOf(credit));
-                intent.putExtra("check", String.valueOf(check));
-                if (App.currentUser.getPermission() == 1) {
-                    intent.putExtra("branch", selectedBranch.getBranchName());
-                } else
-                    intent.putExtra("branch", binding.branchName.getText().toString());
+        reportVM.moveTypesResponseMutableLiveData.observe(this, this::movesSpinner);
+        reportVM.cashierMovesReportResponseMutableLiveData.observe(this, cashierMovesReportResponse -> {
+            binding.progressBar.setVisibility(View.GONE);
+            Log.e("checkProgress", "Gone");
+            if (cashierMovesReportResponse.getStatus() == 1) {
+                if (cashierMovesReportResponse.getData() != null) {
+                    Intent intent = new Intent(this, CashierMovesReportPrinting.class);
+                    if (binding.safeDepositCheckbox.isChecked())
+                        intent.putExtra("safeDeposit", selectedSafeDeposit);
+                    if (binding.intervalCheckBox.isChecked()) {
+                        intent.putExtra("startTime", startTime);
+                        intent.putExtra("endTime", endTime);
+                    }
+                    if (binding.bankCheckbox.isChecked()) {
+                        intent.putExtra("bank", selectedBank.getBankName());
+                    }
+                    if (App.currentUser.getPermission() == 0) {
+                        intent.putExtra("userName", App.currentUser.getWorkerName());
+                    } else if (binding.userCheckbox.isChecked()) {
+                        intent.putExtra("userName", selectedWorker.getWorkerName());
+                    }
+                    if (binding.shiftsCheckbox.isChecked() && !binding.shiftISN.getText().toString().isEmpty()) {
+                        intent.putExtra("shiftISN", binding.shiftISN.getText().toString());
+                    }
+                    intent.putExtra("cash", String.valueOf(cash));
+                    intent.putExtra("credit", String.valueOf(credit));
+                    intent.putExtra("check", String.valueOf(check));
+                    if (App.currentUser.getPermission() == 1) {
+                        intent.putExtra("branch", selectedBranch.getBranchName());
+                    } else
+                        intent.putExtra("branch", binding.branchName.getText().toString());
 
-                if (binding.workDateCheckbox.isChecked()) {
-                    intent.putExtra("workdayStart", workDayStart);
-                    intent.putExtra("workdayEnd", workDayEnd);
+                    if (binding.workDateCheckbox.isChecked()) {
+                        intent.putExtra("workdayStart", workDayStart);
+                        intent.putExtra("workdayEnd", workDayEnd);
+                    }
+                    if (binding.clientCheckBox.isChecked()) {
+                        if (App.customer != null) {
+                            intent.putExtra("clientName", App.customer.getDealerName());
+                        }
+                    }
+                    if (binding.movesCheckBox.isChecked()) {
+                        intent.putExtra("moveType", selectedMove.getMoveName());
+                    }
+                    intent.putExtra("dataList", (Serializable) cashierMovesReportResponse.getData());
+
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(this, getString(R.string.no_result), Toast.LENGTH_LONG).show();
                 }
-                startActivity(intent);
             }
         });
+    }
+
+
+    public void searchButtons() {
+        binding.getClient.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                if (!binding.getClient.getText().toString().isEmpty()) {
+                    performSearch();
+                    return true;
+                } else
+                    return false;
+            }
+            return false;
+        });
+        binding.searchClient.setOnClickListener(view -> {
+            performSearch();
+        });
+    }
+
+    private void performSearch() {
+        if (App.isNetworkAvailable(this))
+            invoiceViewModel.getCustomer(uuid, binding.getClient.getText().toString(), App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN());
+        else {
+            App.noConnectionDialog(this);
+        }
+        BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
+        bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+    }
+
+    @Override
+    public void handleDialogClose(DialogInterface dialog) {
+        if (App.customer != null && App.customer.getDealerName() != null) {
+            binding.getClient.setText(App.customer.getDealerName());
+            customerData = App.customer;
+        }
     }
 
     void collectData() {
@@ -149,7 +217,7 @@ public class CashierMovesReport extends AppCompatActivity {
             //bank
             binding.bankCheckbox.setEnabled(false);
             binding.bankSpinner.setEnabled(false);
-
+            //moves types
             //safeDeposit
             binding.safeDepositCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) {
@@ -162,6 +230,7 @@ public class CashierMovesReport extends AppCompatActivity {
             binding.shiftsCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) {
                     binding.shiftISN.setVisibility(View.VISIBLE);
+
                 } else {
                     binding.shiftISN.setVisibility(View.GONE);
                 }
@@ -192,11 +261,21 @@ public class CashierMovesReport extends AppCompatActivity {
 
             //showReport
             binding.reportButton.setOnClickListener(v -> {
-                reportBody = new ReportBody();
-                fillCashierReport();
-                reportVM.getFinancialReport(reportBody, uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getWorkerBranchISN());
-            });
+                if (App.isNetworkAvailable(this)) {
+                    binding.progressBar.setVisibility(View.VISIBLE);
+                    reportBody = new ReportBody();
+                    selectedWorker = new DataItem();
+                    selectedWorker.setWorkerISN(String.valueOf(App.currentUser.getWorkerISN()));
+                    selectedWorker.setBranchISN(String.valueOf(App.currentUser.getWorkerBranchISN()));
 
+                    if (fillCashierReport())
+                        reportVM.getCashierMoves(reportBody, uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getWorkerBranchISN()
+                                , selectedMove == null ? null : Integer.valueOf(selectedMove.getMoveType()),
+                                customerData == null ? null : customerData
+                                , selectedWorker == null ? null : selectedWorker
+                        );
+                }
+            });
         } else {
             binding.safeDepositSpinner.setVisibility(View.VISIBLE);
             binding.shiftISN.setVisibility(View.VISIBLE);
@@ -208,70 +287,22 @@ public class CashierMovesReport extends AppCompatActivity {
             binding.workEndTime.setOnClickListener(v -> datePicker(binding.workEndTime));
             binding.workDateCheckbox.setChecked(true);
             binding.reportButton.setOnClickListener(v -> {
-                reportBody = new ReportBody();
-                reportBody.setBranchISN(selectedBranch.getBranchISN());
-                if (binding.safeDepositCheckbox.isChecked()) {
-                    reportBody.setSafeDeposit_ISN(String.valueOf(selectedSafeDeposit.getSafeDeposit_ISN()));
-                    reportBody.setSafeDepositBranchISN(String.valueOf(selectedSafeDeposit.getBranchISN()));
+                if (App.isNetworkAvailable(this)) {
+                    binding.progressBar.setVisibility(View.VISIBLE);
+                    if (prepareAdminReport())
+                        reportVM.getCashierMoves(reportBody, uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getWorkerBranchISN()
+                                , selectedMove == null ? null : Integer.valueOf(selectedMove.getMoveType()),
+                                customerData == null ? null : customerData,
+                                selectedWorker == null ? null : selectedWorker
+                        );
                 }
-                if (binding.shiftsCheckbox.isChecked())
-                    if (!binding.shiftISN.getText().toString().isEmpty())
-                        reportBody.setShiftISN(binding.shiftISN.getText().toString());
-                if (binding.userCheckbox.isChecked())
-                    reportBody.setWorker_ISN(selectedWorker.getWorkerISN());
-                if (binding.intervalCheckBox.isChecked()) {
-                    if (!binding.startTime.getText().toString().isEmpty()) {
-                        reportBody.setFrom(binding.startTime.getText().toString());
-                        startTime = binding.startTime.getText().toString();
-                    }
-                    if (!binding.endTime.getText().toString().isEmpty()) {
-                        reportBody.setTo(binding.endTime.getText().toString());
-                        endTime = binding.endTime.getText().toString();
-                    }
-                }
-                if (binding.workDateCheckbox.isChecked()) {
-                    if (!binding.workStartTime.getText().toString().isEmpty()) {
-                        reportBody.setFromWorkday(binding.workStartTime.getText().toString());
-                        workDayStart = binding.workStartTime.getText().toString();
-                    }
-                    if (!binding.workEndTime.getText().toString().isEmpty()) {
-                        reportBody.setToWorkday(binding.workEndTime.getText().toString());
-                        workDayEnd = binding.workEndTime.getText().toString();
-                    }
-                }
-
-                if (binding.bankCheckbox.isChecked()) {
-                    Log.e("falseAlarm", "false");
-                    reportBody.setBankISN(String.valueOf(selectedBank.getBank_ISN()));
-                    reportBody.setBankBranchISN(String.valueOf(selectedBank.getBranchISN()));
-                }
-                binding.cashCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    if (isChecked) {
-                        cash = 1;
-                    } else {
-                        cash = 0;
-                    }
-                });
-
-                binding.checkCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    if (isChecked) {
-                        check = 1;
-                    } else {
-                        check = 0;
-                    }
-                });
-
-                binding.creditCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    if (isChecked) {
-                        credit = 1;
-                    } else {
-                        credit = 0;
-                    }
-                });
-                reportBody.setPaymentMethods(new PaymentMethods(check, credit, cash));
-                reportVM.getFinancialReport(reportBody, uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getWorkerBranchISN());
             });
 
+        }
+
+        if (App.currentUser.getMobilePreviousDatesInReports() == 1) {
+            binding.workStartTime.setOnClickListener(v -> datePicker(binding.workStartTime));
+            binding.workEndTime.setOnClickListener(v -> datePicker(binding.workEndTime));
         }
     }
 
@@ -327,14 +358,36 @@ public class CashierMovesReport extends AppCompatActivity {
         tv.setText(sdf.format(myCalendar.getTime()));
     }
 
-    void fillCashierReport() {
+    boolean fillCashierReport() {
+        if (binding.clientCheckBox.isChecked()) {
+            if (binding.getClient.getText().toString().isEmpty()) {
+                binding.getClient.setError(getString(R.string.select_customer_error));
+                Toast.makeText(this, getString(R.string.select_customer_toast), Toast.LENGTH_LONG).show();
+                return false;
+            } else {
+                customerData = App.customer;
+            }
+        } else {
+            customerData = null;
+        }
+
+        if (binding.movesCheckBox.isChecked()) {
+            selectedMove = moveTypesResponse.getData().get(binding.moveSpinner.getSelectedItemPosition());
+        } else {
+            selectedMove = null;
+        }
+        workDayStart = binding.workStartTime.getText().toString();
+        workDayEnd = binding.workEndTime.getText().toString();
+
         reportBody.setBranchISN(App.currentUser.getBranchISN());
+        reportBody.setWorker_ISN(String.valueOf(App.currentUser.getWorkerISN()));
         if (binding.safeDepositCheckbox.isChecked()) {
             reportBody.setSafeDeposit_ISN(String.valueOf(selectedSafeDeposit.getSafeDeposit_ISN()));
             reportBody.setSafeDepositBranchISN(String.valueOf(selectedSafeDeposit.getBranchISN()));
         }
-        reportBody.setFromWorkday(currentDate);
-        reportBody.setToWorkday(currentDate);
+
+        reportBody.setFromWorkday(binding.workStartTime.getText().toString());
+        reportBody.setToWorkday(binding.workEndTime.getText().toString());
 
         binding.cashCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
@@ -363,7 +416,95 @@ public class CashierMovesReport extends AppCompatActivity {
         reportBody.setPaymentMethods(new PaymentMethods(check, credit, cash));
         if (binding.shiftsCheckbox.isChecked() && !binding.shiftISN.getText().toString().isEmpty())
             reportBody.setShiftISN(binding.shiftISN.getText().toString());
+        return true;
+    }
 
+    private boolean prepareAdminReport() {
+        if (binding.clientCheckBox.isChecked()) {
+            if (App.customer == null) {
+                binding.getClient.setError(getString(R.string.select_customer_error));
+                Toast.makeText(this, getString(R.string.select_customer_toast), Toast.LENGTH_LONG).show();
+                return false;
+            } else {
+                customerData = App.customer;
+            }
+
+        } else {
+            customerData = null;
+        }
+        if (binding.movesCheckBox.isChecked()) {
+            selectedMove = moveTypesResponse.getData().get(binding.moveSpinner.getSelectedItemPosition());
+        } else {
+            selectedMove = null;
+        }
+        reportBody = new ReportBody();
+        reportBody.setBranchISN(selectedBranch.getBranchISN());
+        if (binding.safeDepositCheckbox.isChecked()) {
+            reportBody.setSafeDeposit_ISN(String.valueOf(selectedSafeDeposit.getSafeDeposit_ISN()));
+            reportBody.setSafeDepositBranchISN(String.valueOf(selectedSafeDeposit.getBranchISN()));
+        }
+        if (binding.shiftsCheckbox.isChecked())
+            if (!binding.shiftISN.getText().toString().isEmpty())
+                reportBody.setShiftISN(binding.shiftISN.getText().toString());
+            else {
+                binding.shiftISN.setError("هذا الحقل مطلوب");
+                return false;
+            }
+        if (binding.userCheckbox.isChecked()) {
+            selectedWorker =  workersResponse.getData().get(binding.userSpinner.getSelectedItemPosition());
+        } else
+            selectedWorker = null;
+
+        reportBody.setWorker_ISN(String.valueOf(App.currentUser.getWorkerISN()));
+        if (binding.intervalCheckBox.isChecked()) {
+            if (!binding.startTime.getText().toString().isEmpty()) {
+                reportBody.setFrom(binding.startTime.getText().toString());
+                startTime = binding.startTime.getText().toString();
+            }
+            if (!binding.endTime.getText().toString().isEmpty()) {
+                reportBody.setTo(binding.endTime.getText().toString());
+                endTime = binding.endTime.getText().toString();
+            }
+        }
+        if (binding.workDateCheckbox.isChecked()) {
+            if (!binding.workStartTime.getText().toString().isEmpty()) {
+                reportBody.setFromWorkday(binding.workStartTime.getText().toString());
+                workDayStart = binding.workStartTime.getText().toString();
+            }
+            if (!binding.workEndTime.getText().toString().isEmpty()) {
+                reportBody.setToWorkday(binding.workEndTime.getText().toString());
+                workDayEnd = binding.workEndTime.getText().toString();
+            }
+        }
+        if (binding.bankCheckbox.isChecked()) {
+            Log.e("falseAlarm", "false");
+            reportBody.setBankISN(String.valueOf(selectedBank.getBank_ISN()));
+            reportBody.setBankBranchISN(String.valueOf(selectedBank.getBranchISN()));
+        }
+        binding.cashCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                cash = 1;
+            } else {
+                cash = 0;
+            }
+        });
+        binding.checkCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                check = 1;
+            } else {
+                check = 0;
+            }
+        });
+        binding.creditCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                credit = 1;
+            } else {
+                credit = 0;
+            }
+        });
+        reportBody.setPaymentMethods(new PaymentMethods(check, credit, cash));
+
+        return true;
     }
 
     void branchSpinner(Branches branches) {
@@ -493,13 +634,47 @@ public class CashierMovesReport extends AppCompatActivity {
         }
     }
 
+    void movesSpinner(MoveTypesResponse moveTypesResponse) {
+        this.moveTypesResponse = moveTypesResponse;
+        checkLoading();
+        if (moveTypesResponse.getStatus() == 1) {
+            binding.moveSpinner.setVisibility(View.VISIBLE);
+            binding.movesCheckBox.setEnabled(true);
+
+            //todo:: complete from here.
+
+            ArrayList<String> movesList = new ArrayList<>();
+            for (int i = 0; i < moveTypesResponse.getData().size(); i++) {
+                movesList.add(moveTypesResponse.getData().get(i).getMoveName());
+            }
+            ArrayAdapter aa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, movesList);
+            aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            binding.moveSpinner.setAdapter(aa);
+            binding.moveSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    selectedMove = moveTypesResponse.getData().get(i);
+                    Log.e("checkBank", " selected " + i);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+                }
+            });
+        } else {
+            binding.moveSpinner.setVisibility(View.GONE);
+            binding.movesCheckBox.setChecked(false);
+            binding.movesCheckBox.setEnabled(false);
+        }
+    }
+
     void checkLoading() {
         if (App.currentUser.getPermission() == 1) {
-            if (banks != null && branches != null && safeDeposit != null && workersResponse != null) {
+            if (banks != null && branches != null && safeDeposit != null && workersResponse != null && moveTypesResponse != null) {
                 binding.progress.setVisibility(View.GONE);
             }
         } else {
-            if (safeDeposit != null) {
+            if (safeDeposit != null && moveTypesResponse != null) {
                 binding.progress.setVisibility(View.GONE);
             }
         }

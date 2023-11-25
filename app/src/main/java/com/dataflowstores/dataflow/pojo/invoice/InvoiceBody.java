@@ -5,8 +5,6 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import retrofit2.http.Query;
-
 
 public class InvoiceBody implements Serializable {
     @SerializedName("BranchISN")
@@ -201,7 +199,33 @@ public class InvoiceBody implements Serializable {
     @SerializedName("BranchISNStockMove")
     String BranchISNStockMove;
 
-    public InvoiceBody(Long branchISN, String uuid, Integer cashType, Integer saleType, Integer dealerType, Integer dealerBranchISN, Long dealerISN, Long salesManBranchISN, Long salesManISN, String headerNotes, Double totalLinesValue, Double serviceValue, Double servicePer, Double deliveryValue, Double totalValueAfterServices, Double basicDiscountVal, Double basicDiscountPer, Double totalValueAfterDisc, Double basicTaxVal, Double basicTaxPer, Double totalValueAfterTax, Double netValue, Double paidValue, Double remainValue, Long safeDepositeBranchISN, Long safeDepositeISN, Long bankBranchISN, Long bankISN, String tableNumber, String deliveryPhone, String deliveryAddress, Long workerCBranchISN, Long workerCISN, String checkNumber, String checkDueDate, Long checkBankBranchISN, Long checkBankISN, ArrayList<Long> itemBranchISN, ArrayList<Long> itemISN, ArrayList<Long> priceTypeBranchISN, ArrayList<Long> priceTypeISN, ArrayList<Long> storeBranchISN, ArrayList<Long> storeISN, ArrayList<Float> basicQuantity, ArrayList<Float> bonusQuantity, ArrayList<Float> totalQuantity, ArrayList<Double> price, ArrayList<Long> measureUnitBranchISN, ArrayList<Long> measureUnitISN, ArrayList<Long> basicMeasureUnitBranchISN, ArrayList<Long> basicMeasureUnitISN, ArrayList<String> itemSerial, ArrayList<String> expireDateItem, ArrayList<Long> colorBranchISN, ArrayList<Long> colorISN, ArrayList<Long> sizeBranchISN, ArrayList<Long> sizeISN, ArrayList<Long> seasonBranchISN, ArrayList<Long> seasonISN, ArrayList<Long> group1BranchISN, ArrayList<Long> group1ISN, ArrayList<Long> group2BranchISN, ArrayList<Long> group2ISN, ArrayList<String> lineNotes, Long numberOFItems, Integer createSource, ArrayList<Double> netPrice, ArrayList<Double> basicMeasureUnitQuantity, ArrayList<Boolean> expireDate, ArrayList<Boolean> colors, ArrayList<Boolean> seasons, ArrayList<Boolean> sizes, ArrayList<Boolean> serial, ArrayList<Boolean> group1, ArrayList<Boolean> group2, ArrayList<Boolean> serviceItem, ArrayList<Double> itemTax, ArrayList<Double> taxValue, Double totalLinesTaxVal, Integer allowStoreMinus, ArrayList<String> itemName, ArrayList<Double> discount1, Integer allowStoreMinusConfirm, float latitude, float longitude, String invoiceType, Integer moveType, ArrayList<Long> storeBranchISN2, ArrayList<Long> storeISN2, String workerName, String user_name, String workStationName, String workStation_ISN, String workStationBranchISN, String BranchISNStockMove) {
+    @SerializedName("SelectedFoundation")
+    int selectedFoundation;
+    @SerializedName("LogIn_BISN")
+    String LogIn_BISN;
+    @SerializedName("LogIn_UID")
+    String LogIn_UID;
+    @SerializedName("LogIn_WBISN")
+    String LogIn_WBISN;
+    @SerializedName("LogIn_WISN")
+    String LogIn_WISN;
+    @SerializedName("LogIn_WName")
+    String LogIn_WName;
+    @SerializedName("LogIn_WSBISN")
+    String LogIn_WSBISN;
+    @SerializedName("LogIn_WSISN")
+    String LogIn_WSISN;
+    @SerializedName("LogIn_WSName")
+    String LogIn_WSName;
+    @SerializedName("LogIn_CS")
+    String LogIn_CS;
+    @SerializedName("LogIn_VN")
+    String LogIn_VN;
+    @SerializedName("LogIn_FAlternative")
+    String LogIn_FAlternative;
+
+
+    public InvoiceBody(Long branchISN, String uuid, Integer cashType, Integer saleType, Integer dealerType, Integer dealerBranchISN, Long dealerISN, Long salesManBranchISN, Long salesManISN, String headerNotes, Double totalLinesValue, Double serviceValue, Double servicePer, Double deliveryValue, Double totalValueAfterServices, Double basicDiscountVal, Double basicDiscountPer, Double totalValueAfterDisc, Double basicTaxVal, Double basicTaxPer, Double totalValueAfterTax, Double netValue, Double paidValue, Double remainValue, Long safeDepositeBranchISN, Long safeDepositeISN, Long bankBranchISN, Long bankISN, String tableNumber, String deliveryPhone, String deliveryAddress, Long workerCBranchISN, Long workerCISN, String checkNumber, String checkDueDate, Long checkBankBranchISN, Long checkBankISN, ArrayList<Long> itemBranchISN, ArrayList<Long> itemISN, ArrayList<Long> priceTypeBranchISN, ArrayList<Long> priceTypeISN, ArrayList<Long> storeBranchISN, ArrayList<Long> storeISN, ArrayList<Float> basicQuantity, ArrayList<Float> bonusQuantity, ArrayList<Float> totalQuantity, ArrayList<Double> price, ArrayList<Long> measureUnitBranchISN, ArrayList<Long> measureUnitISN, ArrayList<Long> basicMeasureUnitBranchISN, ArrayList<Long> basicMeasureUnitISN, ArrayList<String> itemSerial, ArrayList<String> expireDateItem, ArrayList<Long> colorBranchISN, ArrayList<Long> colorISN, ArrayList<Long> sizeBranchISN, ArrayList<Long> sizeISN, ArrayList<Long> seasonBranchISN, ArrayList<Long> seasonISN, ArrayList<Long> group1BranchISN, ArrayList<Long> group1ISN, ArrayList<Long> group2BranchISN, ArrayList<Long> group2ISN, ArrayList<String> lineNotes, Long numberOFItems, Integer createSource, ArrayList<Double> netPrice, ArrayList<Double> basicMeasureUnitQuantity, ArrayList<Boolean> expireDate, ArrayList<Boolean> colors, ArrayList<Boolean> seasons, ArrayList<Boolean> sizes, ArrayList<Boolean> serial, ArrayList<Boolean> group1, ArrayList<Boolean> group2, ArrayList<Boolean> serviceItem, ArrayList<Double> itemTax, ArrayList<Double> taxValue, Double totalLinesTaxVal, Integer allowStoreMinus, ArrayList<String> itemName, ArrayList<Double> discount1, Integer allowStoreMinusConfirm, float latitude, float longitude, String invoiceType, Integer moveType, ArrayList<Long> storeBranchISN2, ArrayList<Long> storeISN2, String workerName, String user_name, String workStationName, String workStation_ISN, String workStationBranchISN, String BranchISNStockMove, int SelectedFoundation,String logIn_BISN, String logIn_UID, String logIn_WBISN, String logIn_WISN, String logIn_WName, String logIn_WSBISN, String logIn_WSISN, String logIn_WSName, String logIn_CS, String logIn_VN, String logIn_FAlternative) {
         BranchISN = branchISN;
         this.uuid = uuid;
         CashType = cashType;
@@ -297,5 +321,17 @@ public class InvoiceBody implements Serializable {
         WorkStation_ISN = workStation_ISN;
         WorkStationBranchISN = workStationBranchISN;
         this.BranchISNStockMove = BranchISNStockMove;
+        this.selectedFoundation = SelectedFoundation;
+        LogIn_BISN = logIn_BISN;
+        LogIn_UID = logIn_UID;
+        LogIn_WBISN = logIn_WBISN;
+        LogIn_WISN = logIn_WISN;
+        LogIn_WName = logIn_WName;
+        LogIn_WSBISN = logIn_WSBISN;
+        LogIn_WSISN = logIn_WSISN;
+        LogIn_WSName = logIn_WSName;
+        LogIn_CS = logIn_CS;
+        LogIn_VN = logIn_VN;
+        LogIn_FAlternative = logIn_FAlternative;
     }
 }

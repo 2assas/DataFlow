@@ -24,12 +24,14 @@ import com.dataflowstores.dataflow.pojo.settings.Stores;
 import com.dataflowstores.dataflow.pojo.users.CustomerData;
 import com.dataflowstores.dataflow.pojo.users.SalesManData;
 import com.dataflowstores.dataflow.pojo.workStation.BranchData;
+import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.reports.itemSalesReport.ItemSalesReport;
-//import com.mazenrashed.printooth.Printooth;
 
 import java.util.ArrayList;
 
 public class App extends Application {
+
+
     public static UserData currentUser=new UserData();
     public static Banks banks = new Banks();
     public static ReceiptModel receiptModel = new ReceiptModel();
@@ -41,21 +43,24 @@ public class App extends Application {
     public static CustomerData customer;
     public static SalesManData agent = new SalesManData();
     public static ProductData product = new ProductData();
-    public static boolean isEditing=false;
-    public static int editingPos=0;
+    public static boolean isEditing = false;
+    public static int editingPos = 0;
     public static ArrayList<ProductData> selectedProducts = new ArrayList<>();
-    public static InvoiceResponse invoiceResponse= new InvoiceResponse();
-    public static Invoice printInvoice= new Invoice();
+    public static InvoiceResponse invoiceResponse = new InvoiceResponse();
+    public static Invoice printInvoice = new Invoice();
     public static Bitmap printBitmap;
-    public static String lastConnected="";
-    public static String serialNumber="";
-    public static String customerBalance="";
-    public static int specialDiscount=0;
+    public static String lastConnected = "";
+    public static String serialNumber = "";
+    public static String customerBalance = "";
+    public static int specialDiscount = 0;
     public static Data financialReportData = new Data();
-    public static Integer resales=-1;
-    public static String headerNotes="";
+    public static Integer resales = -1;
+    public static String headerNotes = "";
     public static BranchData currentBranch;
     public static ItemSalesReport itemSalesReport;
+    public static Integer selectedFoundation = 0;
+    public static String pdfName = "";
+
 
 
     public static boolean isNetworkAvailable(Context context) {
@@ -89,16 +94,30 @@ public class App extends Application {
         return false;
     }
 
-    public static void noConnectionDialog(Context context){
-        new AlertDialog.Builder(context).
-                setTitle(context.getResources().getString( R.string.no_connection_title))
-                .setMessage(context.getString( R.string.no_connection))
+    public static <T> int getSleep() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static void noConnectionDialog(Activity context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context).
+                setTitle(context.getResources().getString(R.string.no_connection_title))
+                .setMessage(context.getString(R.string.no_connection))
                 .setCancelable(false)
                 .setIcon(R.drawable.ic_no_wifi)
                 .setNegativeButton("Ok", (dialogInterface, i) -> {
-                    ((Activity) context).recreate();
+                    if (context instanceof SplashScreen) {
+                        ((Activity) context).recreate();
+                    } else
+                        isNetworkAvailable((context));
                     dialogInterface.dismiss();
-                }).show();
+                });
+        AlertDialog ad = builder.create();
+        ad.show();
     }
 
     @Override
@@ -106,4 +125,51 @@ public class App extends Application {
         super.onCreate();
 //        Printooth.INSTANCE.init(this);
     }
+//
+//    public static Single<Boolean> checkOnlineState() {
+//        return
+//    }
 }
+
+//
+//    AtomicBoolean result = new AtomicBoolean(true);
+//                    Single.fromCallable(() -> {
+//                            NetworkInfo NInfo = connectivityManager.getActiveNetworkInfo();
+//                            if (NInfo != null && NInfo.isConnectedOrConnecting()) {
+//                            try {
+//                            if (InetAddress.getByName("www.google.com").isReachable(600)) {
+//                            Log.e("checkConnection", "Connection exists");
+//                            // host reachable
+//                            result.set(true);
+//                            return true;
+//                            } else {
+//                            Log.e("checkConnection", "No connection");
+//                            // host not reachable
+//                            result.set(false);
+//                            return false;
+//                            }
+//                            } catch (IOException e) {
+//                            Log.e("checkConnection", "No connection Error");
+//                            result.set(false);
+//                            return false;
+//                            }
+//                            } else {
+//                            return false;
+//                            }
+//                            }).subscribeOn(Schedulers.io())
+//                            .observeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> {
+//                            if (aBoolean) {
+//                            Log.e("checkResult", "true");
+//                            result.set(true);
+//                            } else {
+//                            Log.e("checkResult", "False");
+//                            result.set(false);
+//                            }
+//                            });
+//                            try {
+//                            Thread.sleep(750);
+//                            } catch (InterruptedException e) {
+//                            throw new RuntimeException(e);
+//                            }
+//                            Log.e("checkResult", "result == "+result.get());
+//                            return result.get();

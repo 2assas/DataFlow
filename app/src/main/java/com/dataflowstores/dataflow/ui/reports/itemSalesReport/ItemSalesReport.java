@@ -3,10 +3,12 @@ package com.dataflowstores.dataflow.ui.reports.itemSalesReport;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
@@ -19,13 +21,17 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
+import com.dataflowstores.dataflow.ViewModels.InvoiceViewModel;
 import com.dataflowstores.dataflow.databinding.ItemSalesReportBinding;
 import com.dataflowstores.dataflow.pojo.financialReport.ReportBody;
 import com.dataflowstores.dataflow.pojo.report.Branches;
 import com.dataflowstores.dataflow.pojo.report.DataItem;
 import com.dataflowstores.dataflow.pojo.report.WorkersResponse;
+import com.dataflowstores.dataflow.pojo.users.CustomerData;
 import com.dataflowstores.dataflow.pojo.workStation.BranchData;
 import com.dataflowstores.dataflow.ui.SplashScreen;
+import com.dataflowstores.dataflow.ui.fragments.BottomSheetFragment;
+import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
 import com.dataflowstores.dataflow.ui.reports.ReportViewModel;
 
 import java.io.Serializable;
@@ -34,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class ItemSalesReport extends AppCompatActivity {
+public class ItemSalesReport extends AppCompatActivity implements MyDialogCloseListener {
     ItemSalesReportBinding binding;
     ReportBody reportBody = new ReportBody();
     ReportViewModel reportVM;
@@ -49,6 +55,10 @@ public class ItemSalesReport extends AppCompatActivity {
     String uuid;
     String startTime, endTime, shiftNum;
     private String workDayStart, workDayEnd;
+    CustomerData customerData;
+
+    String workerCISN, WorkerCBranchISN;
+    InvoiceViewModel invoiceViewModel;
 
     @SuppressLint("HardwareIds")
     @Override
@@ -60,6 +70,7 @@ public class ItemSalesReport extends AppCompatActivity {
         } else {
             binding = DataBindingUtil.setContentView(this, R.layout.item_sales_report);
             reportVM = new ViewModelProvider(this).get(ReportViewModel.class);
+            invoiceViewModel = new ViewModelProvider(this).get(InvoiceViewModel.class);
             uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
             initViews();
         }
@@ -73,6 +84,7 @@ public class ItemSalesReport extends AppCompatActivity {
         observers();
         collectData();
         fillDates();
+        searchButtons();
     }
 
     void fillDates() {
@@ -98,6 +110,11 @@ public class ItemSalesReport extends AppCompatActivity {
                     intent.putExtra("startTime", startTime);
                     intent.putExtra("endTime", endTime);
                 }
+                if (binding.clientCheckBox.isChecked()) {
+                    if (App.customer != null && !binding.getClient.getText().toString().isEmpty()) {
+                        intent.putExtra("clientName", App.customer.getDealerName());
+                    }
+                }
                 if (App.currentUser.getPermission() == 0) {
                     intent.putExtra("userName", App.currentUser.getWorkerName());
                 } else if (binding.userCheckbox.isChecked()) {
@@ -115,14 +132,58 @@ public class ItemSalesReport extends AppCompatActivity {
                 if (binding.shiftsCheckbox.isChecked()) {
                     intent.putExtra("shiftNum", binding.shiftISN.getText().toString());
                 }
+                if (binding.clientCheckBox.isChecked()) {
+                    if (App.customer == null) {
+                        intent.putExtra("shiftNum", binding.shiftISN.getText().toString());
+
+                    }
+                }
                 if (itemSalesResponse.getData().size() > 0) {
                     intent.putExtra("dataList", (Serializable) itemSalesResponse.getData());
+                    binding.progress.setVisibility(View.GONE);
                     startActivity(intent);
                 }
+
+
             } else {
                 Toast.makeText(this, "لا توجد نتائج!", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    public void searchButtons() {
+        binding.getClient.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                if (!binding.getClient.getText().toString().isEmpty()) {
+                    performSearch();
+                    return true;
+                } else
+                    return false;
+            }
+            return false;
+        });
+        binding.searchClient.setOnClickListener(view -> {
+            performSearch();
+        });
+    }
+
+    private void performSearch() {
+        if (App.isNetworkAvailable(this))
+            invoiceViewModel.getCustomer(uuid, binding.getClient.getText().toString(), App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN());
+        else {
+            App.noConnectionDialog(this);
+        }
+        BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
+        bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+
+    }
+
+    @Override
+    public void handleDialogClose(DialogInterface dialog) {
+        if (App.customer != null && App.customer.getDealerName() != null) {
+            binding.getClient.setText(App.customer.getDealerName());
+            customerData = App.customer;
+        }
     }
 
     void collectData() {
@@ -132,14 +193,6 @@ public class ItemSalesReport extends AppCompatActivity {
             binding.branchSpinner.setVisibility(View.GONE);
             binding.branchName.setVisibility(View.VISIBLE);
             binding.branchName.setText(App.currentUser.getBranchName());
-            //shift
-            binding.shiftsCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) {
-                    binding.shiftISN.setVisibility(View.VISIBLE);
-                } else {
-                    binding.shiftISN.setVisibility(View.GONE);
-                }
-            });
 
             //worker
             binding.userCheckbox.setChecked(true);
@@ -156,15 +209,66 @@ public class ItemSalesReport extends AppCompatActivity {
             binding.workStartTime.setText(currentDate);
             binding.workEndTime.setText(currentDate);
 
+            if (binding.intervalCheckBox.isChecked()) {
+                startTime = binding.startTime.getText().toString();
+                endTime = binding.endTime.getText().toString();
+            } else {
+                startTime = null;
+                endTime = null;
+            }
+            //shift
+            binding.shiftsCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    binding.shiftISN.setVisibility(View.VISIBLE);
+                } else {
+                    binding.shiftISN.setVisibility(View.GONE);
+                }
+            });
+            binding.shiftsCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    binding.shiftISN.setVisibility(View.VISIBLE);
+                } else {
+                    binding.shiftISN.setVisibility(View.GONE);
+                }
+            });
+
+
             //showReport
             binding.reportButton.setOnClickListener(v -> {
-                binding.progress.setVisibility(View.VISIBLE);
-                binding.reportButton.setEnabled(false);
-                reportVM.getItemSalesReport(uuid, App.currentUser.getBranchISN(),
-                        workDayStart, workDayEnd, binding.shiftISN.getText().toString(), App.currentUser.getWorkerBranchISN(),
-                        String.valueOf(App.currentUser.getWorkerISN()), binding.startTime.getText().toString(), binding.endTime.getText().toString(), App.currentUser.getVendorID());
+                if (App.isNetworkAvailable(this)) {
+                    if (binding.clientCheckBox.isChecked()) {
+                        if (App.customer == null) {
+                            binding.getClient.setError(getString(R.string.select_customer_error));
+                            Toast.makeText(this, getString(R.string.select_customer_toast), Toast.LENGTH_LONG).show();
+                            return;
+                        } else {
+                            customerData = App.customer;
+                        }
+                    } else {
+                        customerData = null;
+                    }
+                    binding.progress.setVisibility(View.VISIBLE);
+                    binding.reportButton.setEnabled(false);
+                    if (binding.shiftsCheckbox.isChecked()) {
+                        if (!binding.shiftISN.getText().toString().isEmpty()) {
+                            shiftNum = binding.shiftISN.getText().toString();
+                        }
+                    } else {
+                        shiftNum = null;
+                    }
+                    workDayStart = binding.workStartTime.getText().toString();
+                    workDayEnd = binding.workEndTime.getText().toString();
+                    binding.progress.setVisibility(View.VISIBLE);
+                    reportVM.getItemSalesReport(uuid, App.currentUser.getBranchISN(),
+                            workDayStart, workDayEnd, shiftNum, App.currentUser.getWorkerBranchISN(),
+                            String.valueOf(App.currentUser.getWorkerISN()), startTime, endTime, App.currentUser.getVendorID(), String.valueOf(App.currentUser.getWorkerISN()), String.valueOf(App.currentUser.getWorkerBranchISN())
+                            , customerData == null ? null : customerData.getDealerType()
+                            , customerData == null ? null : (long) customerData.getBranchISN()
+                            , customerData == null ? null : customerData.getDealer_ISN());
+                }
             });
-        } else {
+        }
+        else {
             binding.shiftISN.setVisibility(View.VISIBLE);
             reportVM.getBranches(uuid);
             reportVM.getWorkers(uuid);
@@ -174,54 +278,79 @@ public class ItemSalesReport extends AppCompatActivity {
             binding.workEndTime.setOnClickListener(v -> datePicker(binding.workEndTime));
             binding.workDateCheckbox.setChecked(true);
             binding.reportButton.setOnClickListener(v -> {
-                reportBody = new ReportBody();
-                reportBody.setBranchISN(selectedBranch.getBranchISN());
-                if (binding.shiftsCheckbox.isChecked()) {
-                    if (!binding.shiftISN.getText().toString().isEmpty()) {
-                        reportBody.setShiftISN(binding.shiftISN.getText().toString());
-                        shiftNum = binding.shiftISN.getText().toString();
+                if (App.isNetworkAvailable(this)) {
+                    if (binding.clientCheckBox.isChecked()) {
+                        if (App.customer == null) {
+                            binding.getClient.setError(getString(R.string.select_customer_error));
+                            Toast.makeText(this, getString(R.string.select_customer_toast), Toast.LENGTH_LONG).show();
+                            return;
+                        } else {
+                            customerData = App.customer;
+                        }
+                    } else {
+                        customerData = null;
                     }
-                } else {
-                    shiftNum = null;
-                }
-                if (binding.userCheckbox.isChecked()) {
-                    reportBody.setWorker_ISN(selectedWorker.getWorkerISN());
-                } else {
-                    selectedWorker = null;
-                }
-                if (binding.intervalCheckBox.isChecked()) {
-                    if (!binding.startTime.getText().toString().isEmpty()) {
-                        reportBody.setFrom(binding.startTime.getText().toString());
-                        startTime = binding.startTime.getText().toString();
-                    }
-                    if (!binding.endTime.getText().toString().isEmpty()) {
-                        reportBody.setTo(binding.endTime.getText().toString());
-                        endTime = binding.endTime.getText().toString();
-                    }
-                } else {
-                    startTime = null;
-                    endTime = null;
-                }
-                if (binding.workDateCheckbox.isChecked()) {
-                    if (!binding.workStartTime.getText().toString().isEmpty()) {
-                        reportBody.setFromWorkday(binding.workStartTime.getText().toString());
-                        workDayStart = binding.workStartTime.getText().toString();
-                    }
-                    if (!binding.workEndTime.getText().toString().isEmpty()) {
-                        reportBody.setToWorkday(binding.workEndTime.getText().toString());
-                        workDayEnd = binding.workEndTime.getText().toString();
-                    }
-                } else {
-                    workDayStart = null;
-                    workDayEnd = null;
-                }
 
+                    reportBody = new ReportBody();
+                    reportBody.setBranchISN(selectedBranch.getBranchISN());
+                    if (binding.shiftsCheckbox.isChecked()) {
+                        if (!binding.shiftISN.getText().toString().isEmpty()) {
+                            reportBody.setShiftISN(binding.shiftISN.getText().toString());
+                            shiftNum = binding.shiftISN.getText().toString();
+                        }
+                    } else {
+                        shiftNum = null;
+                    }
+                    selectedWorker = workersResponse.getData().get(binding.userSpinner.getSelectedItemPosition());
 
-                reportVM.getItemSalesReport(uuid, App.currentUser.getBranchISN(),
-                        workDayStart, workDayEnd, shiftNum, App.currentUser.getWorkerBranchISN(),
-                        selectedWorker == null ? null : selectedWorker.getWorkerISN(), startTime, endTime, App.currentUser.getVendorID());
+                    if (binding.userCheckbox.isChecked()) {
+                        reportBody.setWorker_ISN(selectedWorker.getWorkerISN());
+                    } else {
+                        selectedWorker = null;
+                    }
+                    if (binding.intervalCheckBox.isChecked()) {
+                        if (!binding.startTime.getText().toString().isEmpty()) {
+                            reportBody.setFrom(binding.startTime.getText().toString());
+                            startTime = binding.startTime.getText().toString();
+                        }
+                        if (!binding.endTime.getText().toString().isEmpty()) {
+                            reportBody.setTo(binding.endTime.getText().toString());
+                            endTime = binding.endTime.getText().toString();
+                        }
+                    } else {
+                        startTime = null;
+                        endTime = null;
+                    }
+                    if (binding.workDateCheckbox.isChecked()) {
+                        if (!binding.workStartTime.getText().toString().isEmpty()) {
+                            reportBody.setFromWorkday(binding.workStartTime.getText().toString());
+                            workDayStart = binding.workStartTime.getText().toString();
+                        }
+                        if (!binding.workEndTime.getText().toString().isEmpty()) {
+                            reportBody.setToWorkday(binding.workEndTime.getText().toString());
+                            workDayEnd = binding.workEndTime.getText().toString();
+                        }
+                    } else {
+                        workDayStart = null;
+                        workDayEnd = null;
+                    }
+                    binding.progress.setVisibility(View.VISIBLE);
+                    reportVM.getItemSalesReport(uuid, selectedBranch.getBranchISN(),
+                            workDayStart, workDayEnd, shiftNum, App.currentUser.getWorkerBranchISN(),
+                            String.valueOf(App.currentUser.getWorkerISN()), startTime, endTime, App.currentUser.getVendorID(), selectedWorker == null ? null : selectedWorker.getWorkerISN(), selectedWorker == null ? null : selectedWorker.getBranchISN()
+                            , customerData == null ? null : customerData.getDealerType()
+                            , customerData == null ? null : (long) customerData.getBranchISN()
+                            , customerData == null ? null : customerData.getDealer_ISN()
+
+                    );
+                }
             });
 
+        }
+
+        if (App.currentUser.getMobilePreviousDatesInReports() == 1) {
+            binding.workStartTime.setOnClickListener(v -> datePicker(binding.workStartTime));
+            binding.workEndTime.setOnClickListener(v -> datePicker(binding.workEndTime));
         }
     }
 

@@ -81,13 +81,15 @@ public class FinanceFragment extends Fragment {
 
     private void setupViews() {
         binding.expenses.setOnClickListener(view -> {
-            startActivity(new Intent(requireActivity(), ExpensesScreen.class));
+            if (App.isNetworkAvailable(requireActivity()))
+                startActivity(new Intent(requireActivity(), ExpensesScreen.class));
         });
         binding.back.setOnClickListener(v -> {
             back();
         });
         binding.receipts.setOnClickListener(v -> {
-            startActivity(new Intent(requireActivity(), ReceiptScreen.class));
+            if (App.isNetworkAvailable(requireActivity()))
+                startActivity(new Intent(requireActivity(), ReceiptScreen.class));
         });
         if (App.currentUser.getMobileCashReceipts() == 0) {
             binding.receipts.setEnabled(false);
@@ -105,9 +107,8 @@ public class FinanceFragment extends Fragment {
     }
 
     private void back() {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.container, new HomeFragment());
-        fragmentTransaction.commit();
+        requireActivity().onBackPressed();
     }
+
+
 }

@@ -21,11 +21,11 @@ import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.ReceiptsVM;
 import com.dataflowstores.dataflow.databinding.SearchReceiptBinding;
+import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -34,6 +34,9 @@ public class SearchReceipts extends AppCompatActivity {
     SearchReceiptBinding binding;
     ReceiptsVM receiptsVM;
     String uuid;
+    Long branchISN;
+    Long workerCBranchISN;
+    Long workerCISN;
 
     @SuppressLint("HardwareIds")
     @Override
@@ -60,7 +63,7 @@ public class SearchReceipts extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 if (App.isNetworkAvailable(SearchReceipts.this)) {
-                    receiptsVM.getReceipt(App.currentUser.getBranchISN(), uuid, s, App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN(), 1);
+                    receiptsVM.getReceipt(branchISN, uuid, s, workerCBranchISN, workerCISN, 1);
                     binding.progressBar.setVisibility(View.VISIBLE);
 
                 } else {
@@ -82,6 +85,23 @@ public class SearchReceipts extends AppCompatActivity {
                 return false;
             }
         });
+
+        if (getIntent().getStringExtra("moveId") != null) {
+            branchISN = getIntent().getLongExtra("branchISN", 0);
+            workerCBranchISN = getIntent().getLongExtra("workerCBranchISN", 0);
+            workerCISN = getIntent().getLongExtra("workerCISN", 0);
+            String query = getIntent().getStringExtra("moveId");
+            binding.searchInvoices.setQuery(query, true);
+            binding.searchInvoices.setVisibility(View.GONE);
+            binding.back.setVisibility(View.VISIBLE);
+            binding.back.setOnClickListener(v -> {
+                onBackPressed();
+            });
+        } else {
+            branchISN = App.currentUser.getBranchISN();
+            workerCBranchISN = App.currentUser.getWorkerBranchISN();
+            workerCISN = App.currentUser.getWorkerISN();
+        }
     }
 
     private void takeScreenShot() {
@@ -140,6 +160,8 @@ public class SearchReceipts extends AppCompatActivity {
             binding.invoiceTemplate.saleManName.setText("المندوب: " + App.receiptModel.getData().get(0).getSaleManName());
         else
             binding.invoiceTemplate.saleManName.setVisibility(View.GONE);
+        binding.invoiceTemplate.foundationName.setText(App.currentUser.getFoundationName());
+
         binding.invoiceTemplate.date.setText("التاريخ: " + App.receiptModel.getData().get(0).getCreateDate());
         binding.invoiceTemplate.receiptTotal.setText(String.format(Locale.US, "%.2f", Float.parseFloat(App.receiptModel.getData().get(0).getNetValue())) + " جنيه");
         binding.invoiceTemplate.receiptNotes.setText("ملاحضات \n" + App.receiptModel.getData().get(0).getHeaderNotes());
@@ -148,8 +170,8 @@ public class SearchReceipts extends AppCompatActivity {
                 App.receiptModel.getData().get(0).getTradeRecoredNo());
         binding.invoiceTemplate.taxCardNo2.setText("رقم التسجيل" + "\n" +
                 App.receiptModel.getData().get(0).getTaxeCardNo());
-        binding.invoiceTemplate.foundationName.setText(App.currentUser.getFoundationName());
         binding.invoiceTemplate.moveId.setText("رقم المقبوض: " + App.receiptModel.getData().get(0).getMoveId());
+        App.pdfName ="رقم المقبوض: " + App.receiptModel.getData().get(0).getMoveId();
         binding.invoiceTemplate.clientAddress.setText(App.receiptModel.getData().get(0).getBranchAddress());
         if (App.receiptModel.getData().get(0).getTel1() != null || App.receiptModel.getData().get(0).getTel1().isEmpty())
             binding.invoiceTemplate.tel1.setText(App.receiptModel.getData().get(0).getTel1());

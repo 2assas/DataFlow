@@ -3,7 +3,9 @@ package com.dataflowstores.dataflow.utils
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import java.net.URL
 import java.util.concurrent.atomic.AtomicBoolean
+import javax.net.ssl.HttpsURLConnection
 
 class SingleLiveEvent<T> : MutableLiveData<T>() {
 
@@ -25,5 +27,6 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
     fun call() {
         postValue(null)
     }
+
 
 }

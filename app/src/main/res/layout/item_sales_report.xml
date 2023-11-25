@@ -118,6 +118,62 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/shiftsCheckbox" />
 
+        <Button
+            android:id="@+id/searchClient"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:gravity="center"
+            android:text="بحث"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/getClient"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/getClient" />
+
+        <EditText
+            android:id="@+id/getClient"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/rounded_border"
+            android:drawableStart="@drawable/baseline_search_24"
+            android:imeOptions="actionSearch"
+            android:lines="1"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:singleLine="true"
+            app:layout_constraintBottom_toBottomOf="@+id/clientCheckBox"
+            app:layout_constraintEnd_toStartOf="@+id/clientText"
+            app:layout_constraintStart_toEndOf="@+id/searchClient"
+            app:layout_constraintTop_toTopOf="@+id/clientCheckBox" />
+
+        <TextView
+            android:id="@+id/clientText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:text="العميل"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/clientCheckBox"
+            app:layout_constraintEnd_toStartOf="@+id/clientCheckBox"
+            app:layout_constraintTop_toTopOf="@+id/clientCheckBox" />
+
+        <CheckBox
+            android:id="@+id/clientCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/userCheckbox" />
+
         <CheckBox
             android:id="@+id/intervalCheckBox"
             android:layout_width="wrap_content"
@@ -125,7 +181,7 @@
             android:layout_marginTop="12dp"
             android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/userCheckbox" />
+            app:layout_constraintTop_toBottomOf="@+id/clientCheckBox" />
 
         <CheckBox
             android:id="@+id/workDateCheckbox"
@@ -290,7 +346,7 @@
             android:layout_height="match_parent"
             android:background="@color/white"
             android:clickable="true"
-            android:elevation="2dp"
+            android:elevation="5dp"
             android:focusable="true"
             android:gravity="center"
             android:visibility="gone"

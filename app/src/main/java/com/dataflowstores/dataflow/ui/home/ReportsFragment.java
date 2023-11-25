@@ -3,24 +3,24 @@ package com.dataflowstores.dataflow.ui.home;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.dataflowstores.dataflow.App;
-import com.dataflowstores.dataflow.ui.reports.SearchCustomerBalance;
+import com.dataflowstores.dataflow.R;
+import com.dataflowstores.dataflow.databinding.FragmentReportsBinding;
 import com.dataflowstores.dataflow.ui.StoreReportScreen;
+import com.dataflowstores.dataflow.ui.reports.SearchCustomerBalance;
+import com.dataflowstores.dataflow.ui.reports.cashierMovesReport.CashierMovesReport;
 import com.dataflowstores.dataflow.ui.reports.financialReport.FinancialReport;
 import com.dataflowstores.dataflow.ui.reports.itemSalesReport.ItemSalesReport;
 import com.dataflowstores.dataflow.ui.searchItemPrice.SearchItemPrice;
-import com.dataflowstores.dataflow.R;
-import com.dataflowstores.dataflow.databinding.FragmentReportsBinding;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -80,22 +80,34 @@ public class ReportsFragment extends Fragment {
     }
 
     private void setupViews() {
+        App.customer = null;
         binding.back.setOnClickListener(view -> back());
         binding.financialReport.setOnClickListener(view -> {
-            startActivity(new Intent(requireActivity(), FinancialReport.class));
+            if (App.isNetworkAvailable(requireActivity())) {
+                startActivity(new Intent(requireActivity(), FinancialReport.class));
+            }
         });
         binding.itemSalesReport.setOnClickListener(view -> {
-            startActivity(new Intent(requireActivity(), ItemSalesReport.class));
+            if (App.isNetworkAvailable(requireActivity()))
+                startActivity(new Intent(requireActivity(), ItemSalesReport.class));
         });
         binding.storeReport.setOnClickListener(view -> {
-            startActivity(new Intent(requireActivity(), StoreReportScreen.class));
+            if (App.isNetworkAvailable(requireActivity()))
+                startActivity(new Intent(requireActivity(), StoreReportScreen.class));
         });
         binding.searchCustomer.setOnClickListener(view -> {
-            startActivity(new Intent(requireActivity(), SearchCustomerBalance.class));
+            if (App.isNetworkAvailable(requireActivity()))
+                startActivity(new Intent(requireActivity(), SearchCustomerBalance.class));
         });
         binding.priceEnquiry.setOnClickListener(view -> {
-            startActivity(new Intent(requireActivity(), SearchItemPrice.class));
+            if (App.isNetworkAvailable(requireActivity()))
+                startActivity(new Intent(requireActivity(), SearchItemPrice.class));
         });
+        binding.cashierMovesReport.setOnClickListener(view -> {
+            if (App.isNetworkAvailable(requireActivity()))
+                startActivity(new Intent(requireActivity(), CashierMovesReport.class));
+        });
+
     }
 
     private void permissions() {
@@ -130,13 +142,17 @@ public class ReportsFragment extends Fragment {
                 binding.storeReport.setBackground(requireActivity().getDrawable(R.drawable.gray_rounded));
             }
         }
+        if (App.currentUser.getMobileCashierMovesReport() == 0) {
+            binding.cashierMovesReport.setEnabled(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                binding.cashierMovesReport.setBackground(requireActivity().getDrawable(R.drawable.gray_rounded));
+            }
+        }
     }
 
     private void back() {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.container, new HomeFragment());
-        fragmentTransaction.commit();
+        requireActivity().onBackPressed();
+
     }
 
 }

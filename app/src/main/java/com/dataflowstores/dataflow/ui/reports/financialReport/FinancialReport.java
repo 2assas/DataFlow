@@ -70,11 +70,11 @@ public class FinancialReport extends AppCompatActivity {
         if (savedInstanceState != null) {
             startActivity(new Intent(this, SplashScreen.class));
             finishAffinity();
-        }else{
-        binding = DataBindingUtil.setContentView(this, R.layout.financial_report);
-        reportVM = new ViewModelProvider(this).get(ReportViewModel.class);
-        uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        initViews();
+        } else {
+            binding = DataBindingUtil.setContentView(this, R.layout.financial_report);
+            reportVM = new ViewModelProvider(this).get(ReportViewModel.class);
+            uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            initViews();
         }
     }
 
@@ -86,7 +86,8 @@ public class FinancialReport extends AppCompatActivity {
         collectData();
         fillDates();
     }
-    void fillDates(){
+
+    void fillDates() {
         Calendar calendar = Calendar.getInstance();
         String date = sdf.format(calendar.getTime());
         binding.startTime.setText(date);
@@ -114,22 +115,23 @@ public class FinancialReport extends AppCompatActivity {
                 if (binding.bankCheckbox.isChecked()) {
                     intent.putExtra("bank", selectedBank.getBankName());
                 }
-                if (App.currentUser.getPermission()==0) {
+                if (App.currentUser.getPermission() == 0) {
                     intent.putExtra("userName", App.currentUser.getWorkerName());
-                }else if(binding.userCheckbox.isChecked()) {
+                } else if (binding.userCheckbox.isChecked()) {
                     intent.putExtra("userName", selectedWorker.getWorkerName());
                 }
                 intent.putExtra("cash", String.valueOf(cash));
                 intent.putExtra("credit", String.valueOf(credit));
                 intent.putExtra("check", String.valueOf(check));
-                if(App.currentUser.getPermission()==1) {
+                if (App.currentUser.getPermission() == 1) {
                     intent.putExtra("branch", selectedBranch.getBranchName());
-                }else
+                } else
                     intent.putExtra("branch", binding.branchName.getText().toString());
 
                 if (binding.workDateCheckbox.isChecked()) {
                     intent.putExtra("workdayStart", workDayStart);
                     intent.putExtra("workdayEnd", workDayEnd);
+                    Log.e("checkWorkDay", " start = "+ workDayStart+ " end = "+ workDayEnd);
                 }
                 startActivity(intent);
             }
@@ -139,7 +141,7 @@ public class FinancialReport extends AppCompatActivity {
     void collectData() {
         if (App.currentUser.getPermission() == 0) {
             reportBody = new ReportBody();
-            reportVM.getSafeDeposit(App.currentUser.getBranchISN(), uuid,0);
+            reportVM.getSafeDeposit(App.currentUser.getBranchISN(), uuid, 0);
             binding.userName.setText(App.currentUser.getWorkerName());
             binding.branchSpinner.setVisibility(View.GONE);
             binding.branchName.setVisibility(View.VISIBLE);
@@ -164,6 +166,7 @@ public class FinancialReport extends AppCompatActivity {
                     binding.shiftISN.setVisibility(View.GONE);
                 }
             });
+
 
             //worker
             binding.userCheckbox.setChecked(true);
@@ -192,11 +195,12 @@ public class FinancialReport extends AppCompatActivity {
             binding.reportButton.setOnClickListener(v -> {
                 reportBody = new ReportBody();
                 fillCashierReport();
-                reportVM.getFinancialReport(reportBody, uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getWorkerBranchISN());
+                reportVM.getFinancialReport(reportBody, uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getWorkerBranchISN(), String.valueOf(App.currentUser.getWorkerISN()), String.valueOf(App.currentUser.getWorkerBranchISN()));
             });
 
 
-        } else {
+        }
+        else {
             binding.safeDepositSpinner.setVisibility(View.VISIBLE);
             binding.shiftISN.setVisibility(View.VISIBLE);
             reportVM.getBranches(uuid);
@@ -209,6 +213,8 @@ public class FinancialReport extends AppCompatActivity {
             binding.reportButton.setOnClickListener(v -> {
                 reportBody = new ReportBody();
                 reportBody.setBranchISN(selectedBranch.getBranchISN());
+                reportBody.setWorker_ISN(String.valueOf(App.currentUser.getWorkerISN()));
+
                 if (binding.safeDepositCheckbox.isChecked()) {
                     reportBody.setSafeDeposit_ISN(String.valueOf(selectedSafeDeposit.getSafeDeposit_ISN()));
                     reportBody.setSafeDepositBranchISN(String.valueOf(selectedSafeDeposit.getBranchISN()));
@@ -216,8 +222,7 @@ public class FinancialReport extends AppCompatActivity {
                 if (binding.shiftsCheckbox.isChecked())
                     if (!binding.shiftISN.getText().toString().isEmpty())
                         reportBody.setShiftISN(binding.shiftISN.getText().toString());
-                if (binding.userCheckbox.isChecked())
-                    reportBody.setWorker_ISN(selectedWorker.getWorkerISN());
+
                 if (binding.intervalCheckBox.isChecked()) {
                     if (!binding.startTime.getText().toString().isEmpty()) {
                         reportBody.setFrom(binding.startTime.getText().toString());
@@ -237,6 +242,9 @@ public class FinancialReport extends AppCompatActivity {
                         reportBody.setToWorkday(binding.workEndTime.getText().toString());
                         workDayEnd = binding.workEndTime.getText().toString();
                     }
+                }
+                if (!binding.userCheckbox.isChecked()){
+                    selectedWorker = null;
                 }
 
                 if (binding.bankCheckbox.isChecked()) {
@@ -268,9 +276,12 @@ public class FinancialReport extends AppCompatActivity {
                     }
                 });
                 reportBody.setPaymentMethods(new PaymentMethods(check, credit, cash));
-                reportVM.getFinancialReport(reportBody, uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getWorkerBranchISN());
+                reportVM.getFinancialReport(reportBody, uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getWorkerBranchISN(), selectedWorker == null ? null : selectedWorker.getWorkerISN(), selectedWorker == null ? null : selectedWorker.getBranchISN());
             });
-
+        }
+        if (App.currentUser.getMobilePreviousDatesInReports() == 1) {
+            binding.workStartTime.setOnClickListener(v -> datePicker(binding.workStartTime));
+            binding.workEndTime.setOnClickListener(v -> datePicker(binding.workEndTime));
         }
     }
 
@@ -328,13 +339,18 @@ public class FinancialReport extends AppCompatActivity {
 
     void fillCashierReport() {
         reportBody.setBranchISN(App.currentUser.getBranchISN());
+        workDayStart = binding.workStartTime.getText().toString();
+        workDayEnd = binding.workEndTime.getText().toString();
+
         if (binding.safeDepositCheckbox.isChecked()) {
             reportBody.setSafeDeposit_ISN(String.valueOf(selectedSafeDeposit.getSafeDeposit_ISN()));
             reportBody.setSafeDepositBranchISN(String.valueOf(selectedSafeDeposit.getBranchISN()));
         }
-        reportBody.setFromWorkday(currentDate);
-        reportBody.setToWorkday(currentDate);
 
+        reportBody.setFromWorkday(workDayStart);
+        reportBody.setToWorkday(workDayEnd);
+
+        reportBody.setWorker_ISN(String.valueOf(App.currentUser.getWorkerISN()));
         binding.cashCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 cash = 1;
@@ -362,7 +378,6 @@ public class FinancialReport extends AppCompatActivity {
         reportBody.setPaymentMethods(new PaymentMethods(check, credit, cash));
         if (binding.shiftsCheckbox.isChecked() && !binding.shiftISN.getText().toString().isEmpty())
             reportBody.setShiftISN(binding.shiftISN.getText().toString());
-
     }
 
     void branchSpinner(Branches branches) {
@@ -395,7 +410,7 @@ public class FinancialReport extends AppCompatActivity {
                 binding.bankCheckbox.setChecked(false);
                 binding.shiftsCheckbox.setChecked(false);
                 reportVM.getBanks(selectedBranch.getBranchISN(), uuid);
-                reportVM.getSafeDeposit(selectedBranch.getBranchISN(), uuid,0);
+                reportVM.getSafeDeposit(selectedBranch.getBranchISN(), uuid, 0);
             }
 
             @Override
@@ -404,7 +419,7 @@ public class FinancialReport extends AppCompatActivity {
             }
         });
         reportVM.getBanks(selectedBranch.getBranchISN(), uuid);
-        reportVM.getSafeDeposit(selectedBranch.getBranchISN(), uuid,0);
+        reportVM.getSafeDeposit(selectedBranch.getBranchISN(), uuid, 0);
     }
 
     void safeDepositSpinner(SafeDeposit safeDeposit) {

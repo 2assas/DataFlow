@@ -45,6 +45,10 @@ public class SearchCashing extends AppCompatActivity {
     String uuid;
     public static IMyBinder binder;
     int moveType = 16;
+    Long branchISN;
+    Long workerCBranchISN;
+    Long workerCISN;
+
     ServiceConnection conn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -84,8 +88,8 @@ public class SearchCashing extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 if (App.isNetworkAvailable(SearchCashing.this)) {
-                    printInvoiceVM.getPrintingData(String.valueOf(App.currentUser.getBranchISN()), uuid, s,
-                            String.valueOf(App.currentUser.getWorkerBranchISN()), String.valueOf(App.currentUser.getWorkerISN()), SearchCashing.this, moveType);
+                    printInvoiceVM.getPrintingData(String.valueOf(branchISN), uuid, s,
+                            String.valueOf(workerCBranchISN), String.valueOf(workerCISN), SearchCashing.this, moveType);
                     binding.progressBar.setVisibility(View.VISIBLE);
                 } else {
                     App.noConnectionDialog(SearchCashing.this);
@@ -111,6 +115,24 @@ public class SearchCashing extends AppCompatActivity {
         Intent intent = new Intent(this, PosprinterService.class);
         bindService(intent, conn, BIND_AUTO_CREATE);
         getInvoiceData();
+        if(getIntent().getStringExtra("moveId")!=null){
+            branchISN = getIntent().getLongExtra("branchISN", 0);
+            workerCBranchISN = getIntent().getLongExtra("workerCBranchISN", 0);
+            workerCISN = getIntent().getLongExtra("workerCISN", 0);
+            String query = getIntent().getStringExtra("moveId");
+            moveType = getIntent().getIntExtra("moveType",0);
+
+            binding.searchInvoices.setQuery(query, true);
+            binding.searchInvoices.setVisibility(View.GONE);
+            binding.back.setVisibility(View.VISIBLE);
+            binding.back.setOnClickListener(v -> {
+                onBackPressed();
+            });
+        } else {
+            branchISN = App.currentUser.getBranchISN();
+            workerCBranchISN = App.currentUser.getWorkerBranchISN();
+            workerCISN = App.currentUser.getWorkerISN();
+        }
     }
 
 
@@ -132,13 +154,15 @@ public class SearchCashing extends AppCompatActivity {
     // this will find a bluetooth printer device
     @SuppressLint("SetTextI18n")
     public void displayPrintingData() {
-        binding.invoiceTemplate.foundationName.setText(App.currentUser.getFoundationName());
-        binding.invoiceTemplate.branchName.setText(App.currentUser.getBranchName());
+        binding.invoiceTemplate.branchName.setText(App.printInvoice.getMoveHeader().getBranchName());
         binding.invoiceTemplate.invoiceDate.setText("التاريخ: " + App.printInvoice.getMoveHeader().getCreateDate().replace(".000", ""));
         binding.invoiceTemplate.dealerName.setText("الموظف: " + App.printInvoice.getMoveHeader().getWorkerName());
+        binding.invoiceTemplate.foundationName.setText(App.currentUser.getFoundationName());
+
         switch (moveType) {
             case 16: {
                 binding.invoiceTemplate.cashingNumber.setText("إذن صرف رقم " + App.printInvoice.getMoveHeader().getMove_ID());
+                App.pdfName = "إذن صرف رقم " + App.printInvoice.getMoveHeader().getMove_ID();
                 if (App.printInvoice.getMoveHeader().getBranchNameStockMove() != null && !App.printInvoice.getMoveHeader().getBranchNameStockMove().isEmpty()) {
                     binding.invoiceTemplate.branch.setVisibility(View.VISIBLE);
                     binding.invoiceTemplate.branch.setText("فرع الإستلام: " + App.printInvoice.getMoveHeader().getBranchNameStockMove());
@@ -149,12 +173,16 @@ public class SearchCashing extends AppCompatActivity {
             break;
             case 8: {
                 binding.invoiceTemplate.cashingNumber.setText("إهلاكات أصناف رقم " + App.printInvoice.getMoveHeader().getMove_ID());
+                App.pdfName= "إهلاكات أصناف رقم " + App.printInvoice.getMoveHeader().getMove_ID();
+
                 binding.invoiceTemplate.fromStore.setText("المخزن");
                 binding.invoiceTemplate.toStore.setVisibility(View.GONE);
             }
             break;
             case 17: {
                 binding.invoiceTemplate.cashingNumber.setText("إذن إستلام رقم " + App.printInvoice.getMoveHeader().getMove_ID());
+                App.pdfName = "إذن إستلام رقم " + App.printInvoice.getMoveHeader().getMove_ID();
+
                 binding.invoiceTemplate.fromStore.setText("المخزن");
                 if (App.printInvoice.getMoveHeader().getBranchNameStockMove() != null && !App.printInvoice.getMoveHeader().getBranchNameStockMove().isEmpty()) {
                     binding.invoiceTemplate.branch.setVisibility(View.VISIBLE);
@@ -165,24 +193,29 @@ public class SearchCashing extends AppCompatActivity {
             break;
             case 15: {
                 binding.invoiceTemplate.cashingNumber.setText("تكوين صنف رقم " + App.printInvoice.getMoveHeader().getMove_ID());
+                App.pdfName = "تكوين صنف رقم " + App.printInvoice.getMoveHeader().getMove_ID();
                 binding.invoiceTemplate.fromStore.setText("المخزن");
                 binding.invoiceTemplate.toStore.setVisibility(View.GONE);
             }
             break;
             case 12: {
                 binding.invoiceTemplate.cashingNumber.setText("كميات أول مدة رقم " + App.printInvoice.getMoveHeader().getMove_ID());
+                App.pdfName= "كميات أول مدة رقم " + App.printInvoice.getMoveHeader().getMove_ID();
                 binding.invoiceTemplate.fromStore.setText("المخزن");
                 binding.invoiceTemplate.toStore.setVisibility(View.GONE);
             }
             break;
             case 7: {
                 binding.invoiceTemplate.cashingNumber.setText("جرد أصناف رقم " + App.printInvoice.getMoveHeader().getMove_ID());
+                App.pdfName= "جرد أصناف رقم " + App.printInvoice.getMoveHeader().getMove_ID();
                 binding.invoiceTemplate.fromStore.setText("المخزن");
                 binding.invoiceTemplate.toStore.setVisibility(View.GONE);
             }
             break;
             case 14: {
                 binding.invoiceTemplate.cashingNumber.setText("تحويل مخزنى رقم " + App.printInvoice.getMoveHeader().getMove_ID());
+                App.pdfName= "تحويل مخزنى رقم " + App.printInvoice.getMoveHeader().getMove_ID();
+
                 binding.invoiceTemplate.fromStore.setText("من مخزن");
                 binding.invoiceTemplate.toStore.setVisibility(View.VISIBLE);
             }

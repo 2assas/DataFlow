@@ -3,22 +3,19 @@ package com.dataflowstores.dataflow.ui.home;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
+
 import com.dataflowstores.dataflow.App;
-import com.dataflowstores.dataflow.ui.cashing.SearchProductsCashing;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.FragmentStoreOperationsBinding;
 import com.dataflowstores.dataflow.pojo.users.CustomerData;
 import com.dataflowstores.dataflow.pojo.users.SalesManData;
+import com.dataflowstores.dataflow.ui.cashing.SearchProductsCashing;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -82,60 +79,74 @@ public class StoreOperationsFragment extends Fragment {
         App.headerNotes="";
         binding.back.setOnClickListener(view -> back());
         binding.cashing.setOnClickListener(view -> {
-            Intent intent = new Intent(requireActivity(), SearchProductsCashing.class);
-            intent.putExtra("moveType", 16);
-            intent.putExtra("store", false);
-            App.customer = new CustomerData();
-            App.agent = new SalesManData();
-            startActivity(intent);
+            if (App.isNetworkAvailable(requireActivity())) {
+                Intent intent = new Intent(requireActivity(), SearchProductsCashing.class);
+                intent.putExtra("moveType", 16);
+                intent.putExtra("store", false);
+                App.customer = new CustomerData();
+                App.agent = new SalesManData();
+                startActivity(intent);
+            }
         });
         binding.receiving.setOnClickListener(view -> {
-            Intent intent = new Intent(requireActivity(), SearchProductsCashing.class);
-            intent.putExtra("moveType", 17);
-            intent.putExtra("store", true);
-            App.customer = new CustomerData();
-            App.agent = new SalesManData();
-            startActivity(intent);
+            if (App.isNetworkAvailable(requireActivity())) {
+                Intent intent = new Intent(requireActivity(), SearchProductsCashing.class);
+                intent.putExtra("moveType", 17);
+                intent.putExtra("store", true);
+                App.customer = new CustomerData();
+                App.agent = new SalesManData();
+                startActivity(intent);
+            }
         });
         binding.storeTransfer.setOnClickListener(view -> {
-            Intent intent = new Intent(requireActivity(), SearchProductsCashing.class);
-            intent.putExtra("moveType", 14);
-            intent.putExtra("store", true);
-            App.customer = new CustomerData();
-            App.agent = new SalesManData();
-            startActivity(intent);
+            if (App.isNetworkAvailable(requireActivity())) {
+                Intent intent = new Intent(requireActivity(), SearchProductsCashing.class);
+                intent.putExtra("moveType", 14);
+                intent.putExtra("store", true);
+                App.customer = new CustomerData();
+                App.agent = new SalesManData();
+                startActivity(intent);
+            }
         });
         binding.createItem.setOnClickListener(view -> {
-            Intent intent = new Intent(requireActivity(), SearchProductsCashing.class);
-            intent.putExtra("moveType", 15);
-            intent.putExtra("store", false);
-            App.customer = new CustomerData();
-            App.agent = new SalesManData();
-            startActivity(intent);
+            if (App.isNetworkAvailable(requireActivity())) {
+                Intent intent = new Intent(requireActivity(), SearchProductsCashing.class);
+                intent.putExtra("moveType", 15);
+                intent.putExtra("store", false);
+                App.customer = new CustomerData();
+                App.agent = new SalesManData();
+                startActivity(intent);
+            }
         });
         binding.mobileFirstPeriod.setOnClickListener(view -> {
-            Intent intent = new Intent(requireActivity(), SearchProductsCashing.class);
-            intent.putExtra("moveType", 12);
-            intent.putExtra("store", false);
-            App.customer = new CustomerData();
-            App.agent = new SalesManData();
-            startActivity(intent);
+            if (App.isNetworkAvailable(requireActivity())) {
+                Intent intent = new Intent(requireActivity(), SearchProductsCashing.class);
+                intent.putExtra("moveType", 12);
+                intent.putExtra("store", false);
+                App.customer = new CustomerData();
+                App.agent = new SalesManData();
+                startActivity(intent);
+            }
         });
         binding.mobileLosses.setOnClickListener(view -> {
-            Intent intent = new Intent(requireActivity(), SearchProductsCashing.class);
-            intent.putExtra("moveType", 8);
-            intent.putExtra("store", false);
-            App.customer = new CustomerData();
-            App.agent = new SalesManData();
-            startActivity(intent);
+            if (App.isNetworkAvailable(requireActivity())) {
+                Intent intent = new Intent(requireActivity(), SearchProductsCashing.class);
+                intent.putExtra("moveType", 8);
+                intent.putExtra("store", false);
+                App.customer = new CustomerData();
+                App.agent = new SalesManData();
+                startActivity(intent);
+            }
         });
         binding.mobileInventory.setOnClickListener(view -> {
-            Intent intent = new Intent(requireActivity(), SearchProductsCashing.class);
-            intent.putExtra("moveType", 7);
-            intent.putExtra("store", false);
-            App.customer = new CustomerData();
-            App.agent = new SalesManData();
-            startActivity(intent);
+            if (App.isNetworkAvailable(requireActivity())) {
+                Intent intent = new Intent(requireActivity(), SearchProductsCashing.class);
+                intent.putExtra("moveType", 7);
+                intent.putExtra("store", false);
+                App.customer = new CustomerData();
+                App.agent = new SalesManData();
+                startActivity(intent);
+            }
         });
     }
 
@@ -189,9 +200,6 @@ public class StoreOperationsFragment extends Fragment {
     }
 
     private void back() {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.container, new HomeFragment());
-        fragmentTransaction.commit();
+        requireActivity().onBackPressed();
     }
 }

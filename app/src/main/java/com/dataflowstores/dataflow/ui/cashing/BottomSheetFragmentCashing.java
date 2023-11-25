@@ -99,6 +99,8 @@ public class BottomSheetFragmentCashing extends BottomSheetDialogFragment implem
                     App.serialNumber = binding.serialDialog.serialNumberInput.getText().toString();
                     isSerial = false;
                     Intent intent = new Intent(requireActivity(), ProductScreenCashing.class);
+                    App.editingPos=0;
+
                     intent.putExtra("moveType", moveType);
                     requireActivity().startActivity(intent);
                     getActivity().finish();
