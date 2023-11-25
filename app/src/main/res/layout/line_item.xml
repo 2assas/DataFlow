@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
@@ -13,14 +14,14 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/linearLayout2"
-        app:layout_constraintTop_toBottomOf="@+id/view2">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
+            android:id="@+id/itemName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="الصـــنف"
             android:gravity="center"
-            android:id="@+id/itemName"
+            android:text="الصـــنف"
             android:textColor="@color/black"
             android:textSize="14sp" />
 
@@ -33,35 +34,35 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toStartOf="@+id/linearLayout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view2">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
+            android:id="@+id/itemTotal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:text="الإجمالى"
-            android:id="@+id/itemTotal"
             android:textColor="@color/black"
             android:textSize="14sp" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:gravity="center"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="الكمية"
             android:id="@+id/itemQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="الكمية"
             android:textColor="@color/black"
             android:textSize="14sp" />
 
         <TextView
+            android:id="@+id/itemPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="السعر"
             android:gravity="center"
-            android:id="@+id/itemPrice"
+            android:text="السعر"
             android:textColor="@color/black"
             android:textSize="14sp" />
     </LinearLayout>

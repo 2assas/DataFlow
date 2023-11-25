@@ -105,13 +105,29 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/foundationName" />
 
+                <TextView
+                    android:id="@+id/resales"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="مرتجع مبيعات"
+                    android:visibility="gone"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.498"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/branchName" />
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/invoiceHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/branchName">
+                    app:layout_constraintTop_toBottomOf="@+id/resales">
 
 
                     <TextView
@@ -158,7 +174,7 @@
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/invoiceDate"
-                        app:layout_constraintTop_toBottomOf="@+id/invoiceNumber" />
+                        app:layout_constraintTop_toBottomOf="@+id/moveId" />
 
                     <TextView
                         android:id="@+id/invoiceDate"
@@ -173,7 +189,7 @@
                         android:textSize="12sp"
                         app:layout_constraintEnd_toStartOf="@+id/SellingType"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/invoiceNumber" />
+                        app:layout_constraintTop_toBottomOf="@+id/moveId" />
 
                     <TextView
                         android:id="@+id/dealerName"

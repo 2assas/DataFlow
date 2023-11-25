@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.dataflow">
 
-    <uses-permission android:name="android.permiss  ion.ACCESS_WIFI_STATE" />
+    package="com.dataflowstores.dataflow">
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
 
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission. ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
@@ -33,12 +35,11 @@
         android:name="com.google.android.gms.vision.DEPENDENCIES"
         android:value="barcode" />
 
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="true" />
+
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="true"
+        android:largeHeap="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
@@ -48,20 +49,35 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:supportsRtl"
         tools:targetApi="m">
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
         <activity
-            android:name=".ui.MainActivity"
+            android:name="com.dataflowstores.dataflow.ui.home.MainActivity"
+            android:exported="true"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.GateWay"
+            android:name="com.dataflowstores.dataflow.ui.gateway.GateWay"
+            android:exported="true"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.invoice.FirstInvoice"
+            android:name="com.dataflowstores.dataflow.ui.invoice.FirstInvoice"
+            android:exported="true"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.Checkout"
+            android:name="com.dataflowstores.dataflow.ui.Checkout"
+            android:exported="true"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.SplashScreen"
+            android:name="com.dataflowstores.dataflow.ui.SplashScreen"
+            android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -69,67 +85,117 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.AddProducts"
+            android:name="com.dataflowstores.dataflow.ui.AddProducts"
+            android:exported="true"
+
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.ProductDetails"
+            android:name="com.dataflowstores.dataflow.ui.products.ProductDetails"
+            android:exported="true"
+
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.ScanBarCode"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.invoice.PrintInvoice"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.DeviceListActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.PrintingInvoice"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.invoice.PrintScreen"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.SearchInvoice"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.StoreReportScreen"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.reports.ReportsScreen"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.receipts.ReceiptScreen"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.receipts.PrintReceipt"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.SearchReceipts"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.reports.FinancialReport"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.reports.FinancialReportPrintScreen"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.cashing.ProductScreenCashing"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.cashing.SearchProductsCashing"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.cashing.CashingPrinting"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.cashing.SearchCashing"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.SearchCustomerBalance"
+            android:name="com.dataflowstores.dataflow.ui.ScanBarCode"
+            android:exported="true"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.invoice.PrintInvoice"
+            android:exported="true"
+
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.DeviceListActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.invoice.PrintScreen"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.SearchInvoice"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.StoreReportScreen"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.reports.ReportsScreen"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.receipts.ReceiptScreen"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.receipts.PrintReceipt"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.SearchReceipts"
+            android:exported="true"
+
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.reports.financialReport.FinancialReport"
+            android:exported="true"
+
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.reports.financialReport.FinancialReportPrintScreen"
+            android:exported="true"
+
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.cashing.ProductScreenCashing"
+            android:exported="true"
+
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.cashing.SearchProductsCashing"
+            android:exported="true"
+
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.cashing.CashingPrinting"
+            android:exported="true"
+
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.cashing.SearchCashing"
+            android:exported="true"
+
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.reports.SearchCustomerBalance"
+            android:exported="true"
+
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.expenses.ExpensesScreen"
+            android:exported="true"
+
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.expenses.PrintExpenses"
+            android:exported="true"
+
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.expenses.SearchExpenses"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.dataflowstores.dataflow.ui.searchItemPrice.SearchItemPrice"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.reports.itemSalesReport.ItemSalesReport" />
+        <activity android:name=".ui.reports.itemSalesReport.ItemSalesPrintScreen" />
+        <activity android:name=".ui.reports.cashierMovesReport.CashierMovesReport" />
+        <activity android:name=".ui.reports.cashierMovesReport.CashierMovesReportPrinting" />
+
         <service android:name="net.posprinter.service.PosprinterService" />
+
     </application>
 
 </manifest>

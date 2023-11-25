@@ -70,6 +70,18 @@
                 android:layout_height="wrap_content"
                 tools:ignore="ExtraText">
 
+
+                <Button
+                    android:id="@+id/availableQuantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/blue_rounded"
+                    android:gravity="center"
+                    android:text="الكمية المتاحة للصنف"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
                 <TextView
                     android:id="@+id/textView15"
                     android:layout_width="wrap_content"
@@ -634,7 +646,7 @@
                     android:layout_marginTop="15dp"
                     android:gravity="center"
                     android:orientation="vertical"
-                    app:layout_constraintEnd_toStartOf="@+id/textView29"
+                    app:layout_constraintEnd_toStartOf="@+id/quantityTxt"
                     app:layout_constraintStart_toEndOf="@+id/textView26"
                     app:layout_constraintTop_toBottomOf="@+id/productNote">
 
@@ -666,7 +678,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/minus_item" />
 
                 <TextView
-                    android:id="@+id/textView29"
+                    android:id="@+id/quantityTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="الكمية"
