@@ -158,7 +158,7 @@ public class  ProductVM extends ViewModel {
             }
         });
     }
-    public void getItemPrice(String uuid, int itemBranchISN, int itemISN){
+    public void getItemPrice(String uuid, int itemBranchISN, int itemISN, int priceType){
         Observable<ItemPriceResponse> storeReportModelObservable= apiClient.getItemPrice(uuid,itemBranchISN, itemISN,App.currentUser.getWorkerName(),
                         App.currentUser.getUserName(),App.currentUser.getWorkStationName(),String.valueOf( App.currentUser.getWorkStationISN()),String.valueOf( App.currentUser.getWorkerBranchISN()),selectedFoundation,
                         App.currentUser.getLogIn_BISN(),
@@ -171,7 +171,7 @@ public class  ProductVM extends ViewModel {
                         App.currentUser.getLogIn_WSName(),
                         App.currentUser.getLogIn_CS(),
                         App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative())
+                        App.currentUser.getLogIn_FAlternative(), priceType)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         storeReportModelObservable.subscribe(new Observer<ItemPriceResponse>() {

@@ -16,7 +16,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.ProductVM;
@@ -25,6 +24,7 @@ import com.dataflowstores.dataflow.pojo.product.ProductData;
 import com.dataflowstores.dataflow.pojo.searchItemPrice.ItemPriceItem;
 import com.dataflowstores.dataflow.pojo.users.CustomerData;
 import com.dataflowstores.dataflow.ui.ScanBarCode;
+import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.fragments.BottomSheetFragment;
 import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
 
@@ -50,6 +50,19 @@ public class SearchItemPrice extends AppCompatActivity implements MyDialogCloseL
 
     private void setupViews() {
         App.customer = new CustomerData();
+        if (App.currentUser.getMobileItemPricesEnquiry() == 0) {
+            binding.sellingPrice.setEnabled(false);
+            binding.sellingPrice.setAlpha(.5F);
+            binding.buyingPrice.setChecked(true);
+        } else {
+            binding.sellingPrice.setChecked(true);
+        }
+
+        if (App.currentUser.getMobileItemPricesEnquiryBuy() == 0) {
+            binding.buyingPrice.setEnabled(false);
+            binding.buyingPrice.setAlpha(.5F);
+        }
+
         productVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
         binding.searchProducts.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -84,7 +97,7 @@ public class SearchItemPrice extends AppCompatActivity implements MyDialogCloseL
     }
 
     public void getItemPrice(ProductData productData) {
-        productVM.getItemPrice(uuid, productData.getBranchISN(), productData.getItemISN());
+        productVM.getItemPrice(uuid, productData.getBranchISN(), productData.getItemISN(), binding.sellingPrice.isChecked() ? 2 : 1);
         binding.itemName.setText(productData.getItemName());
         binding.itemNameCon.setVisibility(View.VISIBLE);
         binding.progress.setVisibility(View.VISIBLE);

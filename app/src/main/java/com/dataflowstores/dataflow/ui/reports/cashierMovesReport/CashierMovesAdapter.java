@@ -2,8 +2,6 @@ package com.dataflowstores.dataflow.ui.reports.cashierMovesReport;
 
 import android.annotation.SuppressLint;
 import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.CashierMovesItemBinding;
-import com.dataflowstores.dataflow.pojo.financialReport.ReportItem;
 import com.dataflowstores.dataflow.pojo.report.cashierMoves.CashierMoveData;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.TextStyle;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -68,8 +64,28 @@ public class CashierMovesAdapter extends RecyclerView.Adapter<CashierMovesAdapte
         binding.workingDayDate.setText(Html.fromHtml(workingDayDate));
         String netValue = "<b>" + "الصافي:" + "</b> " + String.format(Locale.US, "%.2f", Double.parseDouble(list.get(position).getNetValue()));
         binding.netValue.setText(Html.fromHtml(netValue));
-        int serialNum =position + 1;
+        int serialNum = position + 1;
         binding.serialNum.setText(serialNum + "");
+
+        if (!list.get(position).getHeaderNotes().isEmpty()) {
+            binding.headerNotes.setText(list.get(position).getHeaderNotes());
+            binding.headerNotes.setVisibility(View.VISIBLE);
+        } else {
+            binding.headerNotes.setVisibility(View.GONE);
+        }
+        if (!list.get(position).getPrev_balance().isEmpty()) {
+            binding.prevBalance.setText(list.get(position).getPrev_balance());
+            binding.prevBalance.setVisibility(View.VISIBLE);
+        } else {
+            binding.prevBalance.setVisibility(View.GONE);
+        }
+        if (!list.get(position).getCurrent_balance().isEmpty()) {
+            binding.currentBalance.setText(list.get(position).getCurrent_balance());
+            binding.currentBalance.setVisibility(View.VISIBLE);
+        } else {
+            binding.currentBalance.setVisibility(View.GONE);
+        }
+
     }
 
     @Override

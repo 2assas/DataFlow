@@ -10,11 +10,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.dataflowstores.dataflow.App;
-import com.dataflowstores.dataflow.webService.ServiceGenerator;
 import com.dataflowstores.dataflow.pojo.invoice.Invoice;
 import com.dataflowstores.dataflow.pojo.users.CustomerBalance;
 import com.dataflowstores.dataflow.webService.ApiClient;
 import com.dataflowstores.dataflow.webService.Constants;
+import com.dataflowstores.dataflow.webService.ServiceGenerator;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -84,8 +84,9 @@ public class PrintInvoiceVM extends ViewModel {
         invoiceObservable.subscribe(invoiceObserver);
     }
 
-    public void getCustomerBalance(String uuid, String dealerISN, String branchISN, String dealerType, String dealerName) {
-        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(uuid, dealerISN, branchISN, dealerType,selectedFoundation,
+    public void getCustomerBalance(String uuid, String dealerISN, String branchISN, String dealerType,
+                                   String moveBranchISN, String moveISN, String remainValue, String netValue, String moveType) {
+        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(uuid, dealerISN, branchISN, dealerType, selectedFoundation,
                 App.currentUser.getLogIn_BISN(),
                 App.currentUser.getLogIn_UID(),
                 App.currentUser.getLogIn_WBISN(),
@@ -96,7 +97,9 @@ public class PrintInvoiceVM extends ViewModel {
                 App.currentUser.getLogIn_WSName(),
                 App.currentUser.getLogIn_CS(),
                 App.currentUser.getLogIn_VN(),
-                App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                App.currentUser.getLogIn_FAlternative()
+                , moveBranchISN, moveISN, remainValue, netValue, moveType, null, App.currentUser.getInvoiceCurrentBalanceTimeInInvoice()
+        ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observer<CustomerBalance> observer = new Observer<CustomerBalance>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {

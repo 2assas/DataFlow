@@ -123,6 +123,9 @@ public class UserData implements Serializable {
     @SerializedName("MobileDealersBalanceEnquiry")
     private int MobileDealersBalanceEnquiry = 1;
 
+    @SerializedName("MobileSuppliersBalanceEnquiry")
+    private int MobileSuppliersBalanceEnquiry = 1;
+
 
     @SerializedName("MobileShowDealerCurrentBalanceInPrint")
     private int MobileShowDealerCurrentBalanceInPrint = 1;
@@ -152,6 +155,8 @@ public class UserData implements Serializable {
     private int MobileExpenses = 0;
     @SerializedName("MobileItemPricesEnquiry")
     private int MobileItemPricesEnquiry = 0;
+    @SerializedName("MobileItemPricesEnquiryBuy")
+    private int MobileItemPricesEnquiryBuy = 0;
     @SerializedName("MobileMoneyReport")
     private int MobileMoneyReport = 0;
     @SerializedName("MobileInventoryReport")
@@ -190,6 +195,33 @@ public class UserData implements Serializable {
     String LogIn_VN;
     @SerializedName("LogIn_FAlternative")
     String LogIn_FAlternative;
+    @SerializedName("InvoiceCurrentBalanceTimeInInvoice")
+    String InvoiceCurrentBalanceTimeInInvoice;
+
+
+    public String getInvoiceCurrentBalanceTimeInInvoice() {
+        return InvoiceCurrentBalanceTimeInInvoice;
+    }
+
+    public void setInvoiceCurrentBalanceTimeInInvoice(String invoiceCurrentBalanceTimeInInvoice) {
+        InvoiceCurrentBalanceTimeInInvoice = invoiceCurrentBalanceTimeInInvoice;
+    }
+
+    public int getMobileSuppliersBalanceEnquiry() {
+        return MobileSuppliersBalanceEnquiry;
+    }
+
+    public void setMobileSuppliersBalanceEnquiry(int mobileSuppliersBalanceEnquiry) {
+        MobileSuppliersBalanceEnquiry = mobileSuppliersBalanceEnquiry;
+    }
+
+    public int getMobileItemPricesEnquiryBuy() {
+        return MobileItemPricesEnquiryBuy;
+    }
+
+    public void setMobileItemPricesEnquiryBuy(int mobileItemPricesEnquiryBuy) {
+        MobileItemPricesEnquiryBuy = mobileItemPricesEnquiryBuy;
+    }
 
     public String getLogIn_BISN() {
         return LogIn_BISN;

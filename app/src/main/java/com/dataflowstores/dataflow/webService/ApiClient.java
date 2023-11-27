@@ -74,6 +74,21 @@ public interface ApiClient {
             , @Query("LogIn_FAlternative") String LogIn_FAlternative
     );
 
+    @GET("dealer/getSupplier")
+    Observable<Customer> getSupplier(@Query("supplier_name") String name_supplier, @Query("uiid") String uuid, @Query("WorkerBranchISN") Long WorkerBranchISN, @Query("WorkerISN") Long WorkerISN, @Query("SelectedFoundation") int selectedFoundation
+            , @Query("LogIn_BISN") String LogIn_BISN
+            , @Query("LogIn_UID") String LogIn_UID
+            , @Query("LogIn_WBISN") String LogIn_WBISN
+            , @Query("LogIn_WISN") String LogIn_WISN
+            , @Query("LogIn_WName") String LogIn_WName
+            , @Query("LogIn_WSBISN") String LogIn_WSBISN
+            , @Query("LogIn_WSISN") String LogIn_WSISN
+            , @Query("LogIn_WSName") String LogIn_WSName
+            , @Query("LogIn_CS") String LogIn_CS
+            , @Query("LogIn_VN") String LogIn_VN
+            , @Query("LogIn_FAlternative") String LogIn_FAlternative
+    );
+
     @GET("dealer/get_customer_balance")
     Observable<CustomerBalance> getCustomerBalance(@Query("uiid") String uuid, @Query("Dealer_ISN") String dealerISN, @Query("BranchISN") String branchISN, @Query("DealerType") String dealerType, @Query("SelectedFoundation") int selectedFoundation
             , @Query("LogIn_BISN") String LogIn_BISN
@@ -87,6 +102,15 @@ public interface ApiClient {
             , @Query("LogIn_CS") String LogIn_CS
             , @Query("LogIn_VN") String LogIn_VN
             , @Query("LogIn_FAlternative") String LogIn_FAlternative
+            , @Query("MoveBranchISN") String MoveBranchISN //invoice
+            , @Query("Move_ISN") String Move_ISN //invoice
+            , @Query("RemainValue") String RemainValue //invoice
+            , @Query("NetValue") String NetValue //invoice
+            , @Query("MoveType") String MoveType //invoice
+            , @Query("Branch_ISN") String Branch_ISN // from the branch spinner checkbox on report.
+            , @Query("InvoiceCurrentBalanceTimeInInvoice") String InvoiceCurrentBalanceTimeInInvoice
+                                                   //MoveBranchISN instead BranchISN
+                                                   //Move_ISN
     );
 
 
@@ -527,6 +551,7 @@ public interface ApiClient {
             , @Query("LogIn_CS") String LogIn_CS
             , @Query("LogIn_VN") String LogIn_VN
             , @Query("LogIn_FAlternative") String LogIn_FAlternative
+            , @Query("PriceType") Integer PriceType
     );
 
 

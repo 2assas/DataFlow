@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
@@ -58,7 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="إستعلام عن رصيد عميل"
+                    android:text="إستعلام عن رصيد متعامل"
                     android:textColor="@color/black"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -89,33 +89,82 @@
                 android:layout_height="wrap_content"
                 android:padding="20dp">
 
-                <TextView
-                    android:id="@+id/clientName"
-                    android:layout_width="wrap_content"
+
+                <RadioGroup
+                    android:id="@+id/radioGroup"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="إسم العميل"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
+                    android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+
+
+                    >
+
+
+                    <RadioButton
+                        android:id="@+id/supplierRadio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="25dp"
+                        android:text="مورد"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <RadioButton
+                        android:id="@+id/customerRadio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="25dp"
+                        android:text="عميل"
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
+
+                </RadioGroup>
+
+
+                <CheckBox
+                    android:id="@+id/branchCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginTop="5dp"
+                    android:text="الفرع"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+                <Spinner
+                    android:id="@+id/branchSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/branchCheckBox"
+                    app:layout_constraintEnd_toStartOf="@+id/branchCheckBox"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/branchCheckBox" />
 
 
                 <EditText
                     android:id="@+id/getClient"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="5dp"
                     android:background="@drawable/rounded_border"
+                    android:hint="أكتب إسم المتعامل هنا"
                     android:imeOptions="actionSearch"
                     android:lines="1"
                     android:padding="5dp"
                     android:singleLine="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/clientName" />
+                    app:layout_constraintTop_toBottomOf="@+id/branchCheckBox" />
 
 
                 <Button
@@ -125,7 +174,7 @@
                     android:layout_marginTop="20dp"
                     android:background="@drawable/rounded_border"
                     android:gravity="center"
-                    android:text="ابحث عن العميل"
+                    android:text="بـــــــحث"
                     android:textAlignment="center"
                     android:textColor="@color/white"
                     android:textSize="15sp"

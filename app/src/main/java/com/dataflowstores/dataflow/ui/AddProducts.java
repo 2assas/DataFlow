@@ -55,9 +55,13 @@ public class AddProducts extends AppCompatActivity {
             binding.searchProducts.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String s) {
-                    if (App.isNetworkAvailable(AddProducts.this))
-                        productVM.getProduct(s, uuid, null, 1);
-                    else {
+                    if (App.isNetworkAvailable(AddProducts.this)) {
+                        if (App.resales == 0)
+                            productVM.getProduct(s, uuid, null, 1);
+                        else
+                            productVM.getProduct(s, uuid, null, 3);
+
+                    } else {
                         App.noConnectionDialog(AddProducts.this);
                     }
                     BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();

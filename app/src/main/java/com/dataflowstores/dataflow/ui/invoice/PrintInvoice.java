@@ -39,7 +39,7 @@ import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.PrintInvoiceVM;
 import com.dataflowstores.dataflow.databinding.PrintInvoiceBinding;
-import com.dataflowstores.dataflow.pojo.invoice.MoveLines;
+import com.dataflowstores.dataflow.pojo.users.CustomerData;
 import com.dataflowstores.dataflow.ui.DeviceListActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.adapters.PrintingLinesAdapter;
@@ -51,7 +51,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Locale;
 import java.util.Set;
@@ -132,9 +131,28 @@ public class PrintInvoice extends AppCompatActivity implements Runnable {
 
     public void getInvoiceData() {
         printInvoiceVM.invoiceMutableLiveData = new MutableLiveData<>();
+
         printInvoiceVM.invoiceMutableLiveData.observe(this, invoice -> {
-            binding.progress.setVisibility(View.GONE);
             App.printInvoice = invoice;
+            if (App.currentUser.getMobileShowDealerCurrentBalanceInPrint() == 1 && App.customer.getDealerName() != null) {
+                @SuppressLint("HardwareIds") String uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+                printInvoiceVM.getCustomerBalance(uuid, invoice.getMoveHeader().getDealerISN(), invoice.getMoveHeader().getDealerBranchISN(), invoice.getMoveHeader().getDealerType(),
+                        invoice.getMoveHeader().getBranchISN(),
+                        invoice.getMoveHeader().getMove_ISN(),
+                        invoice.getMoveHeader().getRemainValue(),
+                        invoice.getMoveHeader().getNetValue(),
+                        App.resales == 1 ? "3" : "1");
+            } else {
+                binding.progress.setVisibility(View.GONE);
+                displayPrintingData();
+            }
+            App.customer = new CustomerData();
+
+        });
+
+        printInvoiceVM.customerBalanceLiveData.observe(this, customerBalance -> {
+            App.customerBalance = customerBalance.getData();
+            binding.progress.setVisibility(View.GONE);
             displayPrintingData();
         });
     }
@@ -156,7 +174,7 @@ public class PrintInvoice extends AppCompatActivity implements Runnable {
         binding.dealerName.setText("المستخدم: " + App.printInvoice.getMoveHeader().getWorkerName());
         binding.tradeRecord.setText("السجل التجاري" + "\n" + App.printInvoice.getMoveHeader().getTradeRecoredNo());
         binding.taxCardNo.setText("رقم التسجيل" + "\n" + App.printInvoice.getMoveHeader().getTaxeCardNo());
-        if (!App.customerBalance.isEmpty()) {
+        if (App.customerBalance != null && !App.customerBalance.isEmpty()) {
             binding.clientBalance.setText(App.customerBalance);
             binding.clientBalance.setVisibility(View.VISIBLE);
             binding.view511.setVisibility(View.VISIBLE);

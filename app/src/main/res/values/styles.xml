@@ -31,4 +31,8 @@
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
     </style>
+    <style name="CustomRadioButtonStyle" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:buttonTint" tools:targetApi="lollipop">@color/white</item>
+    </style>
+
 </resources>

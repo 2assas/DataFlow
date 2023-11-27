@@ -149,7 +149,13 @@ public class SearchInvoice extends AppCompatActivity {
             if (App.currentUser.getMobileShowDealerCurrentBalanceInPrint() == 1 && !Objects.equals(invoice.getMoveHeader().getDealerISN(), "0")
                     && !Objects.equals(invoice.getMoveHeader().getDealerBranchISN(), "0") && !Objects.equals(invoice.getMoveHeader().getDealerType(), "0")
             ) {
-                printInvoiceVM.getCustomerBalance(uuid, invoice.getMoveHeader().getDealerISN(), invoice.getMoveHeader().getDealerBranchISN(), invoice.getMoveHeader().getDealerType(), "");
+                printInvoiceVM.getCustomerBalance(uuid, invoice.getMoveHeader().getDealerISN(), invoice.getMoveHeader().getDealerBranchISN(), invoice.getMoveHeader().getDealerType(),
+                        invoice.getMoveHeader().getBranchISN(),
+                        invoice.getMoveHeader().getMove_ISN(),
+                        invoice.getMoveHeader().getRemainValue(),
+                        invoice.getMoveHeader().getNetValue(),
+                        String.valueOf(moveType)
+                );
             } else {
                 binding.printButton.setVisibility(View.VISIBLE);
                 displayPrintingData();

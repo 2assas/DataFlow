@@ -14,11 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.dataflowstores.dataflow.App;
+import com.dataflowstores.dataflow.R;
+import com.dataflowstores.dataflow.databinding.PrintExpensesBinding;
 import com.dataflowstores.dataflow.pojo.expenses.ExpenseData;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
-import com.dataflowstores.dataflow.R;
-import com.dataflowstores.dataflow.databinding.PrintExpensesBinding;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -69,9 +69,8 @@ public class PrintExpenses extends AppCompatActivity {
         binding.back.setOnClickListener(view -> finish());
         ExpenseData expenseData = (ExpenseData) getIntent().getSerializableExtra("expensesModel");
         binding.expTemplate.mainExp.setText("المصروف الرئيسي: " + expenseData.getExpMenuName());
-        App.pdfName= "المصروف الرئيسي: " + expenseData.getExpMenuName();
+        App.pdfName = "المصروف الرئيسي: " + expenseData.getExpMenuName() + " رقم " + expenseData.getMoveID();
 
-        //TODO::
         if (expenseData.getSubExpMenuName() != null)
             binding.expTemplate.subExp.setText("المصروف الفرعي: " + expenseData.getSubExpMenuName());
         if (expenseData.getSelectedWorkerName() != null)

@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
@@ -111,7 +109,7 @@ public class ReportsFragment extends Fragment {
     }
 
     private void permissions() {
-        if (App.currentUser.getMobileDealersBalanceEnquiry() == 0) {
+        if (App.currentUser.getMobileDealersBalanceEnquiry() != 1 && App.currentUser.getMobileSuppliersBalanceEnquiry() != 1) {
             binding.searchCustomer.setEnabled(false);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 binding.searchCustomer.setBackground(requireActivity().getDrawable(R.drawable.gray_rounded));
@@ -130,7 +128,7 @@ public class ReportsFragment extends Fragment {
             }
         }
 
-        if (App.currentUser.getMobileItemPricesEnquiry() == 0) {
+        if (App.currentUser.getMobileItemPricesEnquiry() != 1 && App.currentUser.getMobileItemPricesEnquiryBuy() != 1) {
             binding.priceEnquiry.setEnabled(false);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 binding.priceEnquiry.setBackground(requireActivity().getDrawable(R.drawable.gray_rounded));

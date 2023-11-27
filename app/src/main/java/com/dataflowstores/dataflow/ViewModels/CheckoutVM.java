@@ -150,45 +150,4 @@ public class CheckoutVM extends ViewModel {
         checkItem.subscribe(observer);
     }
 
-
-    public void getCustomerBalance(String uuid, String dealerISN, String branchISN, String dealerType, String dealerName) {
-        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(uuid, dealerISN, branchISN, dealerType, selectedFoundation, App.currentUser.getLogIn_BISN(), App.currentUser.getLogIn_UID(), App.currentUser.getLogIn_WBISN(), App.currentUser.getLogIn_WISN(), App.currentUser.getLogIn_WName(), App.currentUser.getLogIn_WSBISN(), App.currentUser.getLogIn_WSISN(), App.currentUser.getLogIn_WSName(), App.currentUser.getLogIn_CS(), App.currentUser.getLogIn_VN(), App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-        Observer<CustomerBalance> observer = new Observer<CustomerBalance>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
-
-            }
-
-            @Override
-            public void onNext(@NonNull CustomerBalance customer) {
-                customerBalanceLiveData.postValue(customer);
-            }
-
-            @Override
-            public void onError(@NonNull Throwable throwable) {
-                if (throwable instanceof IOException) {
-                    //handle network error
-                    toastErrorMutableLiveData.postValue("No Internet Connection!");
-                } else if (throwable instanceof HttpException) {
-                    ResponseBody errorBody = Objects.requireNonNull(((HttpException) throwable).response()).errorBody();
-                    try {
-                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    //handle HTTP error response code
-                } else {
-                    //handle other exceptions
-                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
-                }
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-        };
-        customerObservable.subscribe(observer);
-    }
-
 }

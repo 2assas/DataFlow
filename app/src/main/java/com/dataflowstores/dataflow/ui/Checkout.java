@@ -31,7 +31,6 @@ import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.dataflowstores.dataflow.ui.invoice.PrintInvoice;
 import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.CheckoutVM;
@@ -39,6 +38,7 @@ import com.dataflowstores.dataflow.databinding.CheckoutBinding;
 import com.dataflowstores.dataflow.pojo.settings.BanksData;
 import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
 import com.dataflowstores.dataflow.pojo.users.CustomerData;
+import com.dataflowstores.dataflow.ui.invoice.PrintInvoice;
 import com.dataflowstores.dataflow.utils.SingleShotLocationProvider;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -175,26 +175,11 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
                             }).show();
                 } else {
                     App.invoiceResponse = response;
-                    if (App.currentUser.getMobileShowDealerCurrentBalanceInPrint() == 1 && App.customer.getDealerName() != null) {
-                        checkoutVM.getCustomerBalance(uuid, String.valueOf(App.customer.getDealer_ISN()), String.valueOf(App.customer.getBranchISN()), String.valueOf(App.customer.getDealerType()), String.valueOf(App.customer.getDealerName()));
-                        Log.e("checkBalance", "true");
-                    } else {
-                        Log.e("checkBalance", App.currentUser.getMobileShowDealerCurrentBalanceInPrint() + "  -- ");
-                        App.selectedProducts = new ArrayList<>();
-                        App.customer = new CustomerData();
-                        binding.checkout.setClickable(true);
-                        startActivity(new Intent(this, PrintInvoice.class));
-                        finish();
-                    }
+                    App.selectedProducts = new ArrayList<>();
+                    binding.checkout.setClickable(true);
+                    startActivity(new Intent(this, PrintInvoice.class));
+                    finish();
                 }
-            });
-            checkoutVM.customerBalanceLiveData.observe(this, customerBalance1 -> {
-                App.customerBalance = customerBalance1.getMessage();
-                App.selectedProducts = new ArrayList<>();
-                App.customer = new CustomerData();
-                binding.checkout.setClickable(true);
-                startActivity(new Intent(this, PrintInvoice.class));
-                finish();
             });
             binding.back.setOnClickListener(view -> {
                 startActivity(new Intent(Checkout.this, AddProducts.class));
