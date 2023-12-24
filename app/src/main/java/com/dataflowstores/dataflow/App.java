@@ -14,6 +14,7 @@ import android.util.Log;
 import com.dataflowstores.dataflow.pojo.financialReport.Data;
 import com.dataflowstores.dataflow.pojo.invoice.Invoice;
 import com.dataflowstores.dataflow.pojo.invoice.InvoiceResponse;
+import com.dataflowstores.dataflow.pojo.invoice.InvoiceType;
 import com.dataflowstores.dataflow.pojo.login.UserData;
 import com.dataflowstores.dataflow.pojo.product.ProductData;
 import com.dataflowstores.dataflow.pojo.receipts.ReceiptModel;
@@ -54,13 +55,28 @@ public class App extends Application {
     public static String customerBalance = "";
     public static int specialDiscount = 0;
     public static Data financialReportData = new Data();
-    public static Integer resales = -1;
+    public static InvoiceType invoiceType = null;
     public static String headerNotes = "";
     public static BranchData currentBranch;
     public static ItemSalesReport itemSalesReport;
     public static Integer selectedFoundation = 0;
     public static String pdfName = "";
 
+
+
+
+    public static int getMoveType() {
+        switch (App.invoiceType) {
+            case ReturnSales:
+                return 3;
+            case Purchase:
+                return 2;
+            case ReturnPurchased:
+                return 4;
+            default:
+                return 1;
+        }
+    }
 
 
     public static boolean isNetworkAvailable(Context context) {

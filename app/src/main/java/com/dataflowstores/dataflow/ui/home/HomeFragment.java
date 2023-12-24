@@ -1,6 +1,10 @@
 package com.dataflowstores.dataflow.ui.home;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Purchase;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnPurchased;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnSales;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Sales;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -36,6 +40,8 @@ import com.dataflowstores.dataflow.ui.SearchInvoice;
 import com.dataflowstores.dataflow.ui.SearchReceipts;
 import com.dataflowstores.dataflow.ui.cashing.SearchCashing;
 import com.dataflowstores.dataflow.ui.expenses.SearchExpenses;
+import com.dataflowstores.dataflow.ui.payments.SearchPayments;
+import com.dataflowstores.dataflow.ui.reports.ReportsFragment;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.Objects;
@@ -109,18 +115,16 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupViews() {
-        App.resales = -1;
+        App.invoiceType = null;
         binding.home.exitApp.setOnClickListener(view -> {
-            new AlertDialog.Builder(requireActivity()).setTitle("تأكيد الخروج")
-                    .setMessage("هل تريد الخروج من التطبيق؟")
-                    .setPositiveButton("خروج", (dialogInterface, i) -> {
-                        SharedPreferences.Editor editor = requireActivity().getSharedPreferences("SaveLogin", MODE_PRIVATE).edit();
-                        editor.putString("userName", "");
-                        editor.putString("password", "");
-                        editor.apply();
-                        App.selectedFoundation = 0;
-                        requireActivity().finish();
-                    }).setNegativeButton("البقاء", ((dialogInterface, i) -> dialogInterface.dismiss())).show();
+            new AlertDialog.Builder(requireActivity()).setTitle("تأكيد الخروج").setMessage("هل تريد الخروج من التطبيق؟").setPositiveButton("خروج", (dialogInterface, i) -> {
+                SharedPreferences.Editor editor = requireActivity().getSharedPreferences("SaveLogin", MODE_PRIVATE).edit();
+                editor.putString("userName", "");
+                editor.putString("password", "");
+                editor.apply();
+                App.selectedFoundation = 0;
+                requireActivity().finish();
+            }).setNegativeButton("البقاء", ((dialogInterface, i) -> dialogInterface.dismiss())).show();
         });
         binding.home.textView.setText(getString(R.string.welcome) + " " + App.currentUser.getWorkerName());
         binding.home.foundationName.setText(App.currentUser.getFoundationName());
@@ -145,7 +149,6 @@ public class HomeFragment extends Fragment {
             if (App.isNetworkAvailable(requireActivity())) {
                 if (banksDone && priceTypeDone && safeDepositDone && storesDone)
                     if (App.safeDeposit.getData() != null) {
-//                        Intent intent = new Intent(this, SearchProductsCashing.class);
                         FinanceFragment financeFragment = new FinanceFragment();
                         manager.beginTransaction().replace(R.id.container, financeFragment).addToBackStack("home").commit();
                     } else
@@ -298,17 +301,42 @@ public class HomeFragment extends Fragment {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
-                    case R.id.searchSaleInvoice:
+                    case R.id.sales:
                         if (App.isNetworkAvailable(requireActivity())) {
+                            App.invoiceType = Sales;
                             Intent intent = new Intent(requireActivity(), SearchInvoice.class);
-                            intent.putExtra("moveType", 1);
                             startActivity(intent);
-                            App.resales = 0;
+                            break;
+                        }
+                    case R.id.returnSales:
+                        if (App.isNetworkAvailable(requireActivity())) {
+                            App.invoiceType = ReturnSales;
+                            Intent intent8 = new Intent(requireActivity(), SearchInvoice.class);
+                            startActivity(intent8);
+                            break;
+                        }
+                    case R.id.purchaseOrder:
+                        if (App.isNetworkAvailable(requireActivity())) {
+                            App.invoiceType = Purchase;
+                            Intent intent = new Intent(requireActivity(), SearchInvoice.class);
+                            startActivity(intent);
+                            break;
+                        }
+                    case R.id.returnPurchased:
+                        if (App.isNetworkAvailable(requireActivity())) {
+                            App.invoiceType = ReturnPurchased;
+                            Intent intent8 = new Intent(requireActivity(), SearchInvoice.class);
+                            startActivity(intent8);
                             break;
                         }
                     case R.id.searchReceiptsInvoice:
                         if (App.isNetworkAvailable(requireActivity())) {
                             startActivity(new Intent(requireActivity(), SearchReceipts.class));
+                            break;
+                        }
+                    case R.id.searchPaymentInvoice:
+                        if (App.isNetworkAvailable(requireActivity())) {
+                            startActivity(new Intent(requireActivity(), SearchPayments.class));
                             break;
                         }
                     case R.id.searchExpensesInvoice:
@@ -363,14 +391,7 @@ public class HomeFragment extends Fragment {
                             startActivity(intent7);
                             break;
                         }
-                    case R.id.mobileResales:
-                        if (App.isNetworkAvailable(requireActivity())) {
-                            Intent intent8 = new Intent(requireActivity(), SearchInvoice.class);
-                            intent8.putExtra("moveType", 3);
-                            startActivity(intent8);
-                            App.resales = 1;
-                            break;
-                        }
+
                 }
                 return false;
             }

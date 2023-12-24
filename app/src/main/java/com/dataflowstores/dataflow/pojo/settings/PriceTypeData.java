@@ -16,6 +16,17 @@ public class PriceTypeData implements Serializable {
     @SerializedName("Type")
     String Type;
 
+    @SerializedName("BasicPriceType")
+    int BasicPriceType;
+
+    public int getBasicPriceType() {
+        return BasicPriceType;
+    }
+
+    public void setBasicPriceType(int basicPriceType) {
+        BasicPriceType = basicPriceType;
+    }
+
     public int getBranchISN() {
         return BranchISN;
     }

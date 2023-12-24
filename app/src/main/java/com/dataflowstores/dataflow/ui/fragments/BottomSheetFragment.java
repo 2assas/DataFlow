@@ -1,6 +1,8 @@
 
 package com.dataflowstores.dataflow.ui.fragments;
 
+import static com.dataflowstores.dataflow.App.getMoveType;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -19,18 +21,18 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.dataflowstores.dataflow.App;
+import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.InvoiceViewModel;
 import com.dataflowstores.dataflow.ViewModels.ProductVM;
+import com.dataflowstores.dataflow.databinding.BottomSheetBinding;
 import com.dataflowstores.dataflow.pojo.product.ProductData;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.StoreReportScreen;
 import com.dataflowstores.dataflow.ui.adapters.AgentAdapter;
 import com.dataflowstores.dataflow.ui.adapters.CustomerAdapter;
 import com.dataflowstores.dataflow.ui.adapters.ProductAdapter;
-import com.dataflowstores.dataflow.ui.products.ProductDetails;
-import com.dataflowstores.dataflow.R;
-import com.dataflowstores.dataflow.databinding.BottomSheetBinding;
 import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
+import com.dataflowstores.dataflow.ui.products.ProductDetails;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class BottomSheetFragment extends BottomSheetDialogFragment implements ProductAdapter.ClickListener {
@@ -77,7 +79,6 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Pr
             }
         });
         invoiceVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(requireActivity(), s, Toast.LENGTH_LONG).show());
-
         invoiceVM.salesManLiveData.observe(getActivity(), salesMan -> {
             binding.progressBar.setVisibility(View.GONE);
             if (salesMan.getStatus() == 1) {
@@ -134,7 +135,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Pr
         binding.serialDialog.getRoot().setVisibility(View.VISIBLE);
         binding.serialDialog.confirm.setOnClickListener(view -> {
             if (!binding.serialDialog.serialNumberInput.getText().toString().isEmpty())
-                productVM.getProduct(App.product.getItemName(), uuid, binding.serialDialog.serialNumberInput.getText().toString(), 1);
+                productVM.getProduct(App.product.getItemName(), uuid, binding.serialDialog.serialNumberInput.getText().toString(), getMoveType());
             else
                 binding.serialDialog.serialNumberInput.setError("مطلوب");
             isSerial = true;

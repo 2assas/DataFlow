@@ -172,6 +172,7 @@ public interface ApiClient {
             , @Query("LogIn_CS") String LogIn_CS
             , @Query("LogIn_VN") String LogIn_VN
             , @Query("LogIn_FAlternative") String LogIn_FAlternative
+            , @Query("PriceType") Integer PriceType
     );
 
     @GET("banks/getBanks")
@@ -261,6 +262,7 @@ public interface ApiClient {
             , @Field("LogIn_CS") String LogIn_CS
             , @Field("LogIn_VN") String LogIn_VN
             , @Field("LogIn_FAlternative") String LogIn_FAlternative
+            , @Field("AllowCurrentStoreMinus") Integer AllowCurrentStoreMinus
     );
 
     @GET("invoices/query")
@@ -296,6 +298,46 @@ public interface ApiClient {
     @POST("invoices/cash_receipt")
     @FormUrlEncoded
     Observable<ReceiptResponse> createReceipt(
+            @Field("BranchISN") long BranchISN,
+            @Field("uiid") String uuid,
+            @Field("CashType") int CashType,
+            @Field("SaleType") int SaleType,
+            @Field("DealerType") int DealerType,
+            @Field("DealerBranchISN") int DealerBranchISN,
+            @Field("DealerISN") long DealerISN,
+            @Field("SalesManBranchISN") long SalesManBranchISN,
+            @Field("SalesManISN") long SalesManISN,
+            @Field("HeaderNotes") String HeaderNotes,
+            @Field("TotalLinesValue") double TotalLinesValue,
+            @Field("ServiceValue") double ServiceValue,
+            @Field("ServicePer") double ServicePer,
+            @Field("DeliveryValue") double DeliveryValue,
+            @Field("TotalValueAfterServices") double TotalValueAfterServices,
+            @Field("BasicDiscountVal") double BasicDiscountVal,
+            @Field("BasicDiscountPer") double BasicDiscountPer,
+            @Field("TotalValueAfterDisc") double TotalValueAfterDisc,
+            @Field("BasicTaxVal") double BasicTaxVal,
+            @Field("BasicTaxPer") double BasicTaxPer,
+            @Field("TotalValueAfterTax") double TotalValueAfterTax,
+            @Field("NetValue") double NetValue,
+            @Field("PaidValue") double PaidValue, @Field("RemainValue") double RemainValue, @Field("SafeDepositeBranchISN") long SafeDepositeBranchISN, @Field("SafeDepositeISN") long SafeDepositeISN, @Field("BankBranchISN") long BankBranchISN, @Field("BankISN") long BankISN, @Field("TableNumber") String TableNumber, @Field("DeliveryPhone") String DeliveryPhone, @Field("DeliveryAddress") String DeliveryAddress, @Field("WorkerCBranchISN") long WorkerCBranchISN, @Field("WorkerCISN") long WorkerCISN, @Field("CheckNumber") String CheckNumber, @Field("CheckDueDate") String CheckDueDate,//HERE
+            @Field("CheckBankBranchISN") long CheckBankBranchISN, @Field("CheckBankISN") long CheckBankISN, @Field("CreateSource") int createSource, @Field("Latitude") float latitude, @Field("Longitude") float longitude, @Field("WorkerName") String WorkerName, @Field("user_name") String user_name, @Field("WorkStationName") String WorkStationName, @Field("WorkStation_ISN") String WorkStation_ISN, @Field("WorkStationBranchISN") String WorkStationBranchISN, @Query("SelectedFoundation") int selectedFoundation
+            , @Field("LogIn_BISN") String LogIn_BISN
+            , @Field("LogIn_UID") String LogIn_UID
+            , @Field("LogIn_WBISN") String LogIn_WBISN
+            , @Field("LogIn_WISN") String LogIn_WISN
+            , @Field("LogIn_WName") String LogIn_WName
+            , @Field("LogIn_WSBISN") String LogIn_WSBISN
+            , @Field("LogIn_WSISN") String LogIn_WSISN
+            , @Field("LogIn_WSName") String LogIn_WSName
+            , @Field("LogIn_CS") String LogIn_CS
+            , @Field("LogIn_VN") String LogIn_VN
+            , @Field("LogIn_FAlternative") String LogIn_FAlternative
+    );
+
+    @POST("invoices/Payment")
+    @FormUrlEncoded
+    Observable<ReceiptResponse> createPayment(
             @Field("BranchISN") long BranchISN,
             @Field("uiid") String uuid,
             @Field("CashType") int CashType,
@@ -391,6 +433,20 @@ public interface ApiClient {
             , @Query("LogIn_VN") String LogIn_VN
             , @Query("LogIn_FAlternative") String LogIn_FAlternative
     );
+    @GET("invoices/print_Payment")
+    Observable<ReceiptModel> getPayment(@Query("BranchISN") long BranchISN, @Query("uiid") String uiid, @Query("Move_ID") String Move_ID, @Query("WorkerCBranchISN") long WorkerCBranchISN, @Query("WorkerCISN") long WorkerCISN, @Query("permission") int permission, @Query("SelectedFoundation") int selectedFoundation
+            , @Query("LogIn_BISN") String LogIn_BISN
+            , @Query("LogIn_UID") String LogIn_UID
+            , @Query("LogIn_WBISN") String LogIn_WBISN
+            , @Query("LogIn_WISN") String LogIn_WISN
+            , @Query("LogIn_WName") String LogIn_WName
+            , @Query("LogIn_WSBISN") String LogIn_WSBISN
+            , @Query("LogIn_WSISN") String LogIn_WSISN
+            , @Query("LogIn_WSName") String LogIn_WSName
+            , @Query("LogIn_CS") String LogIn_CS
+            , @Query("LogIn_VN") String LogIn_VN
+            , @Query("LogIn_FAlternative") String LogIn_FAlternative
+    );
 
 
     @GET("branches")
@@ -448,7 +504,13 @@ public interface ApiClient {
             , @Query("LogIn_WSName") String LogIn_WSName
             , @Query("LogIn_CS") String LogIn_CS
             , @Query("LogIn_VN") String LogIn_VN
-            , @Query("LogIn_FAlternative") String LogIn_FAlternative);
+            , @Query("LogIn_FAlternative") String LogIn_FAlternative
+            , @Query("SupplierType") Integer SupplierType
+            , @Query("SupplierBranchISN") Integer SupplierBranchISN
+            , @Query("Supplier_ISN") Long Supplier_ISN
+
+
+    );
 
     @GET("reports/AllMoves_Types")
     Observable<MoveTypesResponse> getMoveTypes(@Query("uiid") String uuid, @Query("SelectedFoundation") int selectedFoundation
@@ -466,6 +528,21 @@ public interface ApiClient {
 
     @GET("reports/itemssales_report")
     Observable<ItemSalesResponse> getItemSalesReport(@Query("uiid") String uuid, @Query("Branch_ISN") Long storeBranchISN, @Query("from_workday") String from_workday, @Query("to_workday") String to_workday, @Query("Shift_ISN") String Shift_ISN, @Query("WorkerBranchISN") Long workerBranchISN, @Query("Worker_ISN") String Worker_ISN, @Query("from") String from, @Query("to") String to, @Query("VendorID") Long vendorId, @Query("WorkerCISN") String WorkerCISN, @Query("WorkerCBranchISN") String WorkerCBranchISN, @Query("WorkerName") String WorkerName, @Query("user_name") String user_name, @Query("WorkStationName") String WorkStationName, @Query("WorkStation_ISN") String WorkStation_ISN, @Query("WorkStationBranchISN") String WorkStationBranchISN, @Query("DealerType") Integer DealerType, @Query("DealerBranchISN") Long DealerBranchISN, @Query("Dealer_ISN") Long Dealer_ISN, @Query("SelectedFoundation") int selectedFoundation
+            , @Query("LogIn_BISN") String LogIn_BISN
+            , @Query("LogIn_UID") String LogIn_UID
+            , @Query("LogIn_WBISN") String LogIn_WBISN
+            , @Query("LogIn_WISN") String LogIn_WISN
+            , @Query("LogIn_WName") String LogIn_WName
+            , @Query("LogIn_WSBISN") String LogIn_WSBISN
+            , @Query("LogIn_WSISN") String LogIn_WSISN
+            , @Query("LogIn_WSName") String LogIn_WSName
+            , @Query("LogIn_CS") String LogIn_CS
+            , @Query("LogIn_VN") String LogIn_VN
+            , @Query("LogIn_FAlternative") String LogIn_FAlternative
+    );
+
+    @GET("reports/itemssupply_report")
+    Observable<ItemSalesResponse> getSupplierSalesReport(@Query("uiid") String uuid, @Query("Branch_ISN") Long storeBranchISN, @Query("from_workday") String from_workday, @Query("to_workday") String to_workday, @Query("Shift_ISN") String Shift_ISN, @Query("WorkerBranchISN") Long workerBranchISN, @Query("Worker_ISN") String Worker_ISN, @Query("from") String from, @Query("to") String to, @Query("VendorID") Long vendorId, @Query("WorkerCISN") String WorkerCISN, @Query("WorkerCBranchISN") String WorkerCBranchISN, @Query("WorkerName") String WorkerName, @Query("user_name") String user_name, @Query("WorkStationName") String WorkStationName, @Query("WorkStation_ISN") String WorkStation_ISN, @Query("WorkStationBranchISN") String WorkStationBranchISN, @Query("DealerType") Integer DealerType, @Query("DealerBranchISN") Long DealerBranchISN, @Query("Dealer_ISN") Long Dealer_ISN, @Query("SelectedFoundation") int selectedFoundation
             , @Query("LogIn_BISN") String LogIn_BISN
             , @Query("LogIn_UID") String LogIn_UID
             , @Query("LogIn_WBISN") String LogIn_WBISN

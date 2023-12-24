@@ -1,5 +1,10 @@
 package com.dataflowstores.dataflow.ui;
 
+import static com.dataflowstores.dataflow.App.getMoveType;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnPurchased;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnSales;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Sales;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -62,7 +67,7 @@ public class SearchInvoice extends AppCompatActivity {
 
     public void setupViews() {
         binding.invoiceTemplate.printButton.setVisibility(View.GONE);
-        moveType = getIntent().getIntExtra("moveType", 1);
+        moveType = getMoveType();
         printInvoiceVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
         binding.searchInvoices.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -166,16 +171,41 @@ public class SearchInvoice extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     public void displayPrintingData() {
-
-        if (App.resales == 1) {
+        if (App.invoiceType == ReturnSales || App.invoiceType == ReturnPurchased) {
             binding.invoiceTemplate.invoiceNumber.setVisibility(View.GONE);
             binding.invoiceTemplate.resales.setVisibility(View.VISIBLE);
+            if (App.invoiceType == ReturnSales) {
+                binding.invoiceTemplate.resales.setText("مرتجع مبيعات");
+            } else {
+                binding.invoiceTemplate.resales.setText("مرتجع مشتريات");
+            }
         } else
             binding.invoiceTemplate.invoiceNumber.setText("رقم  الشيك: " + App.printInvoice.getMoveHeader().getBillNumber());
         binding.invoiceTemplate.foundationName.setText(App.currentUser.getFoundationName());
         binding.invoiceTemplate.branchName.setText(App.printInvoice.getMoveHeader().getBranchName());
         binding.invoiceTemplate.moveId.setText("رقم الفاتورة: " + App.printInvoice.getMoveHeader().getMove_ID());
-        App.pdfName = "رقم الفاتورة: " + App.printInvoice.getMoveHeader().getMove_ID();
+        String invoiceName = "";
+        switch (App.invoiceType) {
+            case Sales:
+                invoiceName = "فاتورة مبيعات";
+                break;
+            case ReturnSales:
+                invoiceName = "فاتورة مرتجع مبيعات";
+                break;
+            case Purchase:
+                invoiceName = "فاتورة مشتريات";
+                binding.invoiceTemplate.notes.setVisibility(View.GONE);
+                binding.invoiceTemplate.invoiceNumber.setVisibility(View.GONE);
+                binding.invoiceTemplate.resales.setVisibility(View.VISIBLE);
+                binding.invoiceTemplate.resales.setText("مشتريات");
+                break;
+            case ReturnPurchased:
+                invoiceName = "فاتورة مرتجع مشتريات";
+                binding.invoiceTemplate.notes.setVisibility(View.GONE);
+                binding.invoiceTemplate.invoiceNumber.setVisibility(View.GONE);
+                break;
+        }
+        App.pdfName = invoiceName + " رقم: " + App.printInvoice.getMoveHeader().getMove_ID();
         binding.invoiceTemplate.SellingType.setText("نوع الدفع: " + App.printInvoice.getMoveHeader().getCashTypeName());
         binding.invoiceTemplate.invoiceDate.setText("التاريخ: " + App.printInvoice.getMoveHeader().getCreateDate().replace(".000", ""));
         binding.invoiceTemplate.dealerName.setText("المستخدم: " + App.printInvoice.getMoveHeader().getWorkerName());
@@ -206,9 +236,12 @@ public class SearchInvoice extends AppCompatActivity {
 
         if (App.printInvoice.getMoveHeader().getTableNumber() != null)
             binding.invoiceTemplate.tableNumber.setText("رقم السفرة: " + App.printInvoice.getMoveHeader().getTableNumber());
-        else
-            binding.invoiceTemplate.tableNumber.setText("نوع البيع: " + App.printInvoice.getMoveHeader().getSaleTypeName());
-
+        else {
+            if (App.invoiceType == Sales)
+                binding.invoiceTemplate.tableNumber.setText("نوع البيع: " + App.printInvoice.getMoveHeader().getSaleTypeName());
+            else
+                binding.invoiceTemplate.tableNumber.setVisibility(View.GONE);
+        }
         binding.invoiceTemplate.recyclerView.setAdapter(new PrintingLinesAdapter(App.printInvoice.getMoveLines()));
         binding.invoiceTemplate.recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -223,7 +256,7 @@ public class SearchInvoice extends AppCompatActivity {
         binding.invoiceTemplate.textView40.setText("المطلوب  " + roundTwoDecimals(Double.parseDouble(App.printInvoice.getMoveHeader().getNetValue())));
         binding.invoiceTemplate.textView41.setText("المتبقى  " + roundTwoDecimals(Double.parseDouble(App.printInvoice.getMoveHeader().getRemainValue())));
         binding.invoiceTemplate.textView42.setText("المدفوع  " + roundTwoDecimals(Double.parseDouble(App.printInvoice.getMoveHeader().getPaidValue())));
-        binding.invoiceTemplate.textView43.setText(App.printInvoice.getMoveHeader().getBranchAddress());
+        binding.invoiceTemplate.notes.setText(App.printInvoice.getMoveHeader().getBranchAddress());
         if (!App.printInvoice.getMoveHeader().getTel1().isEmpty()) {
             binding.invoiceTemplate.textView45.setText(App.printInvoice.getMoveHeader().getTel1());
             binding.invoiceTemplate.textView45.setVisibility(View.VISIBLE);

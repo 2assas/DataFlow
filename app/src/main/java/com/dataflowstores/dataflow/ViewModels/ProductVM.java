@@ -71,7 +71,10 @@ public class  ProductVM extends ViewModel {
                 }
             });
         }else{
-            Observable<Product> productObservable = apiClient.getProductCustomer(productName, uuid, App.priceType.getBranchISN(), App.priceType.getPricesType_ISN(), App.customer.getDealerType(), App.customer.getDealer_ISN(), App.customer.getBranchISN(), (int) App.currentUser.getBranchISN(), App.currentUser.getAllowSpecificDealersPrices(),moveType,serial,selectedFoundation,
+            Observable<Product> productObservable = apiClient.getProductCustomer(productName, uuid, App.priceType.getBranchISN(),
+                            App.priceType.getPricesType_ISN(), App.customer.getDealerType(), App.customer.getDealer_ISN(),
+                            App.customer.getBranchISN(), (int) App.currentUser.getBranchISN(), App.currentUser.getAllowSpecificDealersPrices()
+                            ,moveType,serial,selectedFoundation,
                             App.currentUser.getLogIn_BISN(),
                             App.currentUser.getLogIn_UID(),
                             App.currentUser.getLogIn_WBISN(),

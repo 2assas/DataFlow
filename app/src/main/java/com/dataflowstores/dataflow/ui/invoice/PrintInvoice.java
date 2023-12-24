@@ -1,5 +1,10 @@
 package com.dataflowstores.dataflow.ui.invoice;
 
+import static com.dataflowstores.dataflow.App.getMoveType;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnPurchased;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnSales;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Sales;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -53,6 +58,7 @@ import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.BitSet;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -116,8 +122,7 @@ public class PrintInvoice extends AppCompatActivity implements Runnable {
             @SuppressLint("HardwareIds")
             String uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
             try {
-                printInvoiceVM.getPrintingData(String.valueOf(App.currentUser.getBranchISN()), uuid, String.valueOf(App.invoiceResponse.getData().getMove_ID()),
-                        String.valueOf(App.currentUser.getWorkerBranchISN()), String.valueOf(App.currentUser.getWorkerISN()), this, App.resales == 1 ? 3 : 1);
+                printInvoiceVM.getPrintingData(String.valueOf(App.currentUser.getBranchISN()), uuid, String.valueOf(App.invoiceResponse.getData().getMove_ID()), String.valueOf(App.currentUser.getWorkerBranchISN()), String.valueOf(App.currentUser.getWorkerISN()), this, getMoveType());
             } catch (Exception e) {
                 Toast.makeText(this, "حدث خطأ فى البيانات .. لم يتم تسجيل الفاتورة", Toast.LENGTH_LONG).show();
             }
@@ -136,12 +141,7 @@ public class PrintInvoice extends AppCompatActivity implements Runnable {
             App.printInvoice = invoice;
             if (App.currentUser.getMobileShowDealerCurrentBalanceInPrint() == 1 && App.customer.getDealerName() != null) {
                 @SuppressLint("HardwareIds") String uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-                printInvoiceVM.getCustomerBalance(uuid, invoice.getMoveHeader().getDealerISN(), invoice.getMoveHeader().getDealerBranchISN(), invoice.getMoveHeader().getDealerType(),
-                        invoice.getMoveHeader().getBranchISN(),
-                        invoice.getMoveHeader().getMove_ISN(),
-                        invoice.getMoveHeader().getRemainValue(),
-                        invoice.getMoveHeader().getNetValue(),
-                        App.resales == 1 ? "3" : "1");
+                printInvoiceVM.getCustomerBalance(uuid, invoice.getMoveHeader().getDealerISN(), invoice.getMoveHeader().getDealerBranchISN(), invoice.getMoveHeader().getDealerType(), invoice.getMoveHeader().getBranchISN(), invoice.getMoveHeader().getMove_ISN(), invoice.getMoveHeader().getRemainValue(), invoice.getMoveHeader().getNetValue(), String.valueOf(getMoveType()));
             } else {
                 binding.progress.setVisibility(View.GONE);
                 displayPrintingData();
@@ -151,7 +151,7 @@ public class PrintInvoice extends AppCompatActivity implements Runnable {
         });
 
         printInvoiceVM.customerBalanceLiveData.observe(this, customerBalance -> {
-            App.customerBalance = customerBalance.getData();
+            App.customerBalance = customerBalance.getMessage();
             binding.progress.setVisibility(View.GONE);
             displayPrintingData();
         });
@@ -162,13 +162,41 @@ public class PrintInvoice extends AppCompatActivity implements Runnable {
     public void displayPrintingData() {
         binding.foundationName.setText(App.currentUser.getFoundationName());
         binding.branchName.setText(App.currentUser.getBranchName());
-        if (App.resales == 1) {
+        if (App.invoiceType == ReturnSales || App.invoiceType == ReturnPurchased) {
             binding.invoiceNumber.setVisibility(View.GONE);
             binding.resales.setVisibility(View.VISIBLE);
+            if (App.invoiceType == ReturnSales) {
+                binding.resales.setText("مرتجع مبيعات");
+            } else {
+                binding.resales.setText("مرتجع مشتريات");
+            }
         } else
             binding.invoiceNumber.setText("رقم  الشيك: " + App.printInvoice.getMoveHeader().getBillNumber());
+
+
         binding.moveId.setText("رقم الفاتورة: " + App.printInvoice.getMoveHeader().getMove_ID());
-        App.pdfName = "رقم الفاتورة: " + App.printInvoice.getMoveHeader().getMove_ID();
+        String invoiceName = "";
+        switch (App.invoiceType) {
+            case Sales:
+                invoiceName = "فاتورة مبيعات";
+                break;
+            case ReturnSales:
+                invoiceName = "فاتورة مرتجع مبيعات";
+                break;
+            case Purchase:
+                invoiceName = "فاتورة مشتريات";
+                binding.notes.setVisibility(View.GONE);
+                binding.invoiceNumber.setVisibility(View.GONE);
+                binding.resales.setVisibility(View.VISIBLE);
+                binding.resales.setText("مشتريات");
+                break;
+            case ReturnPurchased:
+                invoiceName = "فاتورة مرتجع مشتريات";
+                binding.notes.setVisibility(View.GONE);
+                binding.invoiceNumber.setVisibility(View.GONE);
+                break;
+        }
+        App.pdfName = invoiceName + " رقم: " + App.printInvoice.getMoveHeader().getMove_ID();
         binding.SellingType.setText("نوع الدفع: " + App.printInvoice.getMoveHeader().getCashTypeName());
         binding.invoiceDate.setText("التاريخ: " + App.printInvoice.getMoveHeader().getCreateDate().replace(".000", ""));
         binding.dealerName.setText("المستخدم: " + App.printInvoice.getMoveHeader().getWorkerName());
@@ -180,7 +208,10 @@ public class PrintInvoice extends AppCompatActivity implements Runnable {
             binding.view511.setVisibility(View.VISIBLE);
         }
         if (App.printInvoice.getMoveHeader().getDealerName() != null) {
-            binding.dealerName2.setText("العميل: " + App.printInvoice.getMoveHeader().getDealerName());
+            if (Objects.equals(App.printInvoice.getMoveHeader().getDealerType(), "1"))
+                binding.dealerName2.setText("العميل: " + App.printInvoice.getMoveHeader().getDealerName());
+            else
+                binding.dealerName2.setText("المورد: " + App.printInvoice.getMoveHeader().getDealerName());
         } else {
             binding.dealerName2.setVisibility(View.GONE);
         }
@@ -191,9 +222,12 @@ public class PrintInvoice extends AppCompatActivity implements Runnable {
         }
         if (App.printInvoice.getMoveHeader().getTableNumber() != null)
             binding.tableNumber.setText("رقم السفرة: " + App.printInvoice.getMoveHeader().getTableNumber());
-        else
-            binding.tableNumber.setText("نوع البيع: " + App.printInvoice.getMoveHeader().getSaleTypeName());
-
+        else {
+            if (App.invoiceType == Sales)
+                binding.tableNumber.setText("نوع البيع: " + App.printInvoice.getMoveHeader().getSaleTypeName());
+            else
+                binding.tableNumber.setVisibility(View.GONE);
+        }
 //        ArrayList<MoveLines> testList= new ArrayList<>();
 //        for(int i=0; i<50; i++)
 //            testList.addAll(App.printInvoice.getMoveLines());
@@ -210,7 +244,7 @@ public class PrintInvoice extends AppCompatActivity implements Runnable {
         binding.textView40.setText("المطلوب  " + roundTwoDecimals(Double.parseDouble(App.printInvoice.getMoveHeader().getNetValue())));
         binding.textView41.setText("المتبقى  " + roundTwoDecimals(Double.parseDouble(App.printInvoice.getMoveHeader().getRemainValue())));
         binding.textView42.setText("المدفوع  " + roundTwoDecimals(Double.parseDouble(App.printInvoice.getMoveHeader().getPaidValue())));
-        binding.textView43.setText(App.printInvoice.getMoveHeader().getBranchAddress());
+        binding.notes.setText(App.printInvoice.getMoveHeader().getBranchAddress());
 
         if (!App.printInvoice.getMoveHeader().getTel1().isEmpty())
             binding.textView45.setText(App.printInvoice.getMoveHeader().getTel1());

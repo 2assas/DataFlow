@@ -49,6 +49,7 @@ public class UserData implements Serializable {
     private long cashierSellPriceTypeBranchISN;
     @SerializedName("CashierSellPriceType_ISN")
     private long cashierSellPriceTypeISN;
+
     @SerializedName("PricesTypeBranchISN")
     private long pricesTypeBranchISN;
     @SerializedName("PricesTypeISN")
@@ -76,14 +77,20 @@ public class UserData implements Serializable {
 
     @SerializedName("SalesDefaultStoreBranchISN")
     private int SalesDefaultStoreBranchISN;
-    @SerializedName("SalesDefaultStoreISN")
-    private int SalesDefaultStoreISN;
-
-
     @SerializedName("ReSalesDefaultStoreBranchISN")
     private int ReSalesDefaultStoreBranchISN;
+    @SerializedName("SalesDefaultStoreISN")
+    private int SalesDefaultStoreISN;
     @SerializedName("ReSalesDefaultStoreISN")
     private int ReSalesDefaultStoreISN;
+    @SerializedName("SupplyDefaultStoreBranchISN")
+    private int SupplyDefaultStoreBranchISN;
+    @SerializedName("ReSupplyDefaultStoreBranchISN")
+    private int ReSupplyDefaultStoreBranchISN;
+    @SerializedName("SupplyDefaultStoreISN")
+    private int SupplyDefaultStoreISN;
+    @SerializedName("ReSupplyDefaultStoreISN")
+    private int ReSupplyDefaultStoreISN;
     @SerializedName("VendorID")
     private long vendorID;
 
@@ -198,6 +205,116 @@ public class UserData implements Serializable {
     @SerializedName("InvoiceCurrentBalanceTimeInInvoice")
     String InvoiceCurrentBalanceTimeInInvoice;
 
+    @SerializedName("MobileModifyPriceInSale")
+    String MobileModifyPriceInSale;
+
+    @SerializedName("MobileModifyPriceInReSale")
+    String MobileModifyPriceInReSale;
+
+    @SerializedName("MobileModifyPriceInSupply")
+    String MobileModifyPriceInSupply;
+
+    @SerializedName("MobileModifyPriceInReSupply")
+    String MobileModifyPriceInReSupply;
+
+    @SerializedName("MobileReportsSuppliersSearch")
+    String MobileReportsSuppliersSearch;
+
+    @SerializedName("MobileItemsSupplyReport")
+    String MobileItemsSupplyReport;
+    @SerializedName("MobileSupply")
+    Integer MobileSupply;
+    @SerializedName("MobileReSupply")
+    Integer MobileReSupply;
+    @SerializedName("MobileTax")
+    Integer MobileTax;
+    @SerializedName("MobilePayment")
+    Integer MobilePayment;
+
+    public Integer getMobilePayment() {
+        return MobilePayment;
+    }
+
+    public Integer getMobileTax() {
+        return MobileTax;
+    }
+
+    public Integer getMobileSupply() {
+        return MobileSupply;
+    }
+
+    public Integer getMobileReSupply() {
+        return MobileReSupply;
+    }
+
+    public int getSupplyDefaultStoreISN() {
+        return SupplyDefaultStoreISN;
+    }
+    public int getReSupplyDefaultStoreISN() {
+        return ReSupplyDefaultStoreISN;
+    }
+    public int getSupplyDefaultStoreBranchISN() {
+        return SupplyDefaultStoreBranchISN;
+    }
+    public void setSupplyDefaultStoreBranchISN(int supplyDefaultStoreBranchISN) {
+        SupplyDefaultStoreBranchISN = supplyDefaultStoreBranchISN;
+    }
+
+    public int getReSupplyDefaultStoreBranchISN() {
+        return ReSupplyDefaultStoreBranchISN;
+    }
+
+    public void setReSupplyDefaultStoreBranchISN(int reSupplyDefaultStoreBranchISN) {
+        ReSupplyDefaultStoreBranchISN = reSupplyDefaultStoreBranchISN;
+    }
+
+    public String getMobileItemsSupplyReport() {
+        return MobileItemsSupplyReport;
+    }
+
+    public void setMobileItemsSupplyReport(String mobileItemsSupplyReport) {
+        MobileItemsSupplyReport = mobileItemsSupplyReport;
+    }
+
+    public String getMobileReportsSuppliersSearch() {
+        return MobileReportsSuppliersSearch;
+    }
+
+    public void setMobileReportsSuppliersSearch(String mobileReportsSuppliersSearch) {
+        MobileReportsSuppliersSearch = mobileReportsSuppliersSearch;
+    }
+
+    public String getMobileModifyPriceInSale() {
+        return MobileModifyPriceInSale;
+    }
+
+    public void setMobileModifyPriceInSale(String mobileModifyPriceInSale) {
+        MobileModifyPriceInSale = mobileModifyPriceInSale;
+    }
+
+    public String getMobileModifyPriceInReSale() {
+        return MobileModifyPriceInReSale;
+    }
+
+    public void setMobileModifyPriceInReSale(String mobileModifyPriceInReSale) {
+        MobileModifyPriceInReSale = mobileModifyPriceInReSale;
+    }
+
+    public String getMobileModifyPriceInSupply() {
+        return MobileModifyPriceInSupply;
+    }
+
+    public void setMobileModifyPriceInSupply(String mobileModifyPriceInSupply) {
+        MobileModifyPriceInSupply = mobileModifyPriceInSupply;
+    }
+
+    public String getMobileModifyPriceInReSupply() {
+        return MobileModifyPriceInReSupply;
+    }
+
+    public void setMobileModifyPriceInReSupply(String mobileModifyPriceInReSupply) {
+        MobileModifyPriceInReSupply = mobileModifyPriceInReSupply;
+    }
 
     public String getInvoiceCurrentBalanceTimeInInvoice() {
         return InvoiceCurrentBalanceTimeInInvoice;

@@ -1,5 +1,12 @@
 package com.dataflowstores.dataflow.ui.products;
 
+import static com.dataflowstores.dataflow.App.getMoveType;
+import static com.dataflowstores.dataflow.App.product;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Purchase;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnPurchased;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnSales;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Sales;
+
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -22,8 +29,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.dataflowstores.dataflow.App;
-import com.dataflowstores.dataflow.ui.AddProducts;
-import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.CheckoutVM;
 import com.dataflowstores.dataflow.ViewModels.ProductVM;
@@ -31,6 +36,8 @@ import com.dataflowstores.dataflow.databinding.ProductScreenBinding;
 import com.dataflowstores.dataflow.pojo.product.MeasureUnit;
 import com.dataflowstores.dataflow.pojo.product.ProductData;
 import com.dataflowstores.dataflow.pojo.report.ItemAvailableQuantity;
+import com.dataflowstores.dataflow.ui.AddProducts;
+import com.dataflowstores.dataflow.ui.SplashScreen;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,6 +61,8 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
     TextWatcher basicQuantity, itemDiscPer, itemDiscVal;
     boolean isBarcodePrice = false;
 
+    double unitPrice = 0;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +84,8 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             quantityWatchers();
             discount();
             checkAvailableQuantity();
+            handleUnitPricePermissions();
+            handleUnitPrice();
             Handler handler = new Handler();
             handler.postDelayed(() -> {
                 handleDefaultBarcodePrice(App.product.getxPriceFromBarcode());
@@ -100,11 +111,11 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                 bonus = App.product.getBonusQuantity();
             }
             binding.totalQuantity.setText(String.format(Locale.US, "%.3f", quantity + bonus) + "");
-            binding.textView26.setText(String.format(Locale.US, "%.3f", App.product.getActualQuantity()) + "");
+            binding.quantity.setText(String.format(Locale.US, "%.3f", App.product.getActualQuantity()) + "");
         } else if (!Objects.equals(App.product.getxQuanFromBarcode(), "0") && !App.isEditing) {
             quantity = Float.parseFloat(App.product.getxQuanFromBarcode());
             binding.totalQuantity.setText(String.format(Locale.US, "%.3f", quantity) + "");
-            binding.textView26.setText(String.format(Locale.US, "%.3f", quantity) + "");
+            binding.quantity.setText(String.format(Locale.US, "%.3f", quantity) + "");
         }
 
         if (App.product.getDiscount1() != 0) {
@@ -140,7 +151,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
 
     private void checkAvailableQuantity() {
         binding.availableQuantity.setOnClickListener(view -> {
-            productVM.checkAvailableQuantity(uuid, App.product.getSelectedStore().getBranchISN(), App.product.getSelectedStore().getStore_ISN(), App.product.getBranchISN(), App.product.getItemISN(), App.resales == 1 ? 3 : 1);
+            productVM.checkAvailableQuantity(uuid, App.product.getSelectedStore().getBranchISN(), App.product.getSelectedStore().getStore_ISN(), App.product.getBranchISN(), App.product.getItemISN(), getMoveType());
             binding.progress.setVisibility(View.VISIBLE);
         });
         productVM.availableQuantityLiveData.observe(this, item -> {
@@ -157,10 +168,64 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
         });
     }
 
+    private void handleUnitPricePermissions() {
+        switch (App.invoiceType) {
+            case Sales:
+                binding.unitPrice.setEnabled(Objects.equals(App.currentUser.getMobileModifyPriceInSale(), "1"));
+                break;
+            case ReturnSales:
+                binding.unitPrice.setEnabled(Objects.equals(App.currentUser.getMobileModifyPriceInReSale(), "1"));
+                break;
+            case Purchase:
+                binding.unitPrice.setEnabled(Objects.equals(App.currentUser.getMobileModifyPriceInSupply(), "1"));
+                break;
+            case ReturnPurchased:
+                binding.unitPrice.setEnabled(Objects.equals(App.currentUser.getMobileModifyPriceInReSupply(), "1"));
+                break;
+        }
+    }
+
+
+    @SuppressLint("SetTextI18n")
+    private void handleUnitPrice() {
+        binding.unitPrice.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() > 0) {
+                    unitPrice = Double.parseDouble(charSequence.toString());
+                } else {
+                    binding.unitPrice.setText("0");
+                }
+            }
+
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void afterTextChanged(Editable editable) {
+                App.product.setNetPrice(unitPrice);
+                binding.price.setText(String.format(Locale.US, "%.3f", unitPrice * quantity) + " جنيه");
+                if (binding.itemDiscPer.getText().toString().isEmpty()) {
+                    binding.price2.setText(String.format(Locale.US, "%.3f", unitPrice * quantity) + " جنيه");
+                    App.product.setNetPrice(unitPrice * quantity);
+                } else {
+                    binding.price2.setText(String.format(Locale.US, "%.3f", (unitPrice * quantity) - ((unitPrice * quantity) / 100) * Double.parseDouble(binding.itemDiscPer.getText().toString())) + " جنيه");
+                    App.product.setNetPrice((unitPrice * quantity) - ((unitPrice * quantity) / 100) * Double.parseDouble(binding.itemDiscPer.getText().toString()));
+                    binding.itemDiscVal.setText(String.format(Locale.US, "%.2f", ((unitPrice * quantity) / 100) * Double.parseDouble(binding.itemDiscPer.getText().toString())) + "");
+                }
+                binding.price3.setText("نسبة: " + String.format(Locale.ENGLISH, "%.2f", Double.parseDouble(App.product.getItemTax())) + "% ");
+                binding.price4.setText("قيمة: " + String.format(Locale.ENGLISH, "%.2f", (App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax()))) + "جنيه ");
+                App.product.setPriceItem(unitPrice);
+            }
+        });
+
+    }
 
     @SuppressLint("SetTextI18n")
     private void handleDefaultBarcodePrice(double price) {
-
         if ((!App.isEditing || App.product.isBarCodePrice()) && price != 0) {
             Log.e("checkIsBar", "true");
             if (binding.itemDiscPer.getText().toString().isEmpty()) {
@@ -181,7 +246,6 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             binding.price3.setText("نسبة: " + String.format(Locale.ENGLISH, "%.2f", Double.parseDouble(App.product.getItemTax())) + "% ");
             binding.price4.setText("قيمة: " + String.format(Locale.ENGLISH, "%.2f",
                     (App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax()))) + "جنيه ");
-
             App.product.setBarCodePrice(true);
         }
     }
@@ -365,7 +429,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             binding.plusBounus.setClickable(false);
             binding.minusBounus.setClickable(false);
             binding.minusItem.setClickable(false);
-            binding.textView26.setEnabled(false);
+            binding.quantity.setEnabled(false);
             binding.bounusQuantity.setEnabled(false);
             binding.serial.setText(App.serialNumber);
             App.product.setSelectedSerial(App.serialNumber);
@@ -391,13 +455,13 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                         binding.itemDiscVal.setText(String.format(Locale.US, "%.2f", value * quantity) + "");
                         App.product.setNetPrice(((App.product.getPriceItem() - value) * quantity));
                         App.product.setDiscount1(Double.parseDouble(binding.itemDiscPer.getText().toString()));
-                        binding.button.setClickable(true);
+                        binding.saveProduct.setClickable(true);
                         binding.price4.setText("قيمة: " + String.format(Locale.ENGLISH, "%.2f", ((App.product.getNetPrice() / 100) * Double.parseDouble(App.product.getItemTax()))) + "جنيه ");
                     } else {
                         binding.itemDiscPer.setError("ERROR!");
                         binding.itemDiscPer.setText("");
                         binding.itemDiscVal.setText("");
-                        binding.button.setClickable(false);
+                        binding.saveProduct.setClickable(false);
                     }
                 } else {
                     binding.price4.setText("قيمة: " + String.format(Locale.ENGLISH, "%.2f",
@@ -432,7 +496,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                         binding.itemDiscPer.setText(String.format(Locale.US, "%.2f", value * 100) + "");
                         App.product.setNetPrice((App.product.getPriceItem() * quantity) - Double.parseDouble(binding.itemDiscVal.getText().toString()));
                         App.product.setDiscount1(value * 100);
-                        binding.button.setClickable(true);
+                        binding.saveProduct.setClickable(true);
                         binding.price2.setText(String.format(Locale.US, "%.2f", ((App.product.getPriceItem() * quantity) - Double.parseDouble(binding.itemDiscVal.getText().toString()))) + " جنيه");
                         binding.price4.setText("قيمة: " + String.format(Locale.ENGLISH, "%.2f", ((App.product.getNetPrice() / 100) * Double.parseDouble(App.product.getItemTax()))) + "جنيه ");
 
@@ -441,7 +505,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                         binding.itemDiscVal.setError("ERROR!");
                         binding.itemDiscPer.setText("");
                         binding.itemDiscVal.setText("");
-                        binding.button.setClickable(false);
+                        binding.saveProduct.setClickable(false);
                     }
                 } else {
                     binding.price2.setText(String.format(Locale.US, "%.2f", (App.product.getPriceItem() * quantity)) + " جنيه");
@@ -492,48 +556,27 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.e("checkItemSelect", "clicked");
                 App.product.setBarCodePrice(false);
-                measureUnit = App.product.getMeasureUnits().get(i);
-                App.product.setNetPrice(measureUnit.getPrice());
-                binding.price.setText(String.format(Locale.US, "%.3f", measureUnit.getPrice() * quantity) + " جنيه");
-                if (binding.itemDiscPer.getText().toString().isEmpty()) {
-                    binding.price2.setText(String.format(Locale.US, "%.3f", measureUnit.getPrice() * quantity) + " جنيه");
-                    App.product.setNetPrice(measureUnit.getPrice() * quantity);
-                } else {
-                    binding.price2.setText(String.format(Locale.US, "%.3f", (measureUnit.getPrice() * quantity) - ((measureUnit.getPrice() * quantity) / 100) * Double.parseDouble(
-                            binding.itemDiscPer.getText().toString()
-                    )) + " جنيه");
-                    App.product.setNetPrice((measureUnit.getPrice() * quantity) - ((measureUnit.getPrice() * quantity) / 100) * Double.parseDouble(
-                            binding.itemDiscPer.getText().toString()));
-                    binding.itemDiscVal.setText(String.format(Locale.US, "%.2f", ((measureUnit.getPrice() * quantity) / 100) * Double.parseDouble(
-                            binding.itemDiscPer.getText().toString())) + "");
-                }
-                binding.price3.setText("نسبة: " + String.format(Locale.ENGLISH, "%.2f", Double.parseDouble(App.product.getItemTax())) + "% ");
-                binding.price4.setText("قيمة: " + String.format(Locale.ENGLISH, "%.2f",
-                        (App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax()))) + "جنيه ");
                 App.product.setSelectedUnit(App.product.getMeasureUnits().get(i));
-                App.product.setPriceItem(measureUnit.getPrice());
+                measureUnit = App.product.getMeasureUnits().get(i);
+                if (!App.isEditing)
+                    unitPrice = measureUnit.getPrice();
+                else
+                    unitPrice = App.product.getPriceItem();
+
+                binding.unitPrice.setText(unitPrice + "");
             }
 
             @SuppressLint("SetTextI18n")
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
                 measureUnit = App.product.getMeasureUnits().get(0);
-                if (binding.itemDiscPer.getText().toString().isEmpty()) {
-                    binding.price.setText(String.format(Locale.US, "%.2f", measureUnit.getPrice() * quantity) + " جنيه");
-                    binding.price2.setText(String.format(Locale.US, "%.2f", measureUnit.getPrice() * quantity) + " جنيه");
-                } else {
-                    binding.price2.setText(String.format(Locale.US, "%.2f", (measureUnit.getPrice() * quantity) - ((measureUnit.getPrice() * quantity) / 100) * Double.parseDouble(
-                            binding.itemDiscPer.getText().toString()
-                    )) + " جنيه");
-                    App.product.setNetPrice((measureUnit.getPrice() * quantity) - ((measureUnit.getPrice() * quantity) / 100) * Double.parseDouble(
-                            binding.itemDiscPer.getText().toString()));
-                    binding.itemDiscVal.setText(String.format(Locale.US, "%.2f", ((measureUnit.getPrice() * quantity) / 100) * Double.parseDouble(
-                            binding.itemDiscPer.getText().toString())) + "");
-                }
-                binding.price3.setText("نسبة: " + String.format(Locale.ENGLISH, "%.2f", Double.parseDouble(App.product.getItemTax())) + "% ");
-                binding.price4.setText("قيمة: " + String.format(Locale.ENGLISH, "%.2f", (App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax()))) + "جنيه ");
                 App.product.setSelectedUnit(App.product.getMeasureUnits().get(0));
-                App.product.setPriceItem(measureUnit.getPrice());
+                if (!App.isEditing)
+                    unitPrice = measureUnit.getPrice();
+                else
+                    unitPrice = App.product.getPriceItem();
+
+                binding.unitPrice.setText(unitPrice + "");
             }
 
 
@@ -601,16 +644,34 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                     binding.storesList.setSelection(i);
             }
             for (int i = 0; i < App.stores.getData().size(); i++) {
-                if (App.resales == 1) {
-                    if (App.currentUser.getReSalesDefaultStoreISN() == App.stores.getData().get(i).getStore_ISN()
-                            && App.currentUser.getReSalesDefaultStoreBranchISN() == App.stores.getData().get(i).getBranchISN())
-                        binding.storesList.setSelection(i);
-                } else {
-                    if (App.currentUser.getSalesDefaultStoreISN() == App.stores.getData().get(i).getStore_ISN()
-                            && App.currentUser.getSalesDefaultStoreBranchISN() == App.stores.getData().get(i).getBranchISN())
-                        binding.storesList.setSelection(i);
+                switch (App.invoiceType) {
+                    case Sales:
+                        if (App.currentUser.getSalesDefaultStoreISN() == App.stores.getData().get(i).getStore_ISN()
+                                && App.currentUser.getSalesDefaultStoreBranchISN() == App.stores.getData().get(i).getBranchISN())
+                            binding.storesList.setSelection(i);
+                        break;
+
+                    case ReturnSales:
+                        if (App.currentUser.getReSalesDefaultStoreISN() == App.stores.getData().get(i).getStore_ISN()
+                                && App.currentUser.getReSalesDefaultStoreBranchISN() == App.stores.getData().get(i).getBranchISN())
+                            binding.storesList.setSelection(i);
+                        break;
+
+                    case Purchase:
+                        if (App.currentUser.getSupplyDefaultStoreISN() == App.stores.getData().get(i).getStore_ISN()
+                                && App.currentUser.getSupplyDefaultStoreBranchISN() == App.stores.getData().get(i).getBranchISN())
+                            binding.storesList.setSelection(i);
+                        break;
+
+                    case ReturnPurchased:
+                        if (App.currentUser.getReSupplyDefaultStoreISN() == App.stores.getData().get(i).getStore_ISN()
+                                && App.currentUser.getReSupplyDefaultStoreBranchISN() == App.stores.getData().get(i).getBranchISN())
+                            binding.storesList.setSelection(i);
+                        break;
+
                 }
             }
+
         }
         ArrayList<String> priceType = new ArrayList<>();
         priceType.add(App.priceType.getPricesTypeName());
@@ -658,7 +719,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
 
                 App.product.setQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
                 binding.totalQuantity.setText(String.format(Locale.US, "%.3f", quantity + bonus) + "");
-                binding.textView26.setText(String.format(Locale.US, "%.3f", quantity) + "");
+                binding.quantity.setText(String.format(Locale.US, "%.3f", quantity) + "");
                 App.product.setPriceTotal(Double.parseDouble(String.format(Locale.US, "%.2f", App.product.getPriceItem() * quantity)));
                 App.product.setActualQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
                 App.product.setBonusQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", bonus)));
@@ -693,10 +754,10 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                 binding.price3.setText("نسبة: " + String.format(Locale.ENGLISH, "%.2f", Double.parseDouble(App.product.getItemTax())) + "% ");
                 binding.price4.setText("قيمة: " + String.format(Locale.ENGLISH, "%.2f",
                         (App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax()))) + "جنيه ");
-//            binding.textView26.setText(quantity+"");
-                if (binding.textView26.getText().toString().isEmpty())
-                    quantity = Float.parseFloat(binding.textView26.getText().toString());
-                binding.textView26.setText(String.format(Locale.US, "%.3f", quantity) + "");
+//            binding.quantity.setText(quantity+"");
+                if (binding.quantity.getText().toString().isEmpty())
+                    quantity = Float.parseFloat(binding.quantity.getText().toString());
+                binding.quantity.setText(String.format(Locale.US, "%.3f", quantity) + "");
                 App.product.setQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
                 binding.totalQuantity.setText(String.format(Locale.US, "%.3f", quantity + bonus) + "");
                 App.product.setPriceTotal(Double.parseDouble(String.format(Locale.US, "%.2f", App.product.getPriceItem() * quantity)));
@@ -723,7 +784,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                     bonus--;
                 }
                 if (binding.bounusQuantity.getText().toString().isEmpty())
-                    bonus = Float.parseFloat(binding.textView26.getText().toString());
+                    bonus = Float.parseFloat(binding.quantity.getText().toString());
                 binding.totalQuantity.setText(quantity + bonus + "");
                 binding.bounusQuantity.setText(bonus + "");
                 App.product.setQuantity(quantity + bonus);
@@ -733,7 +794,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
     }
 
     public void quantityWatchers() {
-        binding.textView26.addTextChangedListener(new TextWatcher() {
+        binding.quantity.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
@@ -779,7 +840,6 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                 binding.price4.setText("قيمة: " + String.format(Locale.ENGLISH, "%.2f",
                         (App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax()))) + "جنيه ");
                 binding.totalQuantity.setText(String.format(Locale.US, "%.3f", quantity + bonus) + "");
-
             }
 
             @Override
@@ -839,9 +899,10 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
     }
 
     private void addButton() {
-        binding.button.setOnClickListener(view -> {
+        binding.saveProduct.setOnClickListener(view -> {
             App.product.setUserNote(binding.productNote.getText().toString());
             App.product.setPriceTotal(App.product.getPriceItem() * quantity);
+            product.setAllowStoreMinus(product.getSelectedStore().getAllowCurrentStoreMinus());
             App.product.setTotalTax((App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax())));
             if (App.product.getSerial() && !binding.serial.getText().toString().isEmpty()) {
                 App.product.setSelectedSerial(binding.serial.getText().toString());
@@ -851,17 +912,17 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             } else if (App.product.getSerial() && binding.serial.getText().toString().isEmpty()) {
                 binding.serial.setError(getString(R.string.serial_error));
             } else {
-                if (App.currentUser.getAllowStoreMinus() == 3 || App.resales == 1) {
+                if (App.currentUser.getAllowStoreMinus() == 3 || (App.invoiceType == ReturnSales || App.invoiceType == Purchase) || (App.currentUser.getAllowStoreMinus() == 4 && product.getSelectedStore().getAllowCurrentStoreMinus() == 3)) {
                     if (!App.isEditing) {
                         App.selectedProducts.add(App.product);
-                        binding.button.setClickable(false);
+                        binding.saveProduct.setClickable(false);
                         if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
                             App.specialDiscount = 1;
                         }
                         startActivity(new Intent(this, AddProducts.class));
                     } else {
                         App.selectedProducts.set(App.editingPos, App.product);
-                        binding.button.setClickable(false);
+                        binding.saveProduct.setClickable(false);
                         if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
                             App.specialDiscount = 1;
                         }
@@ -874,7 +935,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                     minusCheck();
                     checkoutVM.checkItemMutableLiveData.observe(this, response -> {
                         binding.progress.setVisibility(View.GONE);
-                        if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 2 && App.resales != 1) {
+                        if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 2 && (App.invoiceType == Sales || App.invoiceType == ReturnPurchased)) {
                             String error = response.getMessage();
                             String errorTitle = "نقص فالمخزن";
                             if (response.getMessage().equals("Not saved ... please save again")) {
@@ -888,7 +949,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                                     .setCancelable(false)
                                     .setPositiveButton("متابعة", (dialogInterface, i) -> {
                                         if (!App.isEditing) {
-                                            binding.button.setClickable(false);
+                                            binding.saveProduct.setClickable(false);
                                             App.selectedProducts.add(App.product);
                                             if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
                                                 App.specialDiscount = 1;
@@ -896,7 +957,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                                             startActivity(new Intent(this, AddProducts.class));
                                         } else {
                                             App.selectedProducts.set(App.editingPos, App.product);
-                                            binding.button.setClickable(false);
+                                            binding.saveProduct.setClickable(false);
                                             if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
                                                 App.specialDiscount = 1;
                                             }
@@ -909,7 +970,10 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                                         checkoutVM.checkItemMutableLiveData = new MutableLiveData<>();
                                         dialogInterface.dismiss();
                                     }).show();
-                        } else if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 1 && App.resales != 1) {
+                        }
+                        else if (response.getStatus() == 0 && (App.currentUser.getAllowStoreMinus() == 1 ||
+                                (App.currentUser.getAllowStoreMinus() == 4 && App.product.getSelectedStore().getAllowCurrentStoreMinus() == 1))
+                                && (App.invoiceType == Sales || App.invoiceType == ReturnPurchased)) {
                             String error = response.getMessage();
                             String errorTitle = "نقص فالمخزن";
                             if (response.getMessage().equals("Not saved ... please save again")) {
@@ -926,17 +990,18 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                                         checkoutVM.checkItemMutableLiveData = new MutableLiveData<>();
                                         dialogInterface.dismiss();
                                     }).show();
-                        } else {
+                        }
+                        else {
                             if (!App.isEditing) {
                                 App.selectedProducts.add(App.product);
-                                binding.button.setClickable(false);
+                                binding.saveProduct.setClickable(false);
                                 if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
                                     App.specialDiscount = 1;
                                 }
                                 startActivity(new Intent(this, AddProducts.class));
                             } else {
                                 App.selectedProducts.set(App.editingPos, App.product);
-                                binding.button.setClickable(false);
+                                binding.saveProduct.setClickable(false);
                                 if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
                                     App.specialDiscount = 1;
                                 }
@@ -1100,7 +1165,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                 BasicQuantity, BonusQuantity, TotalQuantity, Price, MeasureUnitBranchISN, MeasureUnitISN, BasicMeasureUnitBranchISN, BasicMeasureUnitISN, ItemSerial,
                 ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN, SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes,
                 netPrices, basicMeasureUnitQuantity, expireDateBool, colorsBool, seasonsBool, sizesBool, serialBool, group1Bool, group2Bool, serviceItem, itemTax, itemTaxValue,
-                itemName, discount1, App.currentUser.getAllowStoreMinus(), allowStoreMinusConfirm);
+                itemName, discount1, App.currentUser.getAllowStoreMinus(), allowStoreMinusConfirm, product.getSelectedStore().getAllowCurrentStoreMinus());
         Log.e("checkout", " checkinnnggg");
     }
 

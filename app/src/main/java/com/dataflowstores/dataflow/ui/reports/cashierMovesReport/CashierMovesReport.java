@@ -74,7 +74,9 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
     private String workDayStart, workDayEnd;
     InvoiceViewModel invoiceViewModel;
     CustomerData customerData;
+    CustomerData supplierData;
 
+    boolean searchCustomer = true;
 
     @SuppressLint("HardwareIds")
     @Override
@@ -124,6 +126,11 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
             if (cashierMovesReportResponse.getStatus() == 1) {
                 if (cashierMovesReportResponse.getData() != null) {
                     Intent intent = new Intent(this, CashierMovesReportPrinting.class);
+
+                    if(supplierData!=null && binding.supplierCheckBox.isChecked()){
+                        intent.putExtra("supplierName", supplierData.getDealerName());
+                    }
+
                     if (binding.safeDepositCheckbox.isChecked())
                         intent.putExtra("safeDeposit", selectedSafeDeposit);
                     if (binding.intervalCheckBox.isChecked()) {
@@ -173,24 +180,46 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
 
 
     public void searchButtons() {
+        if (App.currentUser.getMobileReportsSuppliersSearch().equals("0")) {
+            binding.getsupplier.setEnabled(false);
+            binding.supplierCheckBox.setEnabled(false);
+            binding.searchsupplier.setEnabled(false);
+        }
+
         binding.getClient.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 if (!binding.getClient.getText().toString().isEmpty()) {
-                    performSearch();
+                    performSearch(true);
                     return true;
-                } else
-                    return false;
+                } else return false;
             }
             return false;
         });
         binding.searchClient.setOnClickListener(view -> {
-            performSearch();
+            performSearch(true);
+        });
+        binding.getsupplier.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                if (!binding.getsupplier.getText().toString().isEmpty()) {
+                    performSearch(false);
+                    return true;
+                } else return false;
+            }
+            return false;
+        });
+        binding.searchsupplier.setOnClickListener(view -> {
+            performSearch(false);
         });
     }
 
-    private void performSearch() {
-        if (App.isNetworkAvailable(this))
+    private void performSearch(boolean customer) {
+        if (App.isNetworkAvailable(this)) if (customer) {
             invoiceViewModel.getCustomer(uuid, binding.getClient.getText().toString(), App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN());
+            searchCustomer = true;
+        } else {
+            invoiceViewModel.getSupplier(uuid, binding.getsupplier.getText().toString(), App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN());
+            searchCustomer = false;
+        }
         else {
             App.noConnectionDialog(this);
         }
@@ -201,8 +230,13 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
     @Override
     public void handleDialogClose(DialogInterface dialog) {
         if (App.customer != null && App.customer.getDealerName() != null) {
-            binding.getClient.setText(App.customer.getDealerName());
-            customerData = App.customer;
+            if (searchCustomer) {
+                binding.getClient.setText(App.customer.getDealerName());
+                customerData = App.customer;
+            } else {
+                binding.getsupplier.setText(App.customer.getDealerName());
+                supplierData = App.customer;
+            }
         }
     }
 
@@ -273,6 +307,7 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
                                 , selectedMove == null ? null : Integer.valueOf(selectedMove.getMoveType()),
                                 customerData == null ? null : customerData
                                 , selectedWorker == null ? null : selectedWorker
+                                , binding.supplierCheckBox.isChecked() ? supplierData : null
                         );
                 }
             });
@@ -293,7 +328,8 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
                         reportVM.getCashierMoves(reportBody, uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getWorkerBranchISN()
                                 , selectedMove == null ? null : Integer.valueOf(selectedMove.getMoveType()),
                                 customerData == null ? null : customerData,
-                                selectedWorker == null ? null : selectedWorker
+                                selectedWorker == null ? null : selectedWorker,
+                                binding.supplierCheckBox.isChecked() ? supplierData : null
                         );
                 }
             });

@@ -25,6 +25,7 @@ import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.ReceiptsVM;
 import com.dataflowstores.dataflow.databinding.SearchReceiptBinding;
+import com.dataflowstores.dataflow.pojo.receipts.ReceiptData;
 import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 
 import java.util.Locale;
@@ -132,7 +133,10 @@ public class SearchReceipts extends AppCompatActivity {
                 if (App.currentUser.getMobileShowDealerCurrentBalanceInPrint() == 1 && !Objects.equals(receiptModel.getData().get(0).getDealerISN(), "0")
                         && !Objects.equals(receiptModel.getData().get(0).getDealerISN(), "0") && !Objects.equals(receiptModel.getData().get(0).getDealerISN(), "0")
                 ) {
-                    receiptsVM.getCustomerBalance(uuid, receiptModel.getData().get(0).getDealerISN(), receiptModel.getData().get(0).getDealerBranchISN(), receiptModel.getData().get(0).getDealerType(), "");
+                    ReceiptData receiptData = receiptModel.getData().get(0);
+                    receiptsVM.getCustomerBalance(uuid, receiptData.getDealerISN(),
+                            receiptData.getDealerBranchISN(), receiptData.getDealerType(),
+                            receiptData.getBranchISN(), receiptData.getMove_ISN(), receiptData.getRemainValue(), receiptData.getNetValue(), receiptData.getMoveType());
                 } else {
                     binding.progressBar.setVisibility(View.GONE);
                     binding.printButton.setVisibility(View.VISIBLE);

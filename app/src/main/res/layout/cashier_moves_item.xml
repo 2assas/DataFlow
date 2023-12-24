@@ -109,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="3dp"
                 android:gravity="center"
-                android:text="العميل: محمد أحمد السيد الشناوي"
+                android:text=""
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="12sp"

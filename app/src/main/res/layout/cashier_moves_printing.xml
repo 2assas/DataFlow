@@ -159,7 +159,6 @@
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:text=""
-
                     android:textColor="@color/black"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -167,6 +166,23 @@
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/moveType" />
+                <TextView
+                    android:id="@+id/supplierName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center"
+                    android:text=""
+
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/clientName" />
 
                 <TextView
                     android:id="@+id/shiftNumber"
@@ -232,7 +248,7 @@
                     app:layout_constraintBottom_toTopOf="@+id/printReport"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/clientName"
+                    app:layout_constraintTop_toBottomOf="@+id/supplierName"
                     tools:listitem="@layout/cashier_moves_item"
                     tools:targetApi="lollipop" />
 

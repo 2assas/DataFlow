@@ -24,14 +24,13 @@ import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.GateWayViewModel;
 import com.dataflowstores.dataflow.databinding.GatewayBinding;
-import com.dataflowstores.dataflow.pojo.login.UserData;
 import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
 import com.dataflowstores.dataflow.pojo.settings.StoresData;
 import com.dataflowstores.dataflow.pojo.workStation.BranchData;
 import com.dataflowstores.dataflow.pojo.workStation.WorkstationListData;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.home.MainActivity;
-import com.dataflowstores.dataflow.utils.Conts;
+import com.dataflowstores.dataflow.webService.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +64,7 @@ public class GateWay extends AppCompatActivity implements SelectFoundationDialog
 //        uuid = "bbca3293592c95eb";
             Log.e("getID", uuid);
             gateWayViewModel = new ViewModelProvider(this).get(GateWayViewModel.class);
-            binding.appVersion.setText("رقم الإصدار" + Conts.APP_VERSION);
+            binding.appVersion.setText("رقم الإصدار" + Constants.APP_VERSION);
             gateWayViewModel.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
             handleLoginCases();
             checkSavePassword();

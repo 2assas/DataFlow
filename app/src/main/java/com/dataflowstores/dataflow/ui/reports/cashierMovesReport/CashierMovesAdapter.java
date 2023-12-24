@@ -45,7 +45,7 @@ public class CashierMovesAdapter extends RecyclerView.Adapter<CashierMovesAdapte
     public void onBindViewHolder(final CashierMovesAdapter.CashierMovesHolder holder, final int position) {
         CashierMovesItemBinding binding = holder.binding;
         binding.executePendingBindings();
-        String dealerName = "<b>" + "العميل:" + "</b> " + list.get(position).getDealerName();
+        String dealerName = "<b>" + "المتعامل:" + "</b> " + list.get(position).getDealerName();
         binding.dealerName.setText(Html.fromHtml(dealerName));
         String moveId = "<b>" + "رقم الإذن:" + "</b> " + list.get(position).getMoveID();
         binding.moveId.setText(Html.fromHtml(moveId));

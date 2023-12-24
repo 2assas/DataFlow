@@ -30,18 +30,19 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.dataflowstores.dataflow.App;
+import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.InvoiceViewModel;
 import com.dataflowstores.dataflow.ViewModels.ReceiptsVM;
+import com.dataflowstores.dataflow.databinding.ReceiptsBinding;
+import com.dataflowstores.dataflow.pojo.receipts.ReceiptData;
 import com.dataflowstores.dataflow.pojo.settings.BanksData;
 import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
 import com.dataflowstores.dataflow.pojo.users.CustomerData;
 import com.dataflowstores.dataflow.pojo.users.SalesManData;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.fragments.BottomSheetFragment;
-import com.dataflowstores.dataflow.utils.SingleShotLocationProvider;
-import com.dataflowstores.dataflow.R;
-import com.dataflowstores.dataflow.databinding.ReceiptsBinding;
 import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
+import com.dataflowstores.dataflow.utils.SingleShotLocationProvider;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationRequest;
@@ -107,24 +108,12 @@ public class ReceiptScreen extends AppCompatActivity implements MyDialogCloseLis
         else requestPermission();
         invoiceVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
 
-        invoiceVM.customerBalanceLiveData.observe(this, customerBalance -> {
+        receiptsVM.customerBalanceLiveData.observe(this, customerBalance -> {
             App.customerBalance = customerBalance.getMessage();
-            new AlertDialog.Builder(this).setTitle("عملية ناجحة")
-                    .setMessage("تم تسجيل عملية الدفع بنجاح")
-                    .setIcon(getResources().getDrawable(R.drawable.ic_baseline_verified_24))
-                    .setPositiveButton("طباعة", (dialog, which) -> {
-                        binding.confirmProcess.setClickable(true);
-                        receiptsVM.getReceipt(App.currentUser.getBranchISN(), uuid, String.valueOf(moveId),
-                                App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN(), App.currentUser.getPermission());
-                        binding.showProgress.setVisibility(View.VISIBLE);
-                        dialog.dismiss();
-                    }).setNegativeButton("إغلاق", (dialog, which) -> {
-                        dialog.dismiss();
-                        finish();
-                        startActivity(new Intent(this, ReceiptScreen.class));
-                    }).show();
-
-
+            binding.confirmProcess.setClickable(true);
+            binding.showProgress.setVisibility(View.GONE);
+            startActivity(new Intent(ReceiptScreen.this, PrintReceipt.class));
+            finish();
         });
     }
 
@@ -518,8 +507,23 @@ public class ReceiptScreen extends AppCompatActivity implements MyDialogCloseLis
 
         receiptsVM.receiptResponseMutableLiveData.observe(this, receiptResponse -> {
             if (App.customer.getDealerName() != null && App.currentUser.getMobileShowDealerCurrentBalanceInPrint() == 1) {
-                moveId = receiptResponse.getData().getMoveId();
-                invoiceVM.getCustomerBalance(uuid, String.valueOf(App.customer.getDealer_ISN()), String.valueOf(App.customer.getBranchISN()), String.valueOf(App.customer.getDealerType()), String.valueOf(App.customer.getDealerName()));
+                new AlertDialog.Builder(this).setTitle("عملية ناجحة")
+                        .setMessage("تم تسجيل عملية الدفع بنجاح")
+                        .setIcon(getResources().getDrawable(R.drawable.ic_baseline_verified_24))
+                        .setPositiveButton("طباعة", (dialog, which) -> {
+                            binding.confirmProcess.setClickable(true);
+                            moveId = receiptResponse.getData().getMoveId();
+                            receiptsVM.getReceipt(App.currentUser.getBranchISN(), uuid, String.valueOf(moveId),
+                                    App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN(), App.currentUser.getPermission());
+                            binding.showProgress.setVisibility(View.VISIBLE);
+                            dialog.dismiss();
+                        }).setNegativeButton("إغلاق", (dialog, which) -> {
+                            dialog.dismiss();
+                            finish();
+                            startActivity(new Intent(this, ReceiptScreen.class));
+                        }).show();
+
+
             } else {
                 new AlertDialog.Builder(this).setTitle("عملية ناجحة")
                         .setMessage("تم تسجيل عملية الدفع بنجاح")
@@ -538,13 +542,18 @@ public class ReceiptScreen extends AppCompatActivity implements MyDialogCloseLis
             }
         });
 
-
         receiptsVM.receiptModelMutableLiveData.observe(this, receiptModel -> {
             App.receiptModel = receiptModel;
-            binding.confirmProcess.setClickable(true);
-            binding.showProgress.setVisibility(View.GONE);
-            startActivity(new Intent(ReceiptScreen.this, PrintReceipt.class));
-            finish();
+            if (App.customer.getDealerName() != null && App.currentUser.getMobileShowDealerCurrentBalanceInPrint() == 1) {
+                ReceiptData receiptData = receiptModel.getData().get(0);
+                receiptsVM.getCustomerBalance(uuid, String.valueOf(App.customer.getDealer_ISN()), String.valueOf(App.customer.getBranchISN()), String.valueOf(App.customer.getDealerType()),
+                        receiptData.getBranchISN(), receiptData.getMove_ISN(), receiptData.getRemainValue(), receiptData.getNetValue(), receiptData.getMoveType());
+            } else {
+                binding.confirmProcess.setClickable(true);
+                binding.showProgress.setVisibility(View.GONE);
+                startActivity(new Intent(ReceiptScreen.this, PrintReceipt.class));
+                finish();
+            }
         });
     }
 

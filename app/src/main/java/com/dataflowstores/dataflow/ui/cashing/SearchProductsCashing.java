@@ -426,10 +426,14 @@ public class SearchProductsCashing extends AppCompatActivity {
         ArrayList<Double> discount1 = new ArrayList<>();
         ArrayList<Long> toStoreISN = new ArrayList<>();
         ArrayList<Long> toStoreBranchISN = new ArrayList<>();
+        ArrayList<Integer> allowStoreMinus = new ArrayList<>();
+        ArrayList<String> productStoreName = new ArrayList<>();
 
         for (int i = 0; i < App.selectedProducts.size(); i++) {
             itemName.add(App.selectedProducts.get(i).getItemName());
             ItemBranchISN.add((long) App.selectedProducts.get(i).getBranchISN());
+            allowStoreMinus.add(App.selectedProducts.get(i).getAllowStoreMinus());
+            productStoreName.add(App.selectedProducts.get(i).getItemName());
             ItemISN.add((long) App.selectedProducts.get(i).getItemISN());
             if (App.selectedProducts.get(i).getSelectedPriceType() != null) {
                 PriceTypeBranchISN.add((long) App.selectedProducts.get(i).getSelectedPriceType().getBranchISN());
@@ -548,7 +552,7 @@ public class SearchProductsCashing extends AppCompatActivity {
                         ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN, SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes, numberOFItems,
                         netPrices, basicMeasureUnitQuantity, expireDateBool, colorsBool, seasonsBool, sizesBool, serialBool, group1Bool, group2Bool, serviceItem, itemTax, itemTaxValue, 0,
                         App.currentUser.getAllowStoreMinus(), itemName, discount1, AllowStoreMinusConfirm, lat, _long, "exchange_permission", moveType, moveType == 14 ? toStoreBranchISN : null, moveType == 14 ? toStoreISN : null,
-                        App.currentBranch != null ? String.valueOf(App.currentBranch.getBranchISN()) : null);
+                        App.currentBranch != null ? String.valueOf(App.currentBranch.getBranchISN()) : null, allowStoreMinus, productStoreName);
             } else {
                 App.noConnectionDialog(this);
             }
@@ -567,7 +571,6 @@ public class SearchProductsCashing extends AppCompatActivity {
         }
         return true;
     }
-
 
     private void requestPermission() {
         ActivityCompat.requestPermissions(this, new String[]{
@@ -604,7 +607,6 @@ public class SearchProductsCashing extends AppCompatActivity {
                     }
                 }
                 break;
-
         }
     }
 

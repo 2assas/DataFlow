@@ -1,6 +1,7 @@
 package com.dataflowstores.dataflow.ui;
 
 import static android.telephony.MbmsDownloadSession.RESULT_CANCELLED;
+import static com.dataflowstores.dataflow.App.getMoveType;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -46,30 +48,21 @@ public class AddProducts extends AppCompatActivity {
             binding = DataBindingUtil.setContentView(this, R.layout.add_products);
             productVM = new ViewModelProvider(this).get(ProductVM.class);
             uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-            if (App.resales == 1)
-                binding.invoice.setText("متابعة مرتجع المبيعات");
-            else
-                binding.invoice.setText("متابعة فاتورة المبيعات");
+            Log.e("checkType1", App.invoiceType.name());
+            invoiceName();
             productVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
-
             binding.searchProducts.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String s) {
                     if (App.isNetworkAvailable(AddProducts.this)) {
-                        if (App.resales == 0)
-                            productVM.getProduct(s, uuid, null, 1);
-                        else
-                            productVM.getProduct(s, uuid, null, 3);
-
+                        productVM.getProduct(s, uuid, null, getMoveType());
                     } else {
                         App.noConnectionDialog(AddProducts.this);
                     }
                     BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
                     bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
-                    if (App.resales == 1)
-                        binding.invoice.setText("متابعة مرتجع المبيعات");
-                    else
-                        binding.invoice.setText("متابعة فاتورة المبيعات");
+                    Log.e("checkType2", App.invoiceType.name());
+                    invoiceName();
 
                     return false;
                 }
@@ -79,16 +72,14 @@ public class AddProducts extends AppCompatActivity {
                     binding.invoice.setText("بحث عن صنف");
                     binding.invoice.setOnClickListener(view -> {
                         if (App.isNetworkAvailable(AddProducts.this)) {
-                            productVM.getProduct(s, uuid, null, 1);
+                            productVM.getProduct(s, uuid, null, getMoveType());
                             BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
                             bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
                         } else {
                             App.noConnectionDialog(AddProducts.this);
                         }
-                        if (App.resales == 1)
-                            binding.invoice.setText("متابعة مرتجع المبيعات");
-                        else
-                            binding.invoice.setText("متابعة فاتورة المبيعات");
+                        Log.e("checkType3", App.invoiceType.name());
+                        invoiceName();
 
                     });
                     return false;
@@ -113,6 +104,30 @@ public class AddProducts extends AppCompatActivity {
         }
     }
 
+    private void invoiceName() {
+        switch (App.invoiceType) {
+            case Sales:
+                binding.invoice.setText("متابعة فاتورة المبيعات");
+                Log.e("checkType", "Sales");
+                break;
+            case ReturnSales:
+                binding.invoice.setText("متابعة مرتجع المبيعات");
+                Log.e("checkType", "ReturnSales");
+                break;
+            case Purchase:
+                binding.invoice.setText("متابعة فاتورة المشتريات");
+                Log.e("checkType", "Purchase");
+                break;
+            case ReturnPurchased:
+                binding.invoice.setText("متابعة مرتجع المشتريات");
+                Log.e("checkType", "ReturnPurchased");
+                break;
+
+            default:
+                binding.invoice.setText("متابعة فاتورة المبيعات");
+                Log.e("checkType10", "Sales");
+        }
+    }
 
 
     public void barCodeScan() {
@@ -142,17 +157,15 @@ public class AddProducts extends AppCompatActivity {
         if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
                 String contents = data.getStringExtra("SCAN_RESULT");
-                if (App.isNetworkAvailable(AddProducts.this))
-                    productVM.getProduct(contents, uuid, null, 1);
-                else {
+                if (App.isNetworkAvailable(AddProducts.this)) {
+                    productVM.getProduct(contents, uuid, null, getMoveType());
+                } else {
                     App.noConnectionDialog(AddProducts.this);
                 }
                 BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
                 bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
-                if (App.resales == 1)
-                    binding.invoice.setText("متابعة مرتجع المبيعات");
-                else
-                    binding.invoice.setText("متابعة فاتورة المبيعات");
+                Log.e("checkType4", App.invoiceType.name());
+                invoiceName();
 
             }
             if (resultCode == RESULT_CANCELLED) {
@@ -160,6 +173,7 @@ public class AddProducts extends AppCompatActivity {
             }
         }
     }
+
 
     public SwipeHelper recyclerSwipe() {
         return new SwipeHelper(AddProducts.this, binding.productsRecycler, 250) {

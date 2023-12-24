@@ -9,11 +9,17 @@
         android:title="طباعة الفواتير">
         <menu>
             <item
-                android:id="@+id/searchSaleInvoice"
+                android:id="@+id/sales"
                 android:title="فاتورة مبيعات" />
             <item
-                android:id="@+id/mobileResales"
-                android:title="مرتجع فاتورة مبيعات" />
+                android:id="@+id/returnSales"
+                android:title="فاتورة مرتجع مبيعات" />
+            <item
+                android:id="@+id/purchaseOrder"
+                android:title="فاتورة مشتريات" />
+            <item
+                android:id="@+id/returnPurchased"
+                android:title="فاتورة مرتجع مشتريات" />
 
         </menu>
     </item>
@@ -28,6 +34,9 @@
             <item
                 android:id="@+id/searchExpensesInvoice"
                 android:title="مصروفات" />
+            <item
+                android:id="@+id/searchPaymentInvoice"
+                android:title="مدفوعات" />
         </menu>
     </item>
     <item
@@ -64,7 +73,7 @@
         <menu>
             <item
                 android:id="@+id/nav_item_six"
-                android:title="23.1127" />
+                android:title="23.1224" />
         </menu>
     </item>
     <item

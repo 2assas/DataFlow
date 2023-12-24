@@ -1,5 +1,10 @@
 package com.dataflowstores.dataflow.ui;
 
+import static com.dataflowstores.dataflow.App.getMoveType;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Purchase;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnPurchased;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Sales;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -37,7 +42,6 @@ import com.dataflowstores.dataflow.ViewModels.CheckoutVM;
 import com.dataflowstores.dataflow.databinding.CheckoutBinding;
 import com.dataflowstores.dataflow.pojo.settings.BanksData;
 import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
-import com.dataflowstores.dataflow.pojo.users.CustomerData;
 import com.dataflowstores.dataflow.ui.invoice.PrintInvoice;
 import com.dataflowstores.dataflow.utils.SingleShotLocationProvider;
 import com.google.android.gms.common.api.ApiException;
@@ -138,8 +142,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
                     errorMessage = "لا يوجد الكمية الكافية من هذا الصنف";
                     binding.checkout.setClickable(true);
                 }
-
-                if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 2 && App.resales != 1) {
+                if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 2 && (App.invoiceType == Sales || App.invoiceType == ReturnPurchased)) {
                     new AlertDialog.Builder(this).
                             setTitle("نقص فالمخزن")
                             .setMessage(errorMessage)
@@ -154,7 +157,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
                                 startActivity(new Intent(Checkout.this, AddProducts.class));
                                 finish();
                             }).show();
-                } else if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 1 && App.resales != 1) {
+                } else if (response.getStatus() == 0 && (App.currentUser.getAllowStoreMinus() == 1 || App.currentUser.getAllowStoreMinus() == 4) && (App.invoiceType == Sales || App.invoiceType == ReturnPurchased)) {
                     String error = response.getMessage();
                     String errorTitle = "نقص فالمخزن";
                     if (response.getMessage().equals("Not saved ... please save again")) {
@@ -284,6 +287,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case 123:
                 if (grantResults.length > 0) {
@@ -308,8 +312,13 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
 
         }
     }
-
     public void userRestricts() {
+        if (App.currentUser.getMobileTax() == 0) {
+            binding.percentTax.setEnabled(false);
+            binding.percentTaxVal.setEnabled(false);
+            binding.percentTaxTxt.setTextColor(Color.GRAY);
+            binding.percentValTaxTxt.setTextColor(Color.GRAY);
+        }
         if (App.currentUser.getIsCasheir() == 0) {
             binding.cashCheck.setEnabled(false);
             binding.cashCheck.setChecked(false);
@@ -362,7 +371,6 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 safeDepositData = App.safeDeposit.getData().get(i);
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
                 safeDepositData = App.safeDeposit.getData().get(0);
@@ -603,6 +611,9 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
             binding.clientName.setVisibility(View.GONE);
         } else {
             binding.clientName.setText(App.customer.getDealerName());
+            if (App.invoiceType == Purchase || App.invoiceType == ReturnPurchased)
+                binding.client.setText("المورد");
+
         }
         if (App.agent.getDealerName() == null) {
             binding.agentName.setVisibility(View.GONE);
@@ -1097,12 +1108,16 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
         ArrayList<Double> itemTaxValue = new ArrayList<>();//value
         ArrayList<String> itemName = new ArrayList<>();//value
         ArrayList<Double> discount1 = new ArrayList<>();
+        ArrayList<Integer> allowStoreMinus = new ArrayList<>();
+        ArrayList<String> productStoreName = new ArrayList<>();
 
         for (int i = 0; i < App.selectedProducts.size(); i++) {
             itemTax.add(Double.parseDouble(App.selectedProducts.get(i).getItemTax()));
             itemTaxValue.add(((App.selectedProducts.get(i).getSelectedUnit().getPrice() / 100) * Double.parseDouble(App.selectedProducts.get(i).getItemTax())) * App.selectedProducts.get(i).getActualQuantity());
             itemName.add(App.selectedProducts.get(i).getItemName());
             discount1.add(App.selectedProducts.get(i).getDiscount1());
+            allowStoreMinus.add(App.selectedProducts.get(i).getAllowStoreMinus());
+            productStoreName.add(App.selectedProducts.get(i).getItemName());
             lineTax = +Double.parseDouble(App.selectedProducts.get(i).getItemTax());
             ItemBranchISN.add((long) App.selectedProducts.get(i).getBranchISN());
             ItemISN.add((long) App.selectedProducts.get(i).getItemISN());
@@ -1222,7 +1237,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
                         BasicQuantity, BonusQuantity, TotalQuantity, Price, MeasureUnitBranchISN, MeasureUnitISN, BasicMeasureUnitBranchISN, BasicMeasureUnitISN, ItemSerial,
                         ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN, SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes, numberOFItems,
                         netPrices, basicMeasureUnitQuantity, expireDateBool, colorsBool, seasonsBool, sizesBool, serialBool, group1Bool, group2Bool, serviceItem, itemTax, itemTaxValue, totalLineTaxes,
-                        App.currentUser.getAllowStoreMinus(), itemName, discount1, AllowStoreMinusConfirm, lat, _long, null, App.resales == 1 ? 3 : null, null, null, null);
+                        App.currentUser.getAllowStoreMinus(), itemName, discount1, AllowStoreMinusConfirm, lat, _long, null, getMoveType(), null, null, null, allowStoreMinus, productStoreName);
                 Log.e("checkout", " checkinnnggg");
             } else {
                 App.noConnectionDialog(this);

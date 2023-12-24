@@ -7,7 +7,6 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.pojo.login.BranchStaffModel;
 import com.dataflowstores.dataflow.pojo.login.LoginStatus;
 import com.dataflowstores.dataflow.pojo.report.Branches;
@@ -16,7 +15,6 @@ import com.dataflowstores.dataflow.pojo.settings.Stores;
 import com.dataflowstores.dataflow.pojo.workStation.Branch;
 import com.dataflowstores.dataflow.pojo.workStation.Workstation;
 import com.dataflowstores.dataflow.pojo.workStation.WorkstationList;
-import com.dataflowstores.dataflow.utils.Conts;
 import com.dataflowstores.dataflow.webService.ApiClient;
 import com.dataflowstores.dataflow.webService.Constants;
 import com.dataflowstores.dataflow.webService.ServiceGenerator;
@@ -49,7 +47,7 @@ public class GateWayViewModel extends ViewModel {
 
     public void getLoginStatus(String uuid, String user_name, String password, String foundation_name, String phone, String selectedBranchISN, String selectedSafeDepositBranchISN,
                                String selectedSafeDepositISN, String selectedStoreBranchISN, String selectedStoreISN, int demo) {
-        Observable<LoginStatus> login = apiClient.loginGateWay(uuid, user_name, password, foundation_name, phone, 2, Conts.APP_VERSION,
+        Observable<LoginStatus> login = apiClient.loginGateWay(uuid, user_name, password, foundation_name, phone, 2, Constants.APP_VERSION,
                 selectedBranchISN, selectedSafeDepositBranchISN, selectedSafeDepositISN, selectedStoreBranchISN, selectedStoreISN, demo, selectedFoundation
         ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         login.subscribe(loginStatus -> {

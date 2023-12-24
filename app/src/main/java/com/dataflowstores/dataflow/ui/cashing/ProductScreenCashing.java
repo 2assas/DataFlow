@@ -1,5 +1,7 @@
 package com.dataflowstores.dataflow.ui.cashing;
 
+import static com.dataflowstores.dataflow.App.product;
+
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -359,7 +361,6 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
             if (moveType != 14)
                 for (int i = 0; i < App.storesCashing.getData().size(); i++) {
                     stores.add(App.storesCashing.getData().get(i).getStoreName());
-
                 }
             else
                 for (int i = 0; i < App.stores.getData().size(); i++) {
@@ -643,7 +644,8 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
                         }
                         finish();
                     } else {
-                        if (moveType != 17 && moveType != 12 && moveType != 15) {
+                        Log.e("checkCurrentStore", "storeName= " + product.getSelectedStore().getStoreName() + " storeMinus " + product.getSelectedStore().getStore_ISN());
+                        if (moveType != 17 && moveType != 12 && moveType != 15 && (App.currentUser.getAllowStoreMinus() == 1 || App.currentUser.getAllowStoreMinus() == 2 || (App.currentUser.getAllowStoreMinus() == 4 && product.getSelectedStore().getAllowCurrentStoreMinus() == 1))) {
                             minusCheck();
                         } else {
                             if (!App.isEditing) {
@@ -695,7 +697,8 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
                                             checkoutVM.checkItemMutableLiveData = new MutableLiveData<>();
                                             dialogInterface.dismiss();
                                         }).show();
-                            } else if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 1) {
+                            } else if
+                            (response.getStatus() == 0 && (App.currentUser.getAllowStoreMinus() == 1 || (App.currentUser.getAllowStoreMinus() == 4 && App.product.getSelectedStore().getAllowCurrentStoreMinus() == 1))) {
                                 String error = response.getMessage();
                                 String errorTitle = "نقص فالمخزن";
                                 if (response.getMessage().equals("Not saved ... please save again")) {
@@ -884,7 +887,7 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
                 BasicQuantity, BonusQuantity, TotalQuantity, Price, MeasureUnitBranchISN, MeasureUnitISN, BasicMeasureUnitBranchISN, BasicMeasureUnitISN, ItemSerial,
                 ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN, SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes,
                 netPrices, basicMeasureUnitQuantity, expireDateBool, colorsBool, seasonsBool, sizesBool, serialBool, group1Bool, group2Bool, serviceItem, itemTax, itemTaxValue,
-                itemName, discount1, App.currentUser.getAllowStoreMinus(), allowStoreMinusConfirm);
+                itemName, discount1, App.currentUser.getAllowStoreMinus(), allowStoreMinusConfirm, App.product.getSelectedStore().getAllowCurrentStoreMinus());
         Log.e("checkout", " checkinnnggg");
     }
 

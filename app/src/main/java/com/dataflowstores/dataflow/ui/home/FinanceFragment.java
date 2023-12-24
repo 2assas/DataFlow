@@ -3,20 +3,18 @@ package com.dataflowstores.dataflow.ui.home;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
 
 import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.FragmentFinanceBinding;
 import com.dataflowstores.dataflow.ui.expenses.ExpensesScreen;
+import com.dataflowstores.dataflow.ui.payments.PaymentsScreen;
 import com.dataflowstores.dataflow.ui.receipts.ReceiptScreen;
 
 /**
@@ -74,8 +72,8 @@ public class FinanceFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_finance, container, false);
+        powers();
         setupViews();
-
         return binding.getRoot();
     }
 
@@ -91,6 +89,17 @@ public class FinanceFragment extends Fragment {
             if (App.isNetworkAvailable(requireActivity()))
                 startActivity(new Intent(requireActivity(), ReceiptScreen.class));
         });
+        binding.payments.setOnClickListener(v -> {
+            if (App.isNetworkAvailable(requireActivity())) {
+                Intent intent = new Intent(requireActivity(), PaymentsScreen.class);
+                startActivity(intent);
+            }
+        });
+
+
+    }
+
+    private void powers() {
         if (App.currentUser.getMobileCashReceipts() == 0) {
             binding.receipts.setEnabled(false);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -103,7 +112,12 @@ public class FinanceFragment extends Fragment {
                 binding.expenses.setBackground(requireActivity().getDrawable(R.drawable.gray_rounded));
             }
         }
-
+        if (App.currentUser.getMobilePayment() == 0) {
+            binding.payments.setEnabled(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                binding.payments.setBackground(requireActivity().getDrawable(R.drawable.gray_rounded));
+            }
+        }
     }
 
     private void back() {

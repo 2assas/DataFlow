@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
                 .add(R.id.container, fragment1)
                 .addToBackStack("home")
                 .commit();
+
     }
 
 

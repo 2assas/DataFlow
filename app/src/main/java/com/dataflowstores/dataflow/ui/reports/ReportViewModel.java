@@ -48,6 +48,7 @@ public class ReportViewModel extends ViewModel {
     public MutableLiveData<CashierMovesReportResponse> cashierMovesReportResponseMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<MoveTypesResponse> moveTypesResponseMutableLiveData = new MutableLiveData<>();
     public SingleLiveEvent<ItemSalesResponse> itemSalesResponseMutableLiveData = new SingleLiveEvent<>();
+    public SingleLiveEvent<ItemSalesResponse> supplierSalesResponseMutableLiveData = new SingleLiveEvent<>();
     public MutableLiveData<String> toastErrorMutableLiveData = new MutableLiveData<>();
 
     ApiClient apiClient = ServiceGenerator.tokenService(
@@ -325,7 +326,7 @@ public class ReportViewModel extends ViewModel {
         });
     }
 
-    public void getCashierMoves(ReportBody reportBody, String uuid, long storeBranchISN, long storeISN, long workerBranch, Integer moveType, CustomerData customerData, DataItem selectedWorker) {
+    public void getCashierMoves(ReportBody reportBody, String uuid, long storeBranchISN, long storeISN, long workerBranch, Integer moveType, CustomerData customerData, DataItem selectedWorker, CustomerData supplierData) {
 
         Observable<CashierMovesReportResponse> observable = apiClient.getCashierMovesReport(reportBody, uuid, storeBranchISN, storeISN, workerBranch, App.currentUser.getWorkerName(),
                         App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()),
@@ -341,7 +342,11 @@ public class ReportViewModel extends ViewModel {
                         App.currentUser.getLogIn_WSName(),
                         App.currentUser.getLogIn_CS(),
                         App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative())
+                        App.currentUser.getLogIn_FAlternative(),
+                        supplierData==null? null: supplierData.getDealerType(),
+                        supplierData==null? null: supplierData.getBranchISN(),
+                        supplierData==null? null: supplierData.getDealer_ISN()
+                        )
                 .subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread());
         observable.subscribe(new Observer<CashierMovesReportResponse>() {
             @Override
@@ -463,4 +468,63 @@ public class ReportViewModel extends ViewModel {
             }
         });
     }
+
+
+    public void getSupplierSalesReport(String uuid, long branchISN, String fromWorkday, String toWorkday, String shiftISN,
+                                   long workerBranchISN, String workerISN, String from, String to, Long vendorId, String workerCISN, String workerCBranchISN, Integer dealerType, Long dealerBranchISN, Long dealer_ISN) {
+
+        Observable<ItemSalesResponse> observable = apiClient.getSupplierSalesReport(uuid, branchISN, fromWorkday, toWorkday,
+                        shiftISN, workerBranchISN, workerISN, from, to, vendorId, workerCISN, workerCBranchISN, App.currentUser.getWorkerName(),
+                        App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()), dealerType, dealerBranchISN, dealer_ISN,selectedFoundation,
+                        App.currentUser.getLogIn_BISN(),
+                        App.currentUser.getLogIn_UID(),
+                        App.currentUser.getLogIn_WBISN(),
+                        App.currentUser.getLogIn_WISN(),
+                        App.currentUser.getLogIn_WName(),
+                        App.currentUser.getLogIn_WSBISN(),
+                        App.currentUser.getLogIn_WSISN(),
+                        App.currentUser.getLogIn_WSName(),
+                        App.currentUser.getLogIn_CS(),
+                        App.currentUser.getLogIn_VN(),
+                        App.currentUser.getLogIn_FAlternative())
+                .subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread());
+        observable.subscribe(new Observer<ItemSalesResponse>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@NonNull ItemSalesResponse itemSalesResponse) {
+                supplierSalesResponseMutableLiveData.postValue(itemSalesResponse);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable throwable) {
+                Log.e("ERRORpostReport", throwable.toString());
+                if (throwable instanceof IOException) {
+                    //handle network error
+                    toastErrorMutableLiveData.postValue("No Internet Connection!");
+                } else if (throwable instanceof HttpException) {
+                    ResponseBody errorBody = Objects.requireNonNull(((HttpException) throwable).response()).errorBody();
+                    try {
+                        toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    //handle HTTP error response code
+                } else {
+                    //handle other exceptions
+                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+                }
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+    }
+
+
 }

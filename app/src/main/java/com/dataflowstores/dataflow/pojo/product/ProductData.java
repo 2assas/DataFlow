@@ -28,6 +28,7 @@ public class ProductData implements Serializable {
     double totalTax;
     double discount1=0;
     double netPrice;
+    int allowStoreMinus;
 
     @SerializedName("ItemISNBranch")
     private int itemISNBranch;
@@ -143,7 +144,13 @@ public class ProductData implements Serializable {
     private String xBarCodeGroup2Name;
 
     private boolean BarCodePrice =false ;
+    public int getAllowStoreMinus() {
+        return allowStoreMinus;
+    }
 
+    public void setAllowStoreMinus(int allowStoreMinus) {
+        this.allowStoreMinus = allowStoreMinus;
+    }
 
     public boolean isBarCodePrice() {
         return BarCodePrice;

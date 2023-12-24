@@ -8,4 +8,8 @@
     <color name="semi_transparent">#1A000000</color>
     <color name="black_over_color">#D4000000</color>
 
+    <color name="colorPrimary2">#3587D6</color>
+    <color name="colorPrimaryDark2">#676767</color>
+    <color name="colorAccent2">#3587D6</color>
+
 </resources>

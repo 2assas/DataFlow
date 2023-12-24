@@ -42,8 +42,8 @@ import androidx.core.content.FileProvider;
 import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ui.SplashScreen;
-import com.dataflowstores.dataflow.utils.Conts;
 import com.dataflowstores.dataflow.utils.DeviceReceiver;
+import com.dataflowstores.dataflow.webService.Constants;
 import com.google.android.material.snackbar.Snackbar;
 
 import net.posprinter.posprinterface.IMyBinder;
@@ -454,7 +454,7 @@ public class PrintScreen extends AppCompatActivity implements View.OnClickListen
                     return;
                 }
             }
-            startActivityForResult(intent, Conts.ENABLE_BLUETOOTH);
+            startActivityForResult(intent, Constants.ENABLE_BLUETOOTH);
         } else {
             showblueboothlist();
         }
