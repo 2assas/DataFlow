@@ -1,5 +1,7 @@
 package com.dataflowstores.dataflow.ui.expenses;
 
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -29,15 +31,16 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.dataflowstores.dataflow.App;
+import com.dataflowstores.dataflow.R;
+import com.dataflowstores.dataflow.databinding.ExpensesScreenBinding;
+import com.dataflowstores.dataflow.pojo.expenses.MainExpItem;
 import com.dataflowstores.dataflow.pojo.expenses.SubExpItem;
 import com.dataflowstores.dataflow.pojo.expenses.WorkerItem;
 import com.dataflowstores.dataflow.pojo.settings.BanksData;
 import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.utils.SingleShotLocationProvider;
-import com.dataflowstores.dataflow.R;
-import com.dataflowstores.dataflow.databinding.ExpensesScreenBinding;
-import com.dataflowstores.dataflow.pojo.expenses.MainExpItem;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationRequest;
@@ -54,7 +57,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public class ExpensesScreen extends AppCompatActivity implements LocationListener {
+public class ExpensesScreen extends BaseActivity implements LocationListener {
 
     ExpensesScreenBinding binding;
     ExpensesViewModel expensesViewModel;
@@ -78,6 +81,7 @@ public class ExpensesScreen extends AppCompatActivity implements LocationListene
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.expenses_screen);
         if (savedInstanceState != null) {
@@ -242,8 +246,8 @@ public class ExpensesScreen extends AppCompatActivity implements LocationListene
                 binding.receiptTotal.setError("مطلوب");
                 binding.confirmProcess.setClickable(true);
             } else {
-                createExpenses();
                 binding.showProgress.setVisibility(View.VISIBLE);
+                createExpenses();
             }
         } else {
             new AlertDialog.Builder(this).
@@ -438,21 +442,34 @@ public class ExpensesScreen extends AppCompatActivity implements LocationListene
         );
 
         expensesViewModel.expensesResponseMutableLiveData.observe(this, expensesResponse -> {
-            new AlertDialog.Builder(this).setTitle("عملية ناجحة")
-                    .setMessage("تم تسجيل عملية الدفع بنجاح")
-                    .setCancelable(false)
-                    .setIcon(getResources().getDrawable(R.drawable.ic_baseline_verified_24))
-                    .setPositiveButton("طباعة", (dialog, which) -> {
-                        expensesViewModel.getExpenses(App.currentUser.getBranchISN(), uuid, String.valueOf(expensesResponse.getData().getMoveId()),
-                                App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN(), App.currentUser.getPermission());
-                        binding.showProgress.setVisibility(View.VISIBLE);
-                        dialog.dismiss();
-                    }).setNegativeButton("إغلاق", (dialog, which) -> {
-                        dialog.dismiss();
-                        finish();
-                        startActivity(new Intent(this, ExpensesScreen.class));
-                    }).show();
-        });
+                    if (expensesResponse.getStatus() == 1) {
+                        new AlertDialog.Builder(this).setTitle("عملية ناجحة")
+                                .setMessage("تم تسجيل عملية الدفع بنجاح")
+                                .setCancelable(false)
+                                .setIcon(getResources().getDrawable(R.drawable.ic_baseline_verified_24))
+                                .setPositiveButton("طباعة", (dialog, which) -> {
+                                    expensesViewModel.getExpenses(App.currentUser.getBranchISN(), uuid, String.valueOf(expensesResponse.getData().getMoveId()),
+                                            App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN(), App.currentUser.getPermission());
+                                    binding.showProgress.setVisibility(View.VISIBLE);
+                                    dialog.dismiss();
+                                }).setNegativeButton("إغلاق", (dialog, which) -> {
+                                    dialog.dismiss();
+                                    finish();
+                                    startActivity(new Intent(this, ExpensesScreen.class));
+                                }).show();
+                    } else {
+                        binding.confirmProcess.setClickable(true);
+                        new AlertDialog.Builder(this)
+                                .setMessage(expensesResponse.getMessage())
+                                .setIcon(getResources().getDrawable(R.drawable.baseline_cancel_presentation_24))
+                                .setCancelable(false)
+                                .setPositiveButton("إغلاق", (dialog, which) -> {
+                                    dialog.dismiss();
+                                    binding.showProgress.setVisibility(View.GONE);
+                                }).show();
+                    }
+                }
+        );
 
 
         expensesViewModel.expensesModelMutableLiveData.observe(this, expensesModel -> {

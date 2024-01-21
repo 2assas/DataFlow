@@ -10,11 +10,9 @@ import androidx.lifecycle.ViewModel;
 
 import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.pojo.invoice.InitialAPIs;
-import com.dataflowstores.dataflow.pojo.login.BranchStaffModel;
 import com.dataflowstores.dataflow.pojo.report.Branches;
 import com.dataflowstores.dataflow.pojo.settings.Banks;
 import com.dataflowstores.dataflow.pojo.settings.PriceType;
-import com.dataflowstores.dataflow.pojo.settings.PriceTypeData;
 import com.dataflowstores.dataflow.pojo.settings.SafeDeposit;
 import com.dataflowstores.dataflow.pojo.settings.Stores;
 import com.dataflowstores.dataflow.webService.ApiClient;
@@ -54,7 +52,16 @@ public class SettingVM extends ViewModel {
                     App.currentUser.getLogIn_WSName(),
                     App.currentUser.getLogIn_CS(),
                     App.currentUser.getLogIn_VN(),
-                    App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                    App.currentUser.getLogIn_FAlternative(), App.currentUser.getMobileSalesMaxDiscPer()
+                    , App.currentUser.getShiftSystemActivate()
+                    , App.currentUser.getLogIn_ShiftBranchISN()
+                    , App.currentUser.getLogIn_ShiftISN()
+                    , App.currentUser.getLogIn_Spare1()
+                    , App.currentUser.getLogIn_Spare2()
+                    , App.currentUser.getLogIn_Spare3()
+                    , App.currentUser.getLogIn_Spare4()
+                    , App.currentUser.getLogIn_Spare5()
+                    , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
             getStores.subscribe(stores -> {
                 storesMutableLiveData.setValue(stores);
             },throwable -> {
@@ -86,22 +93,40 @@ public class SettingVM extends ViewModel {
                         App.currentUser.getLogIn_WSName(),
                         App.currentUser.getLogIn_CS(),
                         App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                        App.currentUser.getLogIn_FAlternative(), App.currentUser.getMobileSalesMaxDiscPer()
+                        , App.currentUser.getShiftSystemActivate()
+                        , App.currentUser.getLogIn_ShiftBranchISN()
+                        , App.currentUser.getLogIn_ShiftISN()
+                        , App.currentUser.getLogIn_Spare1()
+                        , App.currentUser.getLogIn_Spare2()
+                        , App.currentUser.getLogIn_Spare3()
+                        , App.currentUser.getLogIn_Spare4()
+                        , App.currentUser.getLogIn_Spare5()
+                        , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observable<Stores> getStores =
-                           apiClient.getStores(branchISN, App.currentUser.getPermission(), uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getAllBranchesWorker(), moveType,selectedFoundation,
-                                   App.currentUser.getLogIn_BISN(),
-                                   App.currentUser.getLogIn_UID(),
-                                   App.currentUser.getLogIn_WBISN(),
-                                   App.currentUser.getLogIn_WISN(),
-                                   App.currentUser.getLogIn_WName(),
-                                   App.currentUser.getLogIn_WSBISN(),
-                                   App.currentUser.getLogIn_WSISN(),
-                                   App.currentUser.getLogIn_WSName(),
-                                   App.currentUser.getLogIn_CS(),
-                                   App.currentUser.getLogIn_VN(),
-                                   App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                apiClient.getStores(branchISN, App.currentUser.getPermission(), uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getAllBranchesWorker(), moveType, selectedFoundation,
+                        App.currentUser.getLogIn_BISN(),
+                        App.currentUser.getLogIn_UID(),
+                        App.currentUser.getLogIn_WBISN(),
+                        App.currentUser.getLogIn_WISN(),
+                        App.currentUser.getLogIn_WName(),
+                        App.currentUser.getLogIn_WSBISN(),
+                        App.currentUser.getLogIn_WSISN(),
+                        App.currentUser.getLogIn_WSName(),
+                        App.currentUser.getLogIn_CS(),
+                        App.currentUser.getLogIn_VN(),
+                        App.currentUser.getLogIn_FAlternative(), App.currentUser.getMobileSalesMaxDiscPer()
+                        , App.currentUser.getShiftSystemActivate()
+                        , App.currentUser.getLogIn_ShiftBranchISN()
+                        , App.currentUser.getLogIn_ShiftISN()
+                        , App.currentUser.getLogIn_Spare1()
+                        , App.currentUser.getLogIn_Spare2()
+                        , App.currentUser.getLogIn_Spare3()
+                        , App.currentUser.getLogIn_Spare4()
+                        , App.currentUser.getLogIn_Spare5()
+                        , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observable<SafeDeposit> getSafeDeposits =
-                apiClient.getSafeDeposit(branchISN, App.currentUser.getPermission(), uuid, App.currentUser.getSafeDepositBranchISN(), App.currentUser.getSafeDepositISN(), App.currentUser.getAllBranchesWorker(), moveType,selectedFoundation,
+                apiClient.getSafeDeposit(branchISN, App.currentUser.getPermission(), uuid, App.currentUser.getSafeDepositBranchISN(), App.currentUser.getSafeDepositISN(), App.currentUser.getAllBranchesWorker(), moveType, selectedFoundation,
                         App.currentUser.getLogIn_BISN(),
                         App.currentUser.getLogIn_UID(),
                         App.currentUser.getLogIn_WBISN(),
@@ -112,9 +137,18 @@ public class SettingVM extends ViewModel {
                         App.currentUser.getLogIn_WSName(),
                         App.currentUser.getLogIn_CS(),
                         App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                        App.currentUser.getLogIn_FAlternative(), App.currentUser.getMobileSalesMaxDiscPer()
+                        , App.currentUser.getShiftSystemActivate()
+                        , App.currentUser.getLogIn_ShiftBranchISN()
+                        , App.currentUser.getLogIn_ShiftISN()
+                        , App.currentUser.getLogIn_Spare1()
+                        , App.currentUser.getLogIn_Spare2()
+                        , App.currentUser.getLogIn_Spare3()
+                        , App.currentUser.getLogIn_Spare4()
+                        , App.currentUser.getLogIn_Spare5()
+                        , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observable<PriceType> getPriceTypes =
-                apiClient.getPriceType(App.currentUser.getPermission(), uuid, App.currentUser.getPricesTypeBranchISN(), App.currentUser.getPricesTypeISN(),selectedFoundation,
+                apiClient.getPriceType(App.currentUser.getPermission(), uuid, App.currentUser.getPricesTypeBranchISN(), App.currentUser.getPricesTypeISN(), selectedFoundation,
                         App.currentUser.getLogIn_BISN(),
                         App.currentUser.getLogIn_UID(),
                         App.currentUser.getLogIn_WBISN(),
@@ -125,7 +159,16 @@ public class SettingVM extends ViewModel {
                         App.currentUser.getLogIn_WSName(),
                         App.currentUser.getLogIn_CS(),
                         App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative(),null).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                        App.currentUser.getLogIn_FAlternative(), null, App.currentUser.getMobileSalesMaxDiscPer()
+                        , App.currentUser.getShiftSystemActivate()
+                        , App.currentUser.getLogIn_ShiftBranchISN()
+                        , App.currentUser.getLogIn_ShiftISN()
+                        , App.currentUser.getLogIn_Spare1()
+                        , App.currentUser.getLogIn_Spare2()
+                        , App.currentUser.getLogIn_Spare3()
+                        , App.currentUser.getLogIn_Spare4()
+                        , App.currentUser.getLogIn_Spare5()
+                        , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         Observable<InitialAPIs> zipper = Observable.zip(getStores, getBanks, getSafeDeposits, getPriceTypes, InitialAPIs::new);
 
@@ -160,7 +203,16 @@ public class SettingVM extends ViewModel {
                 App.currentUser.getLogIn_WSName(),
                 App.currentUser.getLogIn_CS(),
                 App.currentUser.getLogIn_VN(),
-                App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                App.currentUser.getLogIn_FAlternative(), App.currentUser.getMobileSalesMaxDiscPer()
+                , App.currentUser.getShiftSystemActivate()
+                , App.currentUser.getLogIn_ShiftBranchISN()
+                , App.currentUser.getLogIn_ShiftISN()
+                , App.currentUser.getLogIn_Spare1()
+                , App.currentUser.getLogIn_Spare2()
+                , App.currentUser.getLogIn_Spare3()
+                , App.currentUser.getLogIn_Spare4()
+                , App.currentUser.getLogIn_Spare5()
+                , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observer<Branches> observer = new Observer<Branches>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {

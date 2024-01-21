@@ -53,7 +53,9 @@ public class SelectedProductsCashingAdapter extends RecyclerView.Adapter<Selecte
         if (moveType == 7)
             binding.quantityTxt.setText("الكمية الحالية");
         binding.totalQuantity.setText(String.format(Locale.US, "%.2f", list.get(position).getActualQuantity()) + " " + list.get(position).getSelectedUnit().getMeasureUnitArName());
+        binding.sequence.setText(String.valueOf(position+1));
     }
+
     @Override
     public int getItemCount() {
         return list.size();

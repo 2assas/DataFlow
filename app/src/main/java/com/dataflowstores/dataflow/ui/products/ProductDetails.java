@@ -1,7 +1,9 @@
 package com.dataflowstores.dataflow.ui.products;
 
 import static com.dataflowstores.dataflow.App.getMoveType;
+import static com.dataflowstores.dataflow.App.priceType;
 import static com.dataflowstores.dataflow.App.product;
+import static com.dataflowstores.dataflow.App.theme;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Purchase;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnPurchased;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnSales;
@@ -37,6 +39,7 @@ import com.dataflowstores.dataflow.pojo.product.MeasureUnit;
 import com.dataflowstores.dataflow.pojo.product.ProductData;
 import com.dataflowstores.dataflow.pojo.report.ItemAvailableQuantity;
 import com.dataflowstores.dataflow.ui.AddProducts;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 
 import java.text.SimpleDateFormat;
@@ -45,7 +48,7 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Objects;
 
-public class ProductDetails extends AppCompatActivity implements View.OnFocusChangeListener, AvailableProductAdapter.ItemClickListener {
+public class ProductDetails extends BaseActivity implements View.OnFocusChangeListener, AvailableProductAdapter.ItemClickListener {
     ProductScreenBinding binding;
     MeasureUnit measureUnit = new MeasureUnit();
     Calendar myCalendar = Calendar.getInstance();
@@ -53,14 +56,13 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
     float quantity = 1;
     float bonus = 0;
     CheckoutVM checkoutVM;
-    float totalQuantity = 1;
     ProductVM productVM;
     int allowStoreMinusConfirm = 0;
     String uuid;
     ProductData productDataOriginal;
     TextWatcher basicQuantity, itemDiscPer, itemDiscVal;
     boolean isBarcodePrice = false;
-
+    boolean editingFirstTime = true;
     double unitPrice = 0;
 
     @Override
@@ -93,7 +95,6 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
         }
     }
 
-    //    =====================================================================================================================
     @SuppressLint("SetTextI18n")
     public void fillViews() {
         productDataOriginal = App.product;
@@ -104,7 +105,6 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
         uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         binding.item.setText(Integer.toString(App.product.getItemISN()));
         binding.itemBranchISN.setText(Long.toString(App.product.getItemISNBranch()));
-
         if (App.product.getQuantity() > 1) {
             quantity = App.product.getActualQuantity();
             if (App.product.getBonusQuantity() > 1) {
@@ -117,7 +117,6 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             binding.totalQuantity.setText(String.format(Locale.US, "%.3f", quantity) + "");
             binding.quantity.setText(String.format(Locale.US, "%.3f", quantity) + "");
         }
-
         if (App.product.getDiscount1() != 0) {
             binding.itemDiscPer.setText(App.product.getDiscount1() + "");
         }
@@ -154,6 +153,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             productVM.checkAvailableQuantity(uuid, App.product.getSelectedStore().getBranchISN(), App.product.getSelectedStore().getStore_ISN(), App.product.getBranchISN(), App.product.getItemISN(), getMoveType());
             binding.progress.setVisibility(View.VISIBLE);
         });
+
         productVM.availableQuantityLiveData.observe(this, item -> {
             binding.progress.setVisibility(View.GONE);
             if (item.getStatus() == 1) {
@@ -184,7 +184,6 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                 break;
         }
     }
-
 
     @SuppressLint("SetTextI18n")
     private void handleUnitPrice() {
@@ -221,13 +220,11 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                 App.product.setPriceItem(unitPrice);
             }
         });
-
     }
 
     @SuppressLint("SetTextI18n")
     private void handleDefaultBarcodePrice(double price) {
         if ((!App.isEditing || App.product.isBarCodePrice()) && price != 0) {
-            Log.e("checkIsBar", "true");
             if (binding.itemDiscPer.getText().toString().isEmpty()) {
                 binding.price2.setText(String.format(Locale.US, "%.3f", price * quantity) + " جنيه");
                 binding.price.setText(String.format(Locale.US, "%.3f", price * quantity) + " جنيه");
@@ -470,9 +467,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                     App.product.setNetPrice(App.product.getPriceItem() * quantity);
                     App.product.setDiscount1(0);
                 }
-
                 binding.price2.setText(String.format(Locale.US, "%.2f", (App.product.getPriceItem() - value) * quantity) + " جنيه");
-
             }
 
             @Override
@@ -558,11 +553,7 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                 App.product.setBarCodePrice(false);
                 App.product.setSelectedUnit(App.product.getMeasureUnits().get(i));
                 measureUnit = App.product.getMeasureUnits().get(i);
-                if (!App.isEditing)
-                    unitPrice = measureUnit.getPrice();
-                else
-                    unitPrice = App.product.getPriceItem();
-
+                unitPrice = measureUnit.getPrice();
                 binding.unitPrice.setText(unitPrice + "");
             }
 
@@ -573,9 +564,9 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                 App.product.setSelectedUnit(App.product.getMeasureUnits().get(0));
                 if (!App.isEditing)
                     unitPrice = measureUnit.getPrice();
-                else
+                else {
                     unitPrice = App.product.getPriceItem();
-
+                }
                 binding.unitPrice.setText(unitPrice + "");
             }
 
@@ -668,7 +659,6 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
                                 && App.currentUser.getReSupplyDefaultStoreBranchISN() == App.stores.getData().get(i).getBranchISN())
                             binding.storesList.setSelection(i);
                         break;
-
                 }
             }
 
@@ -900,126 +890,133 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
 
     private void addButton() {
         binding.saveProduct.setOnClickListener(view -> {
-            App.product.setUserNote(binding.productNote.getText().toString());
-            App.product.setPriceTotal(App.product.getPriceItem() * quantity);
-            product.setAllowStoreMinus(product.getSelectedStore().getAllowCurrentStoreMinus());
-            App.product.setTotalTax((App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax())));
-            if (App.product.getSerial() && !binding.serial.getText().toString().isEmpty()) {
-                App.product.setSelectedSerial(binding.serial.getText().toString());
-            }
-            if (App.product.getExpireDate() && !dateValidation) {
-                binding.expirePicker.setError(getString(R.string.date_error));
-            } else if (App.product.getSerial() && binding.serial.getText().toString().isEmpty()) {
-                binding.serial.setError(getString(R.string.serial_error));
+            double itemPrice = (Double.parseDouble(binding.price.getText().toString().replace(" ", "").replace("جنيه", "")) / quantity);
+            if (measureUnit.getPrice() != itemPrice) {
+                new AlertDialog.Builder(this).setMessage("سعر " + "(" + measureUnit.getMeasureUnitArName() + ")" + " لنوع سعر " + "(" + priceType.getPricesTypeName() + ")" +
+                        " هو " + "(" + String.format(Locale.ENGLISH, "%.2f", measureUnit.getPrice()) + ")" + " وسيتم إضافته بسعر " + "(" + String.format(Locale.ENGLISH, "%.2f", itemPrice) + ")" +
+                        " هل أنت متأكد؟").setPositiveButton("تأكيد", ((dialogInterface, i) -> {
+                    saveProduct();
+                    dialogInterface.dismiss();
+                })).setNegativeButton("إلغاء", ((dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                })).setCancelable(false).show();
             } else {
-                if (App.currentUser.getAllowStoreMinus() == 3 || (App.invoiceType == ReturnSales || App.invoiceType == Purchase) || (App.currentUser.getAllowStoreMinus() == 4 && product.getSelectedStore().getAllowCurrentStoreMinus() == 3)) {
-                    if (!App.isEditing) {
-                        App.selectedProducts.add(App.product);
-                        binding.saveProduct.setClickable(false);
-                        if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
-                            App.specialDiscount = 1;
-                        }
-                        startActivity(new Intent(this, AddProducts.class));
-                    } else {
-                        App.selectedProducts.set(App.editingPos, App.product);
-                        binding.saveProduct.setClickable(false);
-                        if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
-                            App.specialDiscount = 1;
-                        }
-                        startActivity(new Intent(this, AddProducts.class));
-                        App.isEditing = false;
-                        App.editingPos = 0;
-                    }
-                    finish();
-                } else {
-                    minusCheck();
-                    checkoutVM.checkItemMutableLiveData.observe(this, response -> {
-                        binding.progress.setVisibility(View.GONE);
-                        if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 2 && (App.invoiceType == Sales || App.invoiceType == ReturnPurchased)) {
-                            String error = response.getMessage();
-                            String errorTitle = "نقص فالمخزن";
-                            if (response.getMessage().equals("Not saved ... please save again")) {
-                                error = "لا يوجد الكمية الكافية من هذا الصنف";
-                            }
-                            if (response.getMessage().equals("Invoice not saved: Data redundancy.") || response.getMessage().equals("WARNING: Duplicate invoice data.")) {
-                                errorTitle = "تكرار بيانات";
-                            }
-                            new android.app.AlertDialog.Builder(this).setTitle(errorTitle)
-                                    .setMessage(error)
-                                    .setCancelable(false)
-                                    .setPositiveButton("متابعة", (dialogInterface, i) -> {
-                                        if (!App.isEditing) {
-                                            binding.saveProduct.setClickable(false);
-                                            App.selectedProducts.add(App.product);
-                                            if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
-                                                App.specialDiscount = 1;
-                                            }
-                                            startActivity(new Intent(this, AddProducts.class));
-                                        } else {
-                                            App.selectedProducts.set(App.editingPos, App.product);
-                                            binding.saveProduct.setClickable(false);
-                                            if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
-                                                App.specialDiscount = 1;
-                                            }
-                                            startActivity(new Intent(this, AddProducts.class));
-                                            App.isEditing = false;
-                                            App.editingPos = 0;
-                                        }
-                                        finish();
-                                    }).setNegativeButton("إلغاء", (dialogInterface, i) -> {
-                                        checkoutVM.checkItemMutableLiveData = new MutableLiveData<>();
-                                        dialogInterface.dismiss();
-                                    }).show();
-                        }
-                        else if (response.getStatus() == 0 && (App.currentUser.getAllowStoreMinus() == 1 ||
-                                (App.currentUser.getAllowStoreMinus() == 4 && App.product.getSelectedStore().getAllowCurrentStoreMinus() == 1))
-                                && (App.invoiceType == Sales || App.invoiceType == ReturnPurchased)) {
-                            String error = response.getMessage();
-                            String errorTitle = "نقص فالمخزن";
-                            if (response.getMessage().equals("Not saved ... please save again")) {
-                                error = "لا يوجد الكمية الكافية من هذا الصنف";
-                            }
-                            if (response.getMessage().equals("Invoice not saved: Data redundancy.") || response.getMessage().equals("WARNING: Duplicate invoice data.")) {
-                                errorTitle = "تكرار بيانات";
-                            }
-                            new android.app.AlertDialog.Builder(this).
-                                    setTitle(errorTitle)
-                                    .setMessage(error)
-                                    .setCancelable(false)
-                                    .setNegativeButton("إلغاء", (dialogInterface, i) -> {
-                                        checkoutVM.checkItemMutableLiveData = new MutableLiveData<>();
-                                        dialogInterface.dismiss();
-                                    }).show();
-                        }
-                        else {
-                            if (!App.isEditing) {
-                                App.selectedProducts.add(App.product);
-                                binding.saveProduct.setClickable(false);
-                                if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
-                                    App.specialDiscount = 1;
-                                }
-                                startActivity(new Intent(this, AddProducts.class));
-                            } else {
-                                App.selectedProducts.set(App.editingPos, App.product);
-                                binding.saveProduct.setClickable(false);
-                                if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
-                                    App.specialDiscount = 1;
-                                }
-                                startActivity(new Intent(this, AddProducts.class));
-                                App.isEditing = false;
-                                App.editingPos = 0;
-                            }
-                            finish();
-                        }
-                    });
-                }
+                saveProduct();
             }
         });
+    }
+
+    private void saveProduct() {
+        App.product.setUserNote(binding.productNote.getText().toString());
+        App.product.setPriceTotal(App.product.getPriceItem() * quantity);
+        product.setAllowStoreMinus(product.getSelectedStore().getAllowCurrentStoreMinus());
+        App.product.setTotalTax((App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax())));
+        if (App.product.getSerial() && !binding.serial.getText().toString().isEmpty()) {
+            App.product.setSelectedSerial(binding.serial.getText().toString());
+        }
+        if (App.product.getExpireDate() && !dateValidation) {
+            binding.expirePicker.setError(getString(R.string.date_error));
+        } else if (App.product.getSerial() && binding.serial.getText().toString().isEmpty()) {
+            binding.serial.setError(getString(R.string.serial_error));
+        } else {
+            if (App.currentUser.getAllowStoreMinus() == 3 || (App.invoiceType == ReturnSales || App.invoiceType == Purchase) || (App.currentUser.getAllowStoreMinus() == 4 && product.getSelectedStore().getAllowCurrentStoreMinus() == 3)) {
+                if (!App.isEditing) {
+                    App.selectedProducts.add(App.product);
+                    binding.saveProduct.setClickable(false);
+                    if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
+                        App.specialDiscount = 1;
+                    }
+                    startActivity(new Intent(this, AddProducts.class));
+                } else {
+                    App.selectedProducts.set(App.editingPos, App.product);
+                    binding.saveProduct.setClickable(false);
+                    if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
+                        App.specialDiscount = 1;
+                    }
+                    startActivity(new Intent(this, AddProducts.class));
+                    App.isEditing = false;
+                    App.editingPos = 0;
+                }
+                finish();
+            } else {
+                minusCheck();
+                checkoutVM.checkItemMutableLiveData.observe(this, response -> {
+                    binding.progress.setVisibility(View.GONE);
+                    if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 2 && (App.invoiceType == Sales || App.invoiceType == ReturnPurchased)) {
+                        String error = response.getMessage();
+                        if (response.getMessage().equals("Not saved ... please save again")) {
+                            error = "لا يوجد الكمية الكافية من هذا الصنف";
+                        }
+                        new android.app.AlertDialog.Builder(this)
+                                .setMessage(error)
+                                .setCancelable(false)
+                                .setPositiveButton("متابعة", (dialogInterface, i) -> {
+                                    if (!App.isEditing) {
+                                        binding.saveProduct.setClickable(false);
+                                        App.selectedProducts.add(App.product);
+                                        if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
+                                            App.specialDiscount = 1;
+                                        }
+                                        startActivity(new Intent(this, AddProducts.class));
+                                    } else {
+                                        App.selectedProducts.set(App.editingPos, App.product);
+                                        binding.saveProduct.setClickable(false);
+                                        if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
+                                            App.specialDiscount = 1;
+                                        }
+                                        startActivity(new Intent(this, AddProducts.class));
+                                        App.isEditing = false;
+                                        App.editingPos = 0;
+                                    }
+                                    finish();
+                                }).setNegativeButton("إلغاء", (dialogInterface, i) -> {
+                                    checkoutVM.checkItemMutableLiveData = new MutableLiveData<>();
+                                    dialogInterface.dismiss();
+                                }).show();
+                    } else if (response.getStatus() == 0 && (App.currentUser.getAllowStoreMinus() == 1 ||
+                            (App.currentUser.getAllowStoreMinus() == 4 && App.product.getSelectedStore().getAllowCurrentStoreMinus() == 1))
+                            && (App.invoiceType == Sales || App.invoiceType == ReturnPurchased)) {
+                        String error = response.getMessage();
+                        if (response.getMessage().equals("Not saved ... please save again")) {
+                            error = "لا يوجد الكمية الكافية من هذا الصنف";
+                        }
+
+                        new android.app.AlertDialog.Builder(this)
+                                .setMessage(error)
+                                .setCancelable(false)
+                                .setNegativeButton("إلغاء", (dialogInterface, i) -> {
+                                    checkoutVM.checkItemMutableLiveData = new MutableLiveData<>();
+                                    dialogInterface.dismiss();
+                                }).show();
+                    } else {
+                        if (!App.isEditing) {
+                            App.selectedProducts.add(App.product);
+                            binding.saveProduct.setClickable(false);
+                            if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
+                                App.specialDiscount = 1;
+                            }
+                            startActivity(new Intent(this, AddProducts.class));
+                        } else {
+                            App.selectedProducts.set(App.editingPos, App.product);
+                            binding.saveProduct.setClickable(false);
+                            if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
+                                App.specialDiscount = 1;
+                            }
+                            startActivity(new Intent(this, AddProducts.class));
+                            App.isEditing = false;
+                            App.editingPos = 0;
+                        }
+                        finish();
+                    }
+                });
+            }
+        }
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
         startActivity(new Intent(this, AddProducts.class));
         finish();
     }
@@ -1224,5 +1221,6 @@ public class ProductDetails extends AppCompatActivity implements View.OnFocusCha
             App.product.setSelectedSerial(item.getSerial());
         }
     }
+
 }
 

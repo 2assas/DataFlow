@@ -31,7 +31,7 @@
             android:layout_marginEnd="10dp"
             android:layoutDirection="rtl"
             android:text="المخزن"
-            android:textColor="@color/black"
+
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -51,7 +51,7 @@
             android:id="@+id/buttonsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardView4">
@@ -74,7 +74,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
-                android:visibility="gone"
                 android:id="@+id/searchButton"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
@@ -85,6 +84,7 @@
                 android:text="بحث عن صنف"
                 android:textColor="@color/white"
                 android:textStyle="bold"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/showButton"
@@ -101,7 +101,7 @@
             android:checked="true"
             android:layoutDirection="rtl"
             android:text="صنف محدد"
-            android:textColor="@color/black"
+
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/storeCheckBox" />
@@ -184,7 +184,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="تقرير مخزن "
-                    android:textColor="@color/black"
+
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:visibility="gone"
@@ -246,7 +246,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="وصف الكمية"
-                        android:textColor="@color/black"
+
 
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -270,7 +270,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="الوحدة"
-                        android:textColor="@color/black"
+
                         android:textSize="12sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -295,7 +295,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="الكمية"
-                        android:textColor="@color/black"
+
                         android:textSize="12sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -319,7 +319,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="إسم الصنف"
-                        android:textColor="@color/black"
+
                         android:textSize="12sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -344,7 +344,7 @@
                         android:layout_marginStart="1dp"
                         android:gravity="center"
                         android:text="م"
-                        android:textColor="@color/black"
+
                         android:textSize="12sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"

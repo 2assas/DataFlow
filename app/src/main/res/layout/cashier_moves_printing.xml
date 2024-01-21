@@ -39,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:text="FoundationName"
-                    android:textColor="@color/black"
+
                     android:textSize="15sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -56,7 +56,7 @@
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:text=" hgn التوقيت من 20209-2030203- الى 212232"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -73,7 +73,7 @@
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:text=""
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:visibility="gone"
@@ -92,7 +92,7 @@
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:text="خزينة خزينة الكاشير1"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -109,7 +109,7 @@
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:text=""
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -125,7 +125,7 @@
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:text="اليومية من 2323123"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -142,7 +142,7 @@
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:text="نوع الحركة: مقبوضات"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -159,7 +159,7 @@
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:text=""
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -176,7 +176,7 @@
                     android:gravity="center"
                     android:text=""
 
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -193,7 +193,7 @@
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:text="وردية رقم 20"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -210,7 +210,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -227,7 +227,7 @@
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:text="وردية رقم 20"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:visibility="gone"

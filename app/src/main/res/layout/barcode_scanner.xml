@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="Barcode Scanner"
-        android:textColor="@color/black"
+
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,7 +26,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="20dp"
-        android:src="@drawable/ic_back"
+        android:src="@drawable/ic_back_themed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

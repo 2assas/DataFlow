@@ -69,7 +69,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ResultsA
             } else {
                 context.startActivity(new Intent(context, ProductDetails.class));
                 App.editingPos=0;
-
                 ((Activity) context).finish();
                 fragment.dismiss();
             }

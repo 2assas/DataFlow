@@ -1,11 +1,14 @@
 package com.dataflowstores.dataflow.ui.reports;
 
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -22,13 +25,14 @@ import com.dataflowstores.dataflow.databinding.SearchCustomerBalanceBinding;
 import com.dataflowstores.dataflow.pojo.report.Branches;
 import com.dataflowstores.dataflow.pojo.users.CustomerData;
 import com.dataflowstores.dataflow.pojo.workStation.BranchData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.fragments.BottomSheetFragment;
 import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
 
 import java.util.ArrayList;
 
-public class SearchCustomerBalance extends AppCompatActivity implements MyDialogCloseListener {
+public class SearchCustomerBalance extends BaseActivity implements MyDialogCloseListener {
     SearchCustomerBalanceBinding binding;
     InvoiceViewModel invoiceVM;
     String uuid;
@@ -38,6 +42,7 @@ public class SearchCustomerBalance extends AppCompatActivity implements MyDialog
     @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         binding = DataBindingUtil.setContentView(this, R.layout.search_customer_balance);
@@ -83,6 +88,14 @@ public class SearchCustomerBalance extends AppCompatActivity implements MyDialog
     }
 
     public void searchButtons() {
+        binding.getClient.setOnEditorActionListener((textView, actionId, keyEvent) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                binding.getClient.performClick();
+                return true; // Indicates that the action has been handled
+            }
+            return false;
+        });
+
         binding.searchClient.setOnClickListener(view -> {
             if (App.isNetworkAvailable(this)) if (binding.customerRadio.isChecked())
                 invoiceVM.getCustomer(uuid, binding.getClient.getText().toString(), App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN());

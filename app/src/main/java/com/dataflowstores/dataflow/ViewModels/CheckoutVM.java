@@ -37,7 +37,6 @@ public class CheckoutVM extends ViewModel {
     public MutableLiveData<CustomerBalance> customerBalanceLiveData = new MutableLiveData<>();
     public MutableLiveData<String> toastErrorMutableLiveData = new MutableLiveData<>();
 
-
     public void placeInvoice(long BranchISN, String uuid, int CashType, int SaleType, int DealerType, int DealerBranchISN, long DealerISN, long SalesManBranchISN,
                              long SalesManISN, String HeaderNotes, double TotalLinesValue, double ServiceValue, double ServicePer, double DeliveryValue,
                              double TotalValueAfterServices, double BasicDiscountVal, double BasicDiscountPer, double TotalValueAfterDisc, double BasicTaxVal,
@@ -56,7 +55,19 @@ public class CheckoutVM extends ViewModel {
     ) {
         Log.e("checkInvoice", "Triggered request");
 
-        Observable<InvoiceResponse> invoiceResponse = apiClient.placeInvoice(new InvoiceBody(BranchISN, uuid, CashType, SaleType, DealerType, DealerBranchISN, DealerISN, SalesManBranchISN, SalesManISN, HeaderNotes, TotalLinesValue, ServiceValue, ServicePer, DeliveryValue, TotalValueAfterServices, BasicDiscountVal, BasicDiscountPer, TotalValueAfterDisc, BasicTaxVal, BasicTaxPer, TotalValueAfterTax, NetValue, PaidValue, RemainValue, SafeDepositeBranchISN, SafeDepositeISN, BankBranchISN, BankISN, TableNumber, DeliveryPhone, DeliveryAddress, WorkerCBranchISN, WorkerCISN, CheckNumber, CheckDueDate, CheckBankBranchISN, CheckBankISN, ItemBranchISN, ItemISN, PriceTypeBranchISN, PriceTypeISN, StoreBranchISN, StoreISN, BasicQuantity, BonusQuantity, TotalQuantity, Price, MeasureUnitBranchISN, MeasureUnitISN, BasicMeasureUnitBranchISN, BasicMeasureUnitISN, ItemSerial, ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN, SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes, numberOFItems, 2, NetPrice, BasicMeasureUnitQuantity, ExpireDateBool, ColorsBool, SeasonsBool, SizesBool, SerialBool, Group1Bool, Group2Bool, ServiceItem, ItemTax, TaxValue, TotalLinesTaxVal, allowStoreMinus, itemName, discount1, AllowStoreMinusConfirm, latitude, longitude, invoiceType, moveType, StoreBranchISN2, StoreISN2, App.currentUser.getWorkerName(), App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()), BranchISNStockMove, selectedFoundation, App.currentUser.getLogIn_BISN(), App.currentUser.getLogIn_UID(), App.currentUser.getLogIn_WBISN(), App.currentUser.getLogIn_WISN(), App.currentUser.getLogIn_WName(), App.currentUser.getLogIn_WSBISN(), App.currentUser.getLogIn_WSISN(), App.currentUser.getLogIn_WSName(), App.currentUser.getLogIn_CS(), App.currentUser.getLogIn_VN(), App.currentUser.getLogIn_FAlternative(), productAllowStoreMinus,productStoreName))
+        Observable<InvoiceResponse> invoiceResponse = apiClient.placeInvoice(new
+                        InvoiceBody(BranchISN, uuid, CashType, SaleType, DealerType, DealerBranchISN, DealerISN, SalesManBranchISN, SalesManISN, HeaderNotes, TotalLinesValue, ServiceValue, ServicePer, DeliveryValue, TotalValueAfterServices, BasicDiscountVal, BasicDiscountPer, TotalValueAfterDisc, BasicTaxVal, BasicTaxPer, TotalValueAfterTax, NetValue, PaidValue, RemainValue, SafeDepositeBranchISN, SafeDepositeISN, BankBranchISN, BankISN, TableNumber, DeliveryPhone, DeliveryAddress, WorkerCBranchISN, WorkerCISN, CheckNumber, CheckDueDate, CheckBankBranchISN, CheckBankISN, ItemBranchISN, ItemISN, PriceTypeBranchISN, PriceTypeISN, StoreBranchISN, StoreISN, BasicQuantity, BonusQuantity, TotalQuantity, Price, MeasureUnitBranchISN, MeasureUnitISN, BasicMeasureUnitBranchISN, BasicMeasureUnitISN, ItemSerial, ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN, SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes, numberOFItems, 2, NetPrice, BasicMeasureUnitQuantity, ExpireDateBool, ColorsBool, SeasonsBool, SizesBool, SerialBool, Group1Bool, Group2Bool, ServiceItem, ItemTax, TaxValue, TotalLinesTaxVal, allowStoreMinus, itemName, discount1, AllowStoreMinusConfirm, latitude, longitude, invoiceType, moveType, StoreBranchISN2, StoreISN2, App.currentUser.getWorkerName(), App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()), BranchISNStockMove, selectedFoundation, App.currentUser.getLogIn_BISN(), App.currentUser.getLogIn_UID(), App.currentUser.getLogIn_WBISN(), App.currentUser.getLogIn_WISN(), App.currentUser.getLogIn_WName(), App.currentUser.getLogIn_WSBISN(), App.currentUser.getLogIn_WSISN(), App.currentUser.getLogIn_WSName(), App.currentUser.getLogIn_CS(), App.currentUser.getLogIn_VN(), App.currentUser.getLogIn_FAlternative(), productAllowStoreMinus,productStoreName
+                        ,App.currentUser.getMobileSalesMaxDiscPer()
+                        ,App.currentUser.getShiftSystemActivate()
+                        ,App.currentUser.getLogIn_ShiftBranchISN()
+                        ,App.currentUser.getLogIn_ShiftISN()
+                        ,App.currentUser.getLogIn_Spare1()
+                        ,App.currentUser.getLogIn_Spare2()
+                        ,App.currentUser.getLogIn_Spare3()
+                        ,App.currentUser.getLogIn_Spare4()
+                        ,App.currentUser.getLogIn_Spare5()
+                        ,App.currentUser.getLogIn_Spare6()
+                ))
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         Observer<InvoiceResponse> observer = new Observer<InvoiceResponse>() {
@@ -105,7 +116,18 @@ public class CheckoutVM extends ViewModel {
                           ArrayList<Boolean> Group1Bool, ArrayList<Boolean> Group2Bool, ArrayList<Boolean> ServiceItem, ArrayList<Double> ItemTax, ArrayList<Double> TaxValue,
                           ArrayList<String> itemName, ArrayList<Double> discount1, int allowStoreMinus, Integer AllowStoreMinusConfirm, Integer allowCurrentStoreMinus) {
 
-        Observable<InvoiceResponse> checkItem = apiClient.checkItem(uuid, ItemBranchISN, ItemISN, PriceTypeBranchISN, PriceTypeISN, StoreBranchISN, StoreISN, BasicQuantity, BonusQuantity, TotalQuantity, Price, MeasureUnitBranchISN, MeasureUnitISN, BasicMeasureUnitBranchISN, BasicMeasureUnitISN, ItemSerial, ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN, SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes, NetPrice, BasicMeasureUnitQuantity, ExpireDateBool, ColorsBool, SeasonsBool, SizesBool, SerialBool, Group1Bool, Group2Bool, ServiceItem, ItemTax, TaxValue, itemName, discount1, allowStoreMinus, AllowStoreMinusConfirm, App.currentUser.getWorkerName(), App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()), selectedFoundation, App.currentUser.getLogIn_BISN(), App.currentUser.getLogIn_UID(), App.currentUser.getLogIn_WBISN(), App.currentUser.getLogIn_WISN(), App.currentUser.getLogIn_WName(), App.currentUser.getLogIn_WSBISN(), App.currentUser.getLogIn_WSISN(), App.currentUser.getLogIn_WSName(), App.currentUser.getLogIn_CS(), App.currentUser.getLogIn_VN(), App.currentUser.getLogIn_FAlternative(),allowCurrentStoreMinus)
+        Observable<InvoiceResponse> checkItem = apiClient.checkItem(uuid, ItemBranchISN, ItemISN, PriceTypeBranchISN, PriceTypeISN, StoreBranchISN, StoreISN, BasicQuantity, BonusQuantity, TotalQuantity, Price, MeasureUnitBranchISN, MeasureUnitISN, BasicMeasureUnitBranchISN, BasicMeasureUnitISN, ItemSerial, ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN, SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes, NetPrice, BasicMeasureUnitQuantity, ExpireDateBool, ColorsBool, SeasonsBool, SizesBool, SerialBool, Group1Bool, Group2Bool, ServiceItem, ItemTax, TaxValue, itemName, discount1, allowStoreMinus, AllowStoreMinusConfirm, App.currentUser.getWorkerName(), App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()), selectedFoundation, App.currentUser.getLogIn_BISN(), App.currentUser.getLogIn_UID(), App.currentUser.getLogIn_WBISN(), App.currentUser.getLogIn_WISN(), App.currentUser.getLogIn_WName(), App.currentUser.getLogIn_WSBISN(), App.currentUser.getLogIn_WSISN(), App.currentUser.getLogIn_WSName(), App.currentUser.getLogIn_CS(), App.currentUser.getLogIn_VN(), App.currentUser.getLogIn_FAlternative(),allowCurrentStoreMinus
+                        ,App.currentUser.getMobileSalesMaxDiscPer()
+                        ,App.currentUser.getShiftSystemActivate()
+                        ,App.currentUser.getLogIn_ShiftBranchISN()
+                        ,App.currentUser.getLogIn_ShiftISN()
+                        ,App.currentUser.getLogIn_Spare1()
+                        ,App.currentUser.getLogIn_Spare2()
+                        ,App.currentUser.getLogIn_Spare3()
+                        ,App.currentUser.getLogIn_Spare4()
+                        ,App.currentUser.getLogIn_Spare5()
+                        ,App.currentUser.getLogIn_Spare6()
+                )
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observer<InvoiceResponse> observer = new Observer<InvoiceResponse>() {
             @Override

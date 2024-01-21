@@ -4,7 +4,7 @@
     android:shape="rectangle"
     android:padding="10dp">
     <!-- you can use any color you want I used here gray color-->
-    <solid android:color="@color/colorPrimary"/>
+    <solid android:color="?attr/colorPrimary"/>
     <corners android:radius="20dp"/>
     <path
         android:pathData="M772,772m-772,0a772,772 0,1 1,1544 0a772,772 0,1 1,-1544 0">

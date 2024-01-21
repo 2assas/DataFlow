@@ -1,5 +1,7 @@
 package com.dataflowstores.dataflow.ui.expenses;
 
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,17 +19,19 @@ import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.PrintExpensesBinding;
 import com.dataflowstores.dataflow.pojo.expenses.ExpenseData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 
 import java.util.Locale;
 import java.util.Objects;
 
-public class PrintExpenses extends AppCompatActivity {
+public class PrintExpenses extends BaseActivity {
     PrintExpensesBinding binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.print_expenses);
         if (savedInstanceState != null) {

@@ -68,7 +68,17 @@ public class ReportViewModel extends ViewModel {
                         App.currentUser.getLogIn_WSName(),
                         App.currentUser.getLogIn_CS(),
                         App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative())
+                        App.currentUser.getLogIn_FAlternative()
+                        ,App.currentUser.getMobileSalesMaxDiscPer()
+                        ,App.currentUser.getShiftSystemActivate()
+                        ,App.currentUser.getLogIn_ShiftBranchISN()
+                        ,App.currentUser.getLogIn_ShiftISN()
+                        ,App.currentUser.getLogIn_Spare1()
+                        ,App.currentUser.getLogIn_Spare2()
+                        ,App.currentUser.getLogIn_Spare3()
+                        ,App.currentUser.getLogIn_Spare4()
+                        ,App.currentUser.getLogIn_Spare5()
+                        ,App.currentUser.getLogIn_Spare6())
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         storeReportModelObservable.subscribe(new Observer<StoreReportModel>() {
@@ -121,7 +131,17 @@ public class ReportViewModel extends ViewModel {
                 App.currentUser.getLogIn_WSName(),
                 App.currentUser.getLogIn_CS(),
                 App.currentUser.getLogIn_VN(),
-                App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                App.currentUser.getLogIn_FAlternative()
+                ,App.currentUser.getMobileSalesMaxDiscPer()
+                ,App.currentUser.getShiftSystemActivate()
+                ,App.currentUser.getLogIn_ShiftBranchISN()
+                ,App.currentUser.getLogIn_ShiftISN()
+                ,App.currentUser.getLogIn_Spare1()
+                ,App.currentUser.getLogIn_Spare2()
+                ,App.currentUser.getLogIn_Spare3()
+                ,App.currentUser.getLogIn_Spare4()
+                ,App.currentUser.getLogIn_Spare5()
+                ,App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         observable.subscribe(new Observer<Branches>() {
             @Override
@@ -172,7 +192,17 @@ public class ReportViewModel extends ViewModel {
                 App.currentUser.getLogIn_WSName(),
                 App.currentUser.getLogIn_CS(),
                 App.currentUser.getLogIn_VN(),
-                App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                App.currentUser.getLogIn_FAlternative()
+                ,App.currentUser.getMobileSalesMaxDiscPer()
+                ,App.currentUser.getShiftSystemActivate()
+                ,App.currentUser.getLogIn_ShiftBranchISN()
+                ,App.currentUser.getLogIn_ShiftISN()
+                ,App.currentUser.getLogIn_Spare1()
+                ,App.currentUser.getLogIn_Spare2()
+                ,App.currentUser.getLogIn_Spare3()
+                ,App.currentUser.getLogIn_Spare4()
+                ,App.currentUser.getLogIn_Spare5()
+                ,App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         observable.subscribe(new Observer<WorkersResponse>() {
             @Override
@@ -224,7 +254,16 @@ public class ReportViewModel extends ViewModel {
                 App.currentUser.getLogIn_WSName(),
                 App.currentUser.getLogIn_CS(),
                 App.currentUser.getLogIn_VN(),
-                App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                App.currentUser.getLogIn_FAlternative()                ,App.currentUser.getMobileSalesMaxDiscPer()
+                ,App.currentUser.getShiftSystemActivate()
+                ,App.currentUser.getLogIn_ShiftBranchISN()
+                ,App.currentUser.getLogIn_ShiftISN()
+                ,App.currentUser.getLogIn_Spare1()
+                ,App.currentUser.getLogIn_Spare2()
+                ,App.currentUser.getLogIn_Spare3()
+                ,App.currentUser.getLogIn_Spare4()
+                ,App.currentUser.getLogIn_Spare5()
+                ,App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         getSafeDeposit.subscribe(safeDeposit -> {
             safeDepositMutableLiveData.setValue(safeDeposit);
         }, throwable -> {
@@ -254,7 +293,16 @@ public class ReportViewModel extends ViewModel {
                 App.currentUser.getLogIn_WSName(),
                 App.currentUser.getLogIn_CS(),
                 App.currentUser.getLogIn_VN(),
-                App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                App.currentUser.getLogIn_FAlternative()                ,App.currentUser.getMobileSalesMaxDiscPer()
+                ,App.currentUser.getShiftSystemActivate()
+                ,App.currentUser.getLogIn_ShiftBranchISN()
+                ,App.currentUser.getLogIn_ShiftISN()
+                ,App.currentUser.getLogIn_Spare1()
+                ,App.currentUser.getLogIn_Spare2()
+                ,App.currentUser.getLogIn_Spare3()
+                ,App.currentUser.getLogIn_Spare4()
+                ,App.currentUser.getLogIn_Spare5()
+                ,App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         getBanks.subscribe(banks -> {
             banksMutableLiveData.setValue(banks);
         }, throwable -> {
@@ -285,7 +333,16 @@ public class ReportViewModel extends ViewModel {
                         App.currentUser.getLogIn_WSName(),
                         App.currentUser.getLogIn_CS(),
                         App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative())
+                        App.currentUser.getLogIn_FAlternative()                ,App.currentUser.getMobileSalesMaxDiscPer()
+                        ,App.currentUser.getShiftSystemActivate()
+                        ,App.currentUser.getLogIn_ShiftBranchISN()
+                        ,App.currentUser.getLogIn_ShiftISN()
+                        ,App.currentUser.getLogIn_Spare1()
+                        ,App.currentUser.getLogIn_Spare2()
+                        ,App.currentUser.getLogIn_Spare3()
+                        ,App.currentUser.getLogIn_Spare4()
+                        ,App.currentUser.getLogIn_Spare5()
+                        ,App.currentUser.getLogIn_Spare6())
                 .subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread());
 
         observable.subscribe(new Observer<FinancialReportResponse>() {
@@ -346,6 +403,16 @@ public class ReportViewModel extends ViewModel {
                         supplierData==null? null: supplierData.getDealerType(),
                         supplierData==null? null: supplierData.getBranchISN(),
                         supplierData==null? null: supplierData.getDealer_ISN()
+                        ,App.currentUser.getMobileSalesMaxDiscPer()
+                        ,App.currentUser.getShiftSystemActivate()
+                        ,App.currentUser.getLogIn_ShiftBranchISN()
+                        ,App.currentUser.getLogIn_ShiftISN()
+                        ,App.currentUser.getLogIn_Spare1()
+                        ,App.currentUser.getLogIn_Spare2()
+                        ,App.currentUser.getLogIn_Spare3()
+                        ,App.currentUser.getLogIn_Spare4()
+                        ,App.currentUser.getLogIn_Spare5()
+                        ,App.currentUser.getLogIn_Spare6()
                         )
                 .subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread());
         observable.subscribe(new Observer<CashierMovesReportResponse>() {
@@ -395,7 +462,17 @@ public class ReportViewModel extends ViewModel {
                         App.currentUser.getLogIn_WSName(),
                         App.currentUser.getLogIn_CS(),
                         App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                        App.currentUser.getLogIn_FAlternative()
+                        ,App.currentUser.getMobileSalesMaxDiscPer()
+                        ,App.currentUser.getShiftSystemActivate()
+                        ,App.currentUser.getLogIn_ShiftBranchISN()
+                        ,App.currentUser.getLogIn_ShiftISN()
+                        ,App.currentUser.getLogIn_Spare1()
+                        ,App.currentUser.getLogIn_Spare2()
+                        ,App.currentUser.getLogIn_Spare3()
+                        ,App.currentUser.getLogIn_Spare4()
+                        ,App.currentUser.getLogIn_Spare5()
+                        ,App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(moveTypesResponse -> {
                     moveTypesResponseMutableLiveData.postValue(moveTypesResponse);
                 }, throwable -> {
@@ -429,7 +506,17 @@ public class ReportViewModel extends ViewModel {
                         App.currentUser.getLogIn_WSName(),
                         App.currentUser.getLogIn_CS(),
                         App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative())
+                        App.currentUser.getLogIn_FAlternative()
+                        ,App.currentUser.getMobileSalesMaxDiscPer()
+                        ,App.currentUser.getShiftSystemActivate()
+                        ,App.currentUser.getLogIn_ShiftBranchISN()
+                        ,App.currentUser.getLogIn_ShiftISN()
+                        ,App.currentUser.getLogIn_Spare1()
+                        ,App.currentUser.getLogIn_Spare2()
+                        ,App.currentUser.getLogIn_Spare3()
+                        ,App.currentUser.getLogIn_Spare4()
+                        ,App.currentUser.getLogIn_Spare5()
+                        ,App.currentUser.getLogIn_Spare6())
                 .subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread());
         observable.subscribe(new Observer<ItemSalesResponse>() {
             @Override
@@ -486,7 +573,17 @@ public class ReportViewModel extends ViewModel {
                         App.currentUser.getLogIn_WSName(),
                         App.currentUser.getLogIn_CS(),
                         App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative())
+                        App.currentUser.getLogIn_FAlternative()
+                        ,App.currentUser.getMobileSalesMaxDiscPer()
+                        ,App.currentUser.getShiftSystemActivate()
+                        ,App.currentUser.getLogIn_ShiftBranchISN()
+                        ,App.currentUser.getLogIn_ShiftISN()
+                        ,App.currentUser.getLogIn_Spare1()
+                        ,App.currentUser.getLogIn_Spare2()
+                        ,App.currentUser.getLogIn_Spare3()
+                        ,App.currentUser.getLogIn_Spare4()
+                        ,App.currentUser.getLogIn_Spare5()
+                        ,App.currentUser.getLogIn_Spare6())
                 .subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread());
         observable.subscribe(new Observer<ItemSalesResponse>() {
             @Override

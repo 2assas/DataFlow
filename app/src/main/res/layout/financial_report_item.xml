@@ -65,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="الفعلى"
-                android:textColor="@color/black"
+
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/view111"
@@ -89,7 +89,7 @@
                 android:gravity="center"
                 android:text="الوحدة"
                 android:textSize="12sp"
-                android:textColor="@color/black"
+
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/view122"
                 app:layout_constraintStart_toEndOf="@+id/view111"
@@ -112,7 +112,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="العدد"
-                android:textColor="@color/black"
+
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/view12"
@@ -136,7 +136,7 @@
                 android:gravity="center"
                 android:textSize="12sp"
                 android:text="الحساب"
-                android:textColor="@color/black"
+
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/view11"
                 app:layout_constraintStart_toEndOf="@+id/view12"
@@ -160,7 +160,7 @@
                 android:gravity="center"
                 android:textSize="12sp"
                 android:text="م"
-                android:textColor="@color/black"
+
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/view14"
                 app:layout_constraintStart_toEndOf="@+id/view11"

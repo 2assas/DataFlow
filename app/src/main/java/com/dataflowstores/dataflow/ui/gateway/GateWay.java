@@ -1,6 +1,8 @@
 package com.dataflowstores.dataflow.ui.gateway;
 
 
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -28,6 +30,7 @@ import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
 import com.dataflowstores.dataflow.pojo.settings.StoresData;
 import com.dataflowstores.dataflow.pojo.workStation.BranchData;
 import com.dataflowstores.dataflow.pojo.workStation.WorkstationListData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.home.MainActivity;
 import com.dataflowstores.dataflow.webService.Constants;
@@ -35,7 +38,7 @@ import com.dataflowstores.dataflow.webService.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GateWay extends AppCompatActivity implements SelectFoundationDialog.DialogListener {
+public class GateWay extends BaseActivity implements SelectFoundationDialog.DialogListener {
     GatewayBinding binding;
     GateWayViewModel gateWayViewModel;
     String uuid;
@@ -54,6 +57,7 @@ public class GateWay extends AppCompatActivity implements SelectFoundationDialog
     @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             startActivity(new Intent(this, SplashScreen.class));
@@ -179,7 +183,7 @@ public class GateWay extends AppCompatActivity implements SelectFoundationDialog
                     Toast.makeText(this, "Account Login Successfully", Toast.LENGTH_LONG).show();
                     App.currentUser = loginStatus.getData();
                     if (binding.rememberMe.isChecked()) {
-                        SharedPreferences.Editor editor = getSharedPreferences("SaveLogin", MODE_PRIVATE).edit();
+                        SharedPreferences.Editor editor = getSharedPreferences("AppShared", MODE_PRIVATE).edit();
                         editor.putString("userName", binding.userName.getText().toString());
                         editor.putString("password", binding.password.getText().toString());
                         editor.apply();

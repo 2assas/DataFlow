@@ -10,7 +10,8 @@
         <menu>
             <item
                 android:id="@+id/sales"
-                android:title="فاتورة مبيعات" />
+                android:title="فاتورة مبيعات"
+                />
             <item
                 android:id="@+id/returnSales"
                 android:title="فاتورة مرتجع مبيعات" />
@@ -69,11 +70,18 @@
                 android:title="جرد الأصناف" />
         </menu>
     </item>
+    <item android:title="Themes">
+        <menu>
+            <item
+                android:id="@+id/changeTheme"
+                android:title="تغيير النمط" />
+        </menu>
+    </item>
     <item android:title="App Version">
         <menu>
             <item
                 android:id="@+id/nav_item_six"
-                android:title="23.1224" />
+                android:title="24.0104" />
         </menu>
     </item>
     <item

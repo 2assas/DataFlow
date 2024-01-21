@@ -33,17 +33,20 @@ public class SelectedProductsAdapter extends RecyclerView.Adapter<SelectedProduc
 
     @Override
     public SelectedProductsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        binding= DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),R.layout.product_item, parent, false);
+        binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.product_item, parent, false);
         return new SelectedProductsHolder(binding.getRoot());
     }
+
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final SelectedProductsHolder holder, final int position) {
         binding.productName.setText(list.get(position).getItemName());
-        binding.price.setText(String.format(Locale.US,"%.2f", list.get(position).getNetPrice()));
-        binding.totalPrice.setText( list.get(position).getQuantity()+" "+list.get(position).getSelectedUnit().getMeasureUnitArName());
-        binding.totalQuantity.setText(String.format(Locale.US,"%.2f", list.get(position).getPriceItem()));
+        binding.netPrice.setText(String.format(Locale.US, "%.2f", list.get(position).getNetPrice()));
+        binding.quantity.setText(list.get(position).getQuantity() + " " + list.get(position).getSelectedUnit().getMeasureUnitArName());
+        binding.price.setText(String.format(Locale.US, "%.2f", list.get(position).getPriceItem()));
+        binding.sequence.setText(String.valueOf(position+1));
     }
+
     @Override
     public int getItemCount() {
         return list.size();
@@ -55,10 +58,10 @@ public class SelectedProductsAdapter extends RecyclerView.Adapter<SelectedProduc
     }
 
     @Override
-    public int getItemViewType(int position)
-    {
+    public int getItemViewType(int position) {
         return position;
     }
+
     @Override
     public long getItemId(int position) {
         return position;
@@ -67,9 +70,9 @@ public class SelectedProductsAdapter extends RecyclerView.Adapter<SelectedProduc
     public void callEditFunction(int pos) {
         App.product = list.get(pos);
         App.isEditing = true;
-        App.editingPos =pos;
+        App.editingPos = pos;
         context.startActivity(new Intent(context, ProductDetails.class));
-        ((Activity)context).finish();
+        ((Activity) context).finish();
     }
 
     public class SelectedProductsHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -77,6 +80,7 @@ public class SelectedProductsAdapter extends RecyclerView.Adapter<SelectedProduc
             super(itemView);
             itemView.setOnClickListener(this);
         }
+
         @Override
         public void onClick(View v) {
         }

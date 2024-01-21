@@ -1,5 +1,6 @@
 package com.dataflowstores.dataflow.ui.reports.financialReport;
 
+import static com.dataflowstores.dataflow.App.theme;
 import static java.util.Objects.requireNonNull;
 
 import android.annotation.SuppressLint;
@@ -22,6 +23,7 @@ import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.FinancialReportPrintBinding;
 import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 
@@ -30,12 +32,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class FinancialReportPrintScreen extends AppCompatActivity {
+public class FinancialReportPrintScreen extends BaseActivity {
     FinancialReportPrintBinding binding;
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm", Locale.US);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.financial_report_print);
         if (savedInstanceState != null) {

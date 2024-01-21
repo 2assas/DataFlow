@@ -1,5 +1,6 @@
 package com.dataflowstores.dataflow.ui.invoice;
 
+import static com.dataflowstores.dataflow.App.theme;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Purchase;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnPurchased;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnSales;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -29,6 +31,7 @@ import com.dataflowstores.dataflow.databinding.InvoiceFirstBinding;
 import com.dataflowstores.dataflow.pojo.users.CustomerData;
 import com.dataflowstores.dataflow.pojo.users.SalesManData;
 import com.dataflowstores.dataflow.ui.AddProducts;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.fragments.BottomSheetFragment;
 import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
@@ -36,7 +39,7 @@ import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class FirstInvoice extends AppCompatActivity implements MyDialogCloseListener {
+public class FirstInvoice extends BaseActivity implements MyDialogCloseListener {
     InvoiceFirstBinding binding;
     InvoiceViewModel invoiceVM;
     String uuid;
@@ -46,6 +49,7 @@ public class FirstInvoice extends AppCompatActivity implements MyDialogCloseList
     @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             startActivity(new Intent(this, SplashScreen.class));
@@ -131,6 +135,22 @@ public class FirstInvoice extends AppCompatActivity implements MyDialogCloseList
     }
 
     public void searchButtons() {
+        binding.getAgent.setOnEditorActionListener((textView, actionId, keyEvent) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                binding.searchAgent.performClick();
+                return true; // Indicates that the action has been handled
+            }
+            return false;
+        });
+        binding.getClient.setOnEditorActionListener((textView, actionId, keyEvent) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                binding.searchClient.performClick();
+                return true; // Indicates that the action has been handled
+            }
+            return false;
+        });
+
+
         binding.searchAgent.setOnClickListener(view -> {
             if (App.isNetworkAvailable(this)) {
                 invoiceVM.getSalesMan(uuid, binding.getAgent.getText().toString(), App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN());

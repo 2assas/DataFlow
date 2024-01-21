@@ -89,6 +89,58 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/orderSummaryContainer"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout11"
+            android:background="@drawable/rounded_gray"
+            android:layout_margin="5dp"
+            >
+
+            <TextView
+                android:id="@+id/cartLinesTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/cartLinesQuantity"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/cartLinesQuantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/cartLinesTotal"
+                app:layout_constraintStart_toEndOf="@+id/cartLinesCount"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/cartLinesCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/cartLinesQuantity"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/productsRecycler"
             android:layout_width="match_parent"
@@ -96,7 +148,7 @@
             app:layout_constraintBottom_toTopOf="@+id/invoice"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout11" />
+            app:layout_constraintTop_toBottomOf="@+id/orderSummaryContainer" />
 
 
         <Button
@@ -179,6 +231,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone" />
+        <include
+            android:visibility="gone"
+            android:id="@+id/serialDialog"
+            android:elevation="20dp"
+            layout="@layout/serial_dialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="UnusedAttribute" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

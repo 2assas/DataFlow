@@ -1,5 +1,7 @@
 package com.dataflowstores.dataflow.ui.reports.supplierSalesReport;
 
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -29,6 +31,7 @@ import com.dataflowstores.dataflow.pojo.report.DataItem;
 import com.dataflowstores.dataflow.pojo.report.WorkersResponse;
 import com.dataflowstores.dataflow.pojo.users.CustomerData;
 import com.dataflowstores.dataflow.pojo.workStation.BranchData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.fragments.BottomSheetFragment;
 import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
@@ -40,7 +43,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class SupplierSalesReport extends AppCompatActivity implements MyDialogCloseListener {
+public class SupplierSalesReport extends BaseActivity implements MyDialogCloseListener {
     ItemSalesReportBinding binding;
     ReportBody reportBody = new ReportBody();
     ReportViewModel reportVM;
@@ -63,6 +66,7 @@ public class SupplierSalesReport extends AppCompatActivity implements MyDialogCl
     @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             startActivity(new Intent(this, SplashScreen.class));

@@ -1,12 +1,14 @@
 package com.dataflowstores.dataflow.ui;
 
 import static com.dataflowstores.dataflow.App.getMoveType;
+import static com.dataflowstores.dataflow.App.theme;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnPurchased;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnSales;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Sales;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -16,6 +18,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -38,7 +41,7 @@ import java.text.DecimalFormat;
 import java.util.Locale;
 import java.util.Objects;
 
-public class SearchInvoice extends AppCompatActivity {
+public class SearchInvoice extends BaseActivity {
     PrintInvoiceVM printInvoiceVM;
     SearchInvoiceBinding binding;
     String uuid;
@@ -52,6 +55,8 @@ public class SearchInvoice extends AppCompatActivity {
     @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             startActivity(new Intent(this, SplashScreen.class));
@@ -69,6 +74,11 @@ public class SearchInvoice extends AppCompatActivity {
         binding.invoiceTemplate.printButton.setVisibility(View.GONE);
         moveType = getMoveType();
         printInvoiceVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
+        binding.searchInvoices.setOnClickListener(view -> {
+            binding.searchInvoices.onActionViewExpanded(); // Expand the SearchView
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(binding.searchInvoices, InputMethodManager.SHOW_IMPLICIT);
+        });
         binding.searchInvoices.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {

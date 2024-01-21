@@ -1,6 +1,7 @@
 package com.dataflowstores.dataflow.ui;
 
 import static com.dataflowstores.dataflow.App.getMoveType;
+import static com.dataflowstores.dataflow.App.theme;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Purchase;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnPurchased;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Sales;
@@ -59,7 +60,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class Checkout extends AppCompatActivity implements View.OnFocusChangeListener, LocationListener {
+public class Checkout extends BaseActivity implements View.OnFocusChangeListener, LocationListener {
     private static final int REQUEST_CHECK_SETTINGS = 111;
     protected LocationManager locationManager;
     protected LocationListener locationListener;
@@ -99,6 +100,8 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
     @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             startActivity(new Intent(this, SplashScreen.class));
@@ -143,8 +146,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
                     binding.checkout.setClickable(true);
                 }
                 if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 2 && (App.invoiceType == Sales || App.invoiceType == ReturnPurchased)) {
-                    new AlertDialog.Builder(this).
-                            setTitle("نقص فالمخزن")
+                    new AlertDialog.Builder(this)
                             .setMessage(errorMessage)
                             .setCancelable(false)
                             .setPositiveButton("متابعة", (dialogInterface, i) -> {
@@ -157,19 +159,24 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
                                 startActivity(new Intent(Checkout.this, AddProducts.class));
                                 finish();
                             }).show();
-                } else if (response.getStatus() == 0 && (App.currentUser.getAllowStoreMinus() == 1 || App.currentUser.getAllowStoreMinus() == 4) && (App.invoiceType == Sales || App.invoiceType == ReturnPurchased)) {
+                } else if (response.getStatus() == 0 && (App.currentUser.getAllowStoreMinus() == 1 || App.currentUser.getAllowStoreMinus() == 4)
+                        && (App.invoiceType == Sales || App.invoiceType == ReturnPurchased)) {
                     String error = response.getMessage();
-                    String errorTitle = "نقص فالمخزن";
                     if (response.getMessage().equals("Not saved ... please save again")) {
                         error = "لا يوجد الكمية الكافية من هذا الصنف";
                     }
-                    if (response.getMessage().equals("Invoice not saved: Data redundancy.") || response.getMessage().equals("WARNING: Duplicate invoice data.")) {
-                        errorTitle = "تكرار بيانات";
-                    }
                     binding.checkout.setClickable(true);
-                    new AlertDialog.Builder(this).
-                            setTitle(errorTitle)
+                    new AlertDialog.Builder(this)
                             .setMessage(error)
+                            .setCancelable(false)
+                            .setNegativeButton("إلغاء", (dialogInterface, i) -> {
+                                dialogInterface.dismiss();
+                                startActivity(new Intent(Checkout.this, AddProducts.class));
+                                finish();
+                            }).show();
+                } else if (response.getStatus() == 0) {
+                    new AlertDialog.Builder(this)
+                            .setMessage(response.getMessage())
                             .setCancelable(false)
                             .setNegativeButton("إلغاء", (dialogInterface, i) -> {
                                 dialogInterface.dismiss();
@@ -1117,7 +1124,7 @@ public class Checkout extends AppCompatActivity implements View.OnFocusChangeLis
             itemName.add(App.selectedProducts.get(i).getItemName());
             discount1.add(App.selectedProducts.get(i).getDiscount1());
             allowStoreMinus.add(App.selectedProducts.get(i).getAllowStoreMinus());
-            productStoreName.add(App.selectedProducts.get(i).getItemName());
+            productStoreName.add(App.selectedProducts.get(i).getSelectedStore().getStoreName());
             lineTax = +Double.parseDouble(App.selectedProducts.get(i).getItemTax());
             ItemBranchISN.add((long) App.selectedProducts.get(i).getBranchISN());
             ItemISN.add((long) App.selectedProducts.get(i).getItemISN());

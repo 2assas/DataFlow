@@ -231,6 +231,100 @@ public class UserData implements Serializable {
     @SerializedName("MobilePayment")
     Integer MobilePayment;
 
+
+    @SerializedName("MobileSalesMaxDiscPer")
+    Integer MobileSalesMaxDiscPer;
+
+
+    @SerializedName("ShiftSystemActivate")
+    Integer ShiftSystemActivate;
+
+    @SerializedName("LogIn_ShiftBranchISN")
+    Integer LogIn_ShiftBranchISN;
+
+    @SerializedName("LogIn_Spare1")
+    Integer LogIn_Spare1;
+
+    @SerializedName("LogIn_Spare2")
+    Integer LogIn_Spare2;
+
+    @SerializedName("LogIn_Spare3")
+    Integer LogIn_Spare3;
+
+    @SerializedName("LogIn_ShiftISN")
+    Integer LogIn_ShiftISN;
+
+    @SerializedName("LogIn_Spare4")
+    Integer LogIn_Spare4;
+    @SerializedName("LogIn_Spare5")
+    Integer LogIn_Spare5;
+    @SerializedName("LogIn_Spare6")
+    Integer LogIn_Spare6;
+
+    @SerializedName("MobileSearchMilliSecondsWait")
+    Integer MobileSearchMilliSecondsWait;
+
+
+    @SerializedName("MobileSearchTypeLetterCount")
+    Integer MobileSearchTypeLetterCount;
+
+    public Integer getMobileSearchMilliSecondsWait() {
+        return MobileSearchMilliSecondsWait;
+    }
+
+    public Integer getMobileSearchTypeLetterCount() {
+        return MobileSearchTypeLetterCount;
+    }
+
+    public Integer getShiftSystemActivate() {
+        return ShiftSystemActivate;
+    }
+
+    public Integer getMobileSalesMaxDiscPer() {
+        return MobileSalesMaxDiscPer;
+    }
+
+    public Integer getLogIn_ShiftBranchISN() {
+        return LogIn_ShiftBranchISN;
+    }
+
+    public Integer getLogIn_Spare1() {
+        return LogIn_Spare1;
+    }
+
+    public Integer getLogIn_Spare2() {
+        return LogIn_Spare2;
+    }
+
+    public Integer getLogIn_Spare3() {
+        return LogIn_Spare3;
+    }
+
+    public Integer getLogIn_ShiftISN() {
+        return LogIn_ShiftISN;
+    }
+
+    public Integer getLogIn_Spare4() {
+        return LogIn_Spare4;
+    }
+
+    public Integer getLogIn_Spare5() {
+        return LogIn_Spare5;
+    }
+
+    public Integer getLogIn_Spare6() {
+        return LogIn_Spare6;
+    }
+
+    //    ShiftSystemActivate
+//            LogIn_ShiftBranchISN
+//    LogIn_ShiftISN
+//            LogIn_Spare1
+//    LogIn_Spare2
+//            LogIn_Spare3
+//    LogIn_Spare4
+//            LogIn_Spare5
+//    LogIn_Spare6
     public Integer getMobilePayment() {
         return MobilePayment;
     }

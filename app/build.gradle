@@ -11,8 +11,8 @@ android {
         applicationId "com.dataflowstores.dataflow"
         minSdkVersion 19
         targetSdkVersion 33
-        versionCode 24
-        versionName "23.1224"
+        versionCode 25
+        versionName "24.0104"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'

@@ -1,5 +1,7 @@
 package com.dataflowstores.dataflow.ui.reports.supplierSalesReport;
 
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,6 +21,7 @@ import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.ItemSalesReportPrintBinding;
 import com.dataflowstores.dataflow.pojo.report.itemSalesReport.ItemSalesData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 import com.dataflowstores.dataflow.ui.reports.itemSalesReport.ItemSalesAdapter;
@@ -26,13 +29,14 @@ import com.dataflowstores.dataflow.ui.reports.itemSalesReport.ItemSalesAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SupplierSalesPrintScreen extends AppCompatActivity {
+public class SupplierSalesPrintScreen extends BaseActivity {
     ItemSalesReportPrintBinding binding;
     String shiftNum;
     List<ItemSalesData> itemSalesDataList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.item_sales_report_print);
         if (savedInstanceState != null) {

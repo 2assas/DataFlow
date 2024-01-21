@@ -51,7 +51,17 @@ public class PrintInvoiceVM extends ViewModel {
                 App.currentUser.getLogIn_WSName(),
                 App.currentUser.getLogIn_CS(),
                 App.currentUser.getLogIn_VN(),
-                App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                App.currentUser.getLogIn_FAlternative()
+                ,App.currentUser.getMobileSalesMaxDiscPer()
+                ,App.currentUser.getShiftSystemActivate()
+                ,App.currentUser.getLogIn_ShiftBranchISN()
+                ,App.currentUser.getLogIn_ShiftISN()
+                ,App.currentUser.getLogIn_Spare1()
+                ,App.currentUser.getLogIn_Spare2()
+                ,App.currentUser.getLogIn_Spare3()
+                ,App.currentUser.getLogIn_Spare4()
+                ,App.currentUser.getLogIn_Spare5()
+                ,App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observer<Invoice> invoiceObserver = new Observer<Invoice>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
@@ -99,6 +109,16 @@ public class PrintInvoiceVM extends ViewModel {
                 App.currentUser.getLogIn_VN(),
                 App.currentUser.getLogIn_FAlternative()
                 , moveBranchISN, moveISN, remainValue, netValue, moveType, null, App.currentUser.getInvoiceCurrentBalanceTimeInInvoice()
+                ,App.currentUser.getMobileSalesMaxDiscPer()
+                ,App.currentUser.getShiftSystemActivate()
+                ,App.currentUser.getLogIn_ShiftBranchISN()
+                ,App.currentUser.getLogIn_ShiftISN()
+                ,App.currentUser.getLogIn_Spare1()
+                ,App.currentUser.getLogIn_Spare2()
+                ,App.currentUser.getLogIn_Spare3()
+                ,App.currentUser.getLogIn_Spare4()
+                ,App.currentUser.getLogIn_Spare5()
+                ,App.currentUser.getLogIn_Spare6()
         ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observer<CustomerBalance> observer = new Observer<CustomerBalance>() {
             @Override

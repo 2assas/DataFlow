@@ -1,6 +1,9 @@
 package com.dataflowstores.dataflow.ui.expenses;
 
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -9,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -21,13 +25,14 @@ import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.SearchExpensesBinding;
 import com.dataflowstores.dataflow.pojo.expenses.ExpenseData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 
 import java.util.Locale;
 import java.util.Objects;
 
-public class SearchExpenses extends AppCompatActivity {
+public class SearchExpenses extends BaseActivity {
     SearchExpensesBinding binding;
     ExpensesViewModel expensesViewModel;
     String uuid;
@@ -38,6 +43,7 @@ public class SearchExpenses extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.search_expenses);
         if (savedInstanceState != null) {
@@ -73,6 +79,11 @@ public class SearchExpenses extends AppCompatActivity {
     }
 
     private void searchInvoice() {
+        binding.searchInvoices.setOnClickListener(view -> {
+            binding.searchInvoices.onActionViewExpanded(); // Expand the SearchView
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(binding.searchInvoices, InputMethodManager.SHOW_IMPLICIT);
+        });
         binding.searchInvoices.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {

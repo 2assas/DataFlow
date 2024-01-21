@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.pojo.login.BranchStaffModel;
 import com.dataflowstores.dataflow.pojo.login.LoginStatus;
 import com.dataflowstores.dataflow.pojo.report.Branches;
@@ -150,7 +151,17 @@ public class GateWayViewModel extends ViewModel {
                 null,
                 null,
                 null,
-                null).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                null
+                , App.currentUser.getMobileSalesMaxDiscPer()
+                , App.currentUser.getShiftSystemActivate()
+                , App.currentUser.getLogIn_ShiftBranchISN()
+                , App.currentUser.getLogIn_ShiftISN()
+                , App.currentUser.getLogIn_Spare1()
+                , App.currentUser.getLogIn_Spare2()
+                , App.currentUser.getLogIn_Spare3()
+                , App.currentUser.getLogIn_Spare4()
+                , App.currentUser.getLogIn_Spare5()
+                , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observable<Stores> getStores = tokenService.getStores(null, 1, uuid, null, null, -1, moveType, selectedFoundation,
                 null,
                 null,
@@ -162,7 +173,17 @@ public class GateWayViewModel extends ViewModel {
                 null,
                 null,
                 null,
-                null).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                null
+                , App.currentUser.getMobileSalesMaxDiscPer()
+                , App.currentUser.getShiftSystemActivate()
+                , App.currentUser.getLogIn_ShiftBranchISN()
+                , App.currentUser.getLogIn_ShiftISN()
+                , App.currentUser.getLogIn_Spare1()
+                , App.currentUser.getLogIn_Spare2()
+                , App.currentUser.getLogIn_Spare3()
+                , App.currentUser.getLogIn_Spare4()
+                , App.currentUser.getLogIn_Spare5()
+                , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observable<SafeDeposit> getSafeDeposits = tokenService.getSafeDeposit(null, 1, uuid, null, null, -1, moveType, selectedFoundation,
                 null,
                 null,
@@ -174,7 +195,17 @@ public class GateWayViewModel extends ViewModel {
                 null,
                 null,
                 null,
-                null).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                null
+                , App.currentUser.getMobileSalesMaxDiscPer()
+                , App.currentUser.getShiftSystemActivate()
+                , App.currentUser.getLogIn_ShiftBranchISN()
+                , App.currentUser.getLogIn_ShiftISN()
+                , App.currentUser.getLogIn_Spare1()
+                , App.currentUser.getLogIn_Spare2()
+                , App.currentUser.getLogIn_Spare3()
+                , App.currentUser.getLogIn_Spare4()
+                , App.currentUser.getLogIn_Spare5()
+                , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         Observable<BranchStaffModel> zipper = Observable.zip(getBranches, getStores, getSafeDeposits, BranchStaffModel::new);
 

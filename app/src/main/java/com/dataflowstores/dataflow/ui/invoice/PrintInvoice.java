@@ -1,6 +1,7 @@
 package com.dataflowstores.dataflow.ui.invoice;
 
 import static com.dataflowstores.dataflow.App.getMoveType;
+import static com.dataflowstores.dataflow.App.theme;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnPurchased;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnSales;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Sales;
@@ -45,6 +46,7 @@ import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.PrintInvoiceVM;
 import com.dataflowstores.dataflow.databinding.PrintInvoiceBinding;
 import com.dataflowstores.dataflow.pojo.users.CustomerData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.DeviceListActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.adapters.PrintingLinesAdapter;
@@ -62,7 +64,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-public class PrintInvoice extends AppCompatActivity implements Runnable {
+public class PrintInvoice extends BaseActivity implements Runnable {
 
     private static final String TAG = ".PrintInvoice";
     PrintInvoiceBinding binding;
@@ -111,6 +113,7 @@ public class PrintInvoice extends AppCompatActivity implements Runnable {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             startActivity(new Intent(this, SplashScreen.class));

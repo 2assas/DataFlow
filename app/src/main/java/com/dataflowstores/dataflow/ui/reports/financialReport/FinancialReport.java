@@ -1,5 +1,7 @@
 package com.dataflowstores.dataflow.ui.reports.financialReport;
 
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -31,6 +33,7 @@ import com.dataflowstores.dataflow.pojo.settings.BanksData;
 import com.dataflowstores.dataflow.pojo.settings.SafeDeposit;
 import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
 import com.dataflowstores.dataflow.pojo.workStation.BranchData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.reports.ReportViewModel;
 
@@ -39,7 +42,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class FinancialReport extends AppCompatActivity {
+public class FinancialReport extends BaseActivity {
     FinancialReportBinding binding;
     ReportBody reportBody = new ReportBody();
     ReportViewModel reportVM;
@@ -66,6 +69,7 @@ public class FinancialReport extends AppCompatActivity {
     @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             startActivity(new Intent(this, SplashScreen.class));

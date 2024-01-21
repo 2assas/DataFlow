@@ -1,5 +1,7 @@
 package com.dataflowstores.dataflow.ui.cashing;
 
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -39,6 +41,7 @@ import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.PrintInvoiceVM;
 import com.dataflowstores.dataflow.databinding.CachingPrintingBinding;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.DeviceListActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
@@ -50,7 +53,7 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
 
-public class CashingPrinting extends AppCompatActivity implements Runnable {
+public class CashingPrinting extends BaseActivity implements Runnable {
 
     private static final String TAG = "Cashing";
     CachingPrintingBinding binding;
@@ -82,6 +85,7 @@ public class CashingPrinting extends AppCompatActivity implements Runnable {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             startActivity(new Intent(this, SplashScreen.class));

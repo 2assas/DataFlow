@@ -33,6 +33,7 @@ import com.dataflowstores.dataflow.ui.adapters.CustomerAdapter;
 import com.dataflowstores.dataflow.ui.adapters.ProductAdapter;
 import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
 import com.dataflowstores.dataflow.ui.products.ProductDetails;
+import com.dataflowstores.dataflow.utils.SingleLiveEvent;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class BottomSheetFragment extends BottomSheetDialogFragment implements ProductAdapter.ClickListener {
@@ -92,7 +93,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Pr
     public void getProduct() {
         App.product = new ProductData();
         productVM = new ViewModelProvider(getActivity()).get(ProductVM.class);
-        productVM.productMutableLiveData = new MutableLiveData<>();
+        productVM.productMutableLiveData = new SingleLiveEvent<>();
         productVM.productMutableLiveData.observe(getActivity(), product -> {
             binding.serialDialog.getRoot().setVisibility(View.GONE);
             binding.progressBar.setVisibility(View.GONE);
@@ -135,7 +136,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Pr
         binding.serialDialog.getRoot().setVisibility(View.VISIBLE);
         binding.serialDialog.confirm.setOnClickListener(view -> {
             if (!binding.serialDialog.serialNumberInput.getText().toString().isEmpty())
-                productVM.getProduct(App.product.getItemName(), uuid, binding.serialDialog.serialNumberInput.getText().toString(), getMoveType());
+                productVM.getProduct(App.product.getItemName(), uuid, binding.serialDialog.serialNumberInput.getText().toString(), getMoveType(), null);
             else
                 binding.serialDialog.serialNumberInput.setError("مطلوب");
             isSerial = true;

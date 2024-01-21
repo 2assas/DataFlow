@@ -31,7 +31,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="5dp"
                     android:gravity="center"
-                    android:textColor="@color/black"
+
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -43,7 +43,7 @@
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="5dp"
                     android:gravity="center"
-                    android:textColor="@color/black"
+
                     android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -55,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="Foundation Name"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -98,7 +98,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="Branch Name"
-                    android:textColor="@color/black"
+
                     android:textSize="13sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -112,7 +112,7 @@
                     android:layout_marginTop="5dp"
                     android:text="مرتجع مبيعات"
                     android:visibility="gone"
-                    android:textColor="@color/black"
+
                     android:textSize="13sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -139,7 +139,7 @@
                         android:layout_marginEnd="10dp"
                         android:gravity="start"
                         android:text="رقم  الدفع: "
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/moveId"
@@ -154,7 +154,7 @@
                         android:layout_marginEnd="5dp"
                         android:gravity="start"
                         android:text="رقم الفاتورة: "
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintEnd_toStartOf="@+id/invoiceNumber"
                         app:layout_constraintStart_toStartOf="parent"
@@ -170,7 +170,7 @@
                         android:layout_marginEnd="10dp"
                         android:gravity="start"
                         android:text="نوع البيع: "
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/invoiceDate"
@@ -185,7 +185,7 @@
                         android:layout_marginEnd="5dp"
                         android:gravity="start"
                         android:text="التاريخ: "
-                        android:textColor="@color/black"
+
                         android:textSize="12sp"
                         app:layout_constraintEnd_toStartOf="@+id/SellingType"
                         app:layout_constraintStart_toStartOf="parent"
@@ -199,7 +199,7 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="10dp"
                         android:text="إسم الكاشير: "
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tableNumber"
@@ -214,7 +214,7 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="5dp"
                         android:text="رقم السفرة: "
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintEnd_toStartOf="@+id/dealerName"
                         app:layout_constraintStart_toStartOf="parent"
@@ -229,7 +229,7 @@
                         android:layout_marginEnd="10dp"
                         android:gravity="start"
                         android:text="إسم المندوب:"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/dealerName2"
@@ -244,7 +244,7 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="5dp"
                         android:text="إسم العميل: "
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintEnd_toStartOf="@+id/saleMan"
                         app:layout_constraintStart_toStartOf="parent"
@@ -280,7 +280,7 @@
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:text="الصـــنف"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp" />
 
                 </LinearLayout>
@@ -303,7 +303,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:text="الإجمالى"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp" />
 
                     <TextView
@@ -313,7 +313,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:text="الكمية"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp" />
 
                     <TextView
@@ -323,7 +323,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:text="السعر"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -360,7 +360,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="totalInvoice"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -373,7 +373,7 @@
                     android:layout_height="wrap_content"
 
                     android:text="totalInvoice"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toStartOf="@+id/textView44"
@@ -386,7 +386,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="totalInvoice"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -418,7 +418,7 @@
                     android:layout_marginBottom="5dp"
                     android:gravity="center"
                     android:text="ClientBalance"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toTopOf="@+id/view8"
@@ -434,7 +434,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="5dp"
                     android:text="المتبقى"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toStartOf="@+id/view5"
@@ -462,7 +462,7 @@
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:text="المدفوع"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -477,7 +477,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="10dp"
                     android:text="المطلوب"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -492,7 +492,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="5dp"
                     android:text="الضريبة"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toStartOf="@+id/view5"
@@ -507,7 +507,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="10dp"
                     android:text="الخصم"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -522,7 +522,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="5dp"
                     android:text="الخدمة"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toStartOf="@+id/view5"
@@ -537,7 +537,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="10dp"
                     android:text="الإجمالى    510"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -598,7 +598,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="DATAFLOW Software Solutions   T:01002000235"
-                    android:textColor="@color/black"
+
                     android:textSize="11sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

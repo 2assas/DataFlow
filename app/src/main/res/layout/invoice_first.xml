@@ -48,7 +48,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginBottom="3dp"
-                    android:src="@drawable/ic_back"
+                    android:src="@drawable/ic_back_themed"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -59,7 +59,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="إختيار العميل والمندوب"
-                    android:textColor="@color/black"
+
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/back"
@@ -107,7 +107,7 @@
                     android:layout_marginTop="20dp"
                     android:gravity="center"
                     android:text="إسم العميل"
-                    android:textColor="@color/black"
+
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -198,7 +198,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="إسم المندوب"
-                    android:textColor="@color/black"
+
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -213,7 +213,7 @@
                     android:layout_marginTop="10dp"
                     android:gravity="center"
                     android:text="نوع السعر"
-                    android:textColor="@color/black"
+
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"

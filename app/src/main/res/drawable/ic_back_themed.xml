@@ -1,0 +1,12 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background shape with rounded corners -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="8dp" /> <!-- Adjust the radius as needed -->
+            <solid android:color="?attr/colorPrimaryDark" />
+        </shape>
+    </item>
+
+    <!-- Original Vector Drawable -->
+    <item android:drawable="@drawable/ic_back" />
+</layer-list>

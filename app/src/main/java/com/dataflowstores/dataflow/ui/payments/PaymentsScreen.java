@@ -1,5 +1,7 @@
 package com.dataflowstores.dataflow.ui.payments;
 
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -16,6 +18,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -38,6 +41,7 @@ import com.dataflowstores.dataflow.pojo.settings.BanksData;
 import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
 import com.dataflowstores.dataflow.pojo.users.CustomerData;
 import com.dataflowstores.dataflow.pojo.users.SalesManData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.fragments.BottomSheetFragment;
 import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
@@ -56,7 +60,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class PaymentsScreen extends AppCompatActivity implements MyDialogCloseListener, LocationListener {
+public class PaymentsScreen extends BaseActivity implements MyDialogCloseListener, LocationListener {
 
     PaymentsBinding binding;
     PaymentsViewModel viewModel;
@@ -78,6 +82,7 @@ public class PaymentsScreen extends AppCompatActivity implements MyDialogCloseLi
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         binding = DataBindingUtil.setContentView(this, R.layout.payments);
@@ -193,6 +198,21 @@ public class PaymentsScreen extends AppCompatActivity implements MyDialogCloseLi
     }
 
     private void searchButtons() {
+        binding.getAgent.setOnEditorActionListener((textView, actionId, keyEvent) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                binding.searchAgent.performClick();
+                return true; // Indicates that the action has been handled
+            }
+            return false;
+        });
+        binding.getSupplier.setOnEditorActionListener((textView, actionId, keyEvent) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                binding.searchSupplier.performClick();
+                return true; // Indicates that the action has been handled
+            }
+            return false;
+        });
+
         binding.searchAgent.setOnClickListener(view -> {
             if (App.isNetworkAvailable(this))
                 invoiceVM.getSalesMan(uuid, binding.getAgent.getText().toString(), App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN());
@@ -509,38 +529,49 @@ public class PaymentsScreen extends AppCompatActivity implements MyDialogCloseLi
 
         viewModel.paymentResponseMutableLiveData.observe(this, receiptResponse -> {
             binding.showProgress.setVisibility(View.GONE);
-            if (App.customer.getDealerName() != null && App.currentUser.getMobileShowDealerCurrentBalanceInPrint() == 1) {
-                new AlertDialog.Builder(this).setTitle("عملية ناجحة")
-                        .setMessage("تم تسجيل عملية الدفع بنجاح")
-                        .setIcon(getResources().getDrawable(R.drawable.ic_baseline_verified_24))
-                        .setPositiveButton("طباعة", (dialog, which) -> {
-                            binding.confirmProcess.setClickable(true);
-                            moveId = receiptResponse.getData().getMoveId();
-                            viewModel.getPayment(App.currentUser.getBranchISN(), uuid, String.valueOf(moveId),
-                                    App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN(), App.currentUser.getPermission());
-                            binding.showProgress.setVisibility(View.VISIBLE);
-                            dialog.dismiss();
-                        }).setNegativeButton("إغلاق", (dialog, which) -> {
-                            dialog.dismiss();
-                            finish();
-                            startActivity(new Intent(this, PaymentsScreen.class));
-                        }).show();
+            if (receiptResponse.getStatus() != 0) {
+                if (App.customer.getDealerName() != null && App.currentUser.getMobileShowDealerCurrentBalanceInPrint() == 1) {
+                    new AlertDialog.Builder(this).setTitle("عملية ناجحة")
+                            .setMessage("تم تسجيل عملية الدفع بنجاح")
+                            .setIcon(getResources().getDrawable(R.drawable.ic_baseline_verified_24))
+                            .setPositiveButton("طباعة", (dialog, which) -> {
+                                binding.confirmProcess.setClickable(true);
+                                moveId = receiptResponse.getData().getMoveId();
+                                viewModel.getPayment(App.currentUser.getBranchISN(), uuid, String.valueOf(moveId),
+                                        App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN(), App.currentUser.getPermission());
+                                binding.showProgress.setVisibility(View.VISIBLE);
+                                dialog.dismiss();
+                            }).setNegativeButton("إغلاق", (dialog, which) -> {
+                                dialog.dismiss();
+                                finish();
+                                startActivity(new Intent(this, PaymentsScreen.class));
+                            }).show();
 
 
+                } else {
+                    new AlertDialog.Builder(this).setTitle("عملية ناجحة")
+                            .setMessage("تم تسجيل عملية الدفع بنجاح")
+                            .setIcon(getResources().getDrawable(R.drawable.ic_baseline_verified_24))
+                            .setPositiveButton("طباعة", (dialog, which) -> {
+                                binding.confirmProcess.setClickable(true);
+                                viewModel.getPayment(App.currentUser.getBranchISN(), uuid, String.valueOf(receiptResponse.getData().getMoveId()),
+                                        App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN(), App.currentUser.getPermission());
+                                binding.showProgress.setVisibility(View.VISIBLE);
+                                dialog.dismiss();
+                            }).setNegativeButton("إغلاق", (dialog, which) -> {
+                                dialog.dismiss();
+                                finish();
+                                startActivity(new Intent(this, PaymentsScreen.class));
+                            }).show();
+                }
             } else {
-                new AlertDialog.Builder(this).setTitle("عملية ناجحة")
-                        .setMessage("تم تسجيل عملية الدفع بنجاح")
-                        .setIcon(getResources().getDrawable(R.drawable.ic_baseline_verified_24))
-                        .setPositiveButton("طباعة", (dialog, which) -> {
-                            binding.confirmProcess.setClickable(true);
-                            viewModel.getPayment(App.currentUser.getBranchISN(), uuid, String.valueOf(receiptResponse.getData().getMoveId()),
-                                    App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN(), App.currentUser.getPermission());
-                            binding.showProgress.setVisibility(View.VISIBLE);
+                binding.confirmProcess.setClickable(true);
+                binding.showProgress.setVisibility(View.GONE);
+                new AlertDialog.Builder(this)
+                        .setMessage(receiptResponse.getMessage())
+                        .setIcon(getResources().getDrawable(R.drawable.baseline_cancel_presentation_24))
+                        .setPositiveButton("إغلاق", (dialog, which) -> {
                             dialog.dismiss();
-                        }).setNegativeButton("إغلاق", (dialog, which) -> {
-                            dialog.dismiss();
-                            finish();
-                            startActivity(new Intent(this, PaymentsScreen.class));
                         }).show();
             }
         });

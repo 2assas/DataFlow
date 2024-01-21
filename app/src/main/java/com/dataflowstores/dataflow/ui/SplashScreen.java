@@ -1,9 +1,12 @@
 package com.dataflowstores.dataflow.ui;
 
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -18,17 +21,19 @@ import com.dataflowstores.dataflow.databinding.SplashScreenBinding;
 import com.dataflowstores.dataflow.ui.gateway.GateWay;
 import com.dataflowstores.dataflow.ui.home.MainActivity;
 
-public class SplashScreen extends AppCompatActivity {
+public class SplashScreen extends BaseActivity {
     SplashScreenBinding binding;
     GateWayViewModel gateWayViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.splash_screen);
-        SharedPreferences prefs = getSharedPreferences("SaveLogin", MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences("AppShared", MODE_PRIVATE);
         String userName = prefs.getString("userName", "");//"No name defined" is the default value.
         String password = prefs.getString("password", ""); //0 is the default
+
 
         // value// .
         String uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -36,7 +41,7 @@ public class SplashScreen extends AppCompatActivity {
         gateWayViewModel.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
         if (!userName.isEmpty() && !password.isEmpty()) {
             if (App.isNetworkAvailable(this))
-                gateWayViewModel.getLoginStatus(uuid, userName, password, null, null, "-1", null, null, null, null,0);
+                gateWayViewModel.getLoginStatus(uuid, userName, password, null, null, "-1", null, null, null, null, 0);
             else {
                 App.noConnectionDialog(this);
             }             //assas

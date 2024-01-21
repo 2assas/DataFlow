@@ -1,5 +1,7 @@
 package com.dataflowstores.dataflow.ui.payments;
 
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,15 +19,17 @@ import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.PrintPaymentBinding;
 import com.dataflowstores.dataflow.databinding.PrintReceiptBinding;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 
 import java.util.Locale;
 
-public class PrintPayment extends AppCompatActivity {
+public class PrintPayment extends BaseActivity {
     PrintPaymentBinding binding;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.print_payment);
         if (savedInstanceState != null) {

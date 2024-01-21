@@ -1,5 +1,6 @@
 package com.dataflowstores.dataflow.ui.reports.cashierMovesReport;
 
+import static com.dataflowstores.dataflow.App.theme;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Purchase;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnPurchased;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnSales;
@@ -26,6 +27,7 @@ import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.CashierMovesPrintingBinding;
 import com.dataflowstores.dataflow.pojo.report.cashierMoves.CashierMoveData;
 import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SearchInvoice;
 import com.dataflowstores.dataflow.ui.SearchReceipts;
 import com.dataflowstores.dataflow.ui.SplashScreen;
@@ -38,12 +40,13 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class CashierMovesReportPrinting extends AppCompatActivity implements CashierMovesAdapter.onCashierMoveListener {
+public class CashierMovesReportPrinting extends BaseActivity implements CashierMovesAdapter.onCashierMoveListener {
     CashierMovesPrintingBinding binding;
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm", Locale.US);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.cashier_moves_printing);
         if (savedInstanceState != null) {

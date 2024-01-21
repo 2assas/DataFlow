@@ -31,7 +31,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:text="Foundation Name"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -72,7 +72,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:text="Branch Name"
-                    android:textColor="@color/black"
+
                     android:textSize="13sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -84,7 +84,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="إذن صرف"
-                    android:textColor="@color/black"
+
                     android:textSize="16sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -109,7 +109,7 @@
                         android:layout_marginTop="10dp"
                         android:gravity="start"
                         android:text="التاريخ: "
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintEnd_toStartOf="@+id/dealerName"
                         app:layout_constraintStart_toStartOf="parent"
@@ -122,7 +122,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
                         android:text="الموظف: "
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/invoiceDate"
@@ -136,7 +136,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
                         android:text="المخزن: "
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/invoiceDate"
@@ -176,7 +176,7 @@
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:text="الصـــنف"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp" />
 
                 </LinearLayout>
@@ -200,7 +200,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:text="الى مخزن"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp" />
 
                     <TextView
@@ -211,7 +211,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:text="من مخزن"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp" />
 
                     <TextView
@@ -221,7 +221,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:text="الكمية"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp" />
                 </LinearLayout>
 

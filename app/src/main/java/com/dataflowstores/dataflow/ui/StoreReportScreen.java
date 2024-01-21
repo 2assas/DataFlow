@@ -3,8 +3,11 @@ package com.dataflowstores.dataflow.ui;
 import static android.telephony.MbmsDownloadSession.RESULT_CANCELLED;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,13 +17,15 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CursorAdapter;
 import android.widget.SearchView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,6 +35,7 @@ import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.ProductVM;
 import com.dataflowstores.dataflow.databinding.StoreReportBinding;
 import com.dataflowstores.dataflow.pojo.product.ProductData;
+import com.dataflowstores.dataflow.pojo.product.SearchProductResponse;
 import com.dataflowstores.dataflow.pojo.settings.StoresData;
 import com.dataflowstores.dataflow.pojo.users.CustomerData;
 import com.dataflowstores.dataflow.ui.adapters.StoreReportAdapter;
@@ -39,9 +45,10 @@ import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
 import com.dataflowstores.dataflow.ui.reports.ReportViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public class StoreReportScreen extends AppCompatActivity implements MyDialogCloseListener {
+public class StoreReportScreen extends BaseActivity implements MyDialogCloseListener {
     StoreReportBinding binding;
     StoresData storesData = new StoresData();
     StoresData selectedStoresData = null;
@@ -50,9 +57,15 @@ public class StoreReportScreen extends AppCompatActivity implements MyDialogClos
     String uuid;
     ProductVM productVM;
     ProductData selectedProduct = null;
+    private SimpleCursorAdapter adapter;
+    private final String[] suggestionsColumns = {"_id", "suggestion"};
+    Boolean isSerial = false;
+    List<SearchProductResponse> searchProductList = new ArrayList<>();
+    String itemCode = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             startActivity(new Intent(this, SplashScreen.class));
@@ -68,6 +81,8 @@ public class StoreReportScreen extends AppCompatActivity implements MyDialogClos
             searchProducts();
             barCodeScan();
             handleCheckboxes();
+            observeSearching();
+            observeSearchProduct();
             binding.showButton.setOnClickListener(v -> {
                 if (selectedProduct != null && !Objects.equals(selectedProduct.getItemName(), binding.searchProducts.getQuery().toString())) {
                     selectedProduct = null;
@@ -128,12 +143,17 @@ public class StoreReportScreen extends AppCompatActivity implements MyDialogClos
 
     private void searchProducts() {
         App.customer = new CustomerData();
+        binding.searchProducts.setOnClickListener(view -> {
+            binding.searchProducts.onActionViewExpanded(); // Expand the SearchView
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(binding.searchProducts, InputMethodManager.SHOW_IMPLICIT);
+        });
         binding.searchProducts.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 if (binding.itemCheckBox.isChecked()) {
                     if (App.isNetworkAvailable(StoreReportScreen.this))
-                        productVM.getProduct(s, uuid, null, 1);
+                        productVM.getProduct(s, uuid, null, 1, null);
                     else {
                         App.noConnectionDialog(StoreReportScreen.this);
                     }
@@ -149,10 +169,13 @@ public class StoreReportScreen extends AppCompatActivity implements MyDialogClos
             @Override
             public boolean onQueryTextChange(String s) {
                 binding.searchButton.setVisibility(View.VISIBLE);
+                if (binding.itemCheckBox.isChecked() ) {
+                    productVM.setSearchQuery(s);
+                }
                 binding.searchButton.setOnClickListener(view -> {
                     if (binding.itemCheckBox.isChecked()) {
                         if (App.isNetworkAvailable(StoreReportScreen.this))
-                            productVM.getProduct(s, uuid, null, 1);
+                            productVM.getProduct(s, uuid, null, 1, null);
                         else {
                             App.noConnectionDialog(StoreReportScreen.this);
                         }
@@ -164,6 +187,59 @@ public class StoreReportScreen extends AppCompatActivity implements MyDialogClos
                     }
                 });
                 return false;
+            }
+        });
+
+
+        adapter = new SimpleCursorAdapter(this, android.R.layout.simple_dropdown_item_1line, null, new String[]{"suggestion"}, new int[]{android.R.id.text1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        binding.searchProducts.setSuggestionsAdapter(adapter);
+        binding.searchProducts.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return false;
+            }
+
+            @Override
+            public boolean onSuggestionClick(int position) {
+                Cursor cursor = adapter.getCursor();
+                if (cursor != null && cursor.moveToPosition(position)) {
+                    int suggestionIndex = cursor.getColumnIndex("suggestion");
+                    if (suggestionIndex != -1) {
+                        String suggestion = cursor.getString(suggestionIndex);
+                        itemCode = searchProductList.get(position).getItemCode();
+                        productVM.getProduct(suggestion, uuid, null, 1, itemCode);
+                    }
+                }
+                return true;
+            }
+        });
+    }
+
+    private void observeSearching() {
+        productVM.getSearchResults().observe(this, searchProductResponses -> {
+            if (searchProductResponses != null) {
+                searchProductList = searchProductResponses;
+                MatrixCursor cursor = new MatrixCursor(suggestionsColumns);
+                for (int i = 0; i < searchProductResponses.size(); i++) {
+                    String[] rowData = {String.valueOf(i), searchProductResponses.get(i).getItemName()};
+                    cursor.addRow(rowData);
+                }
+                adapter.changeCursor(cursor);
+            } else {
+                MatrixCursor cursor = new MatrixCursor(suggestionsColumns);
+                adapter.changeCursor(cursor);
+            }
+        });
+
+    }
+
+    private void observeSearchProduct() {
+        productVM.productMutableLiveData.observe(this, product -> {
+            if (product != null) {
+                App.product = product.getData().get(0);
+                binding.searchProducts.setQuery(App.product.getItemName(), false);
+                selectedProduct = App.product;
+                binding.searchButton.setVisibility(View.GONE);
             }
         });
     }
@@ -269,7 +345,7 @@ public class StoreReportScreen extends AppCompatActivity implements MyDialogClos
             if (resultCode == RESULT_OK) {
                 String contents = data.getStringExtra("SCAN_RESULT");
                 if (App.isNetworkAvailable(StoreReportScreen.this))
-                    productVM.getProduct(contents, uuid, null, 1);
+                    productVM.getProduct(contents, uuid, null, 1, null);
                 else {
                     App.noConnectionDialog(StoreReportScreen.this);
                 }

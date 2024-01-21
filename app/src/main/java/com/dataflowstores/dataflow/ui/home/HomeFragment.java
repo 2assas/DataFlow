@@ -1,6 +1,7 @@
 package com.dataflowstores.dataflow.ui.home;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.dataflowstores.dataflow.App.theme;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Purchase;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnPurchased;
 import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnSales;
@@ -44,6 +45,7 @@ import com.dataflowstores.dataflow.ui.payments.SearchPayments;
 import com.dataflowstores.dataflow.ui.reports.ReportsFragment;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -104,8 +106,10 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.home_screen, container, false);
         uuid = Settings.Secure.getString(requireActivity().getContentResolver(), Settings.Secure.ANDROID_ID);
+        App.uuid=uuid;
         settingVM = new ViewModelProvider(this).get(SettingVM.class);
         manager = requireActivity().getSupportFragmentManager();
+        App.selectedProducts=new ArrayList<>();
         setupViews();
         getUserSettings(App.currentUser.getBranchISN(), uuid);
         handleFragments();
@@ -118,7 +122,7 @@ public class HomeFragment extends Fragment {
         App.invoiceType = null;
         binding.home.exitApp.setOnClickListener(view -> {
             new AlertDialog.Builder(requireActivity()).setTitle("تأكيد الخروج").setMessage("هل تريد الخروج من التطبيق؟").setPositiveButton("خروج", (dialogInterface, i) -> {
-                SharedPreferences.Editor editor = requireActivity().getSharedPreferences("SaveLogin", MODE_PRIVATE).edit();
+                SharedPreferences.Editor editor = requireActivity().getSharedPreferences("AppShared", MODE_PRIVATE).edit();
                 editor.putString("userName", "");
                 editor.putString("password", "");
                 editor.apply();
@@ -391,6 +395,9 @@ public class HomeFragment extends Fragment {
                             startActivity(intent7);
                             break;
                         }
+                    case R.id.changeTheme:
+                        showThemeSelectionDialog();
+                        break;
 
                 }
                 return false;
@@ -398,4 +405,31 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private void showThemeSelectionDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        builder.setTitle("Select Theme").setItems(new CharSequence[]{"النمط الأزرق", "النمط الأصفر"}, (dialogInterface, which) -> {
+            switch (which) {
+                case 0:
+                    if (theme != R.style.AppTheme) {
+                        setAppTheme(R.style.AppTheme);
+                        requireActivity().recreate();
+                    } else dialogInterface.dismiss();
+                    break;
+                case 1:
+                    if (theme != R.style.SecondTheme) {
+                        setAppTheme(R.style.SecondTheme);
+                        requireActivity().recreate();
+                    } else dialogInterface.dismiss();
+                    break;
+            }
+        });
+        builder.create().show();
+    }
+
+    private void setAppTheme(int themeId) {
+        requireActivity().setTheme(themeId);
+        SharedPreferences prefs = requireActivity().getSharedPreferences("AppShared", MODE_PRIVATE);
+        prefs.edit().putString("theme", themeId == R.style.AppTheme ? "default" : "second").apply(); // Save the selected theme
+    }
 }
+

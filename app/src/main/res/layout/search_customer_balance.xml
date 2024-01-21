@@ -48,7 +48,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginBottom="3dp"
-                    android:src="@drawable/ic_back"
+                    android:src="@drawable/ic_back_themed"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -59,7 +59,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="إستعلام عن رصيد متعامل"
-                    android:textColor="@color/black"
+
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/back"
@@ -110,7 +110,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="25dp"
                         android:text="مورد"
-                        android:textColor="@color/black"
+
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -120,7 +120,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="25dp"
                         android:text="عميل"
-                        android:textColor="@color/black"
+
                         android:textStyle="bold" />
 
                 </RadioGroup>
@@ -133,7 +133,7 @@
 
                     android:layout_marginTop="5dp"
                     android:text="الفرع"
-                    android:textColor="@color/black"
+
                     android:textSize="15sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -217,7 +217,7 @@
             android:layout_marginEnd="50dp"
             android:layout_marginRight="50dp"
             android:gravity="center"
-            android:textColor="@color/black"
+
             android:textSize="20sp"
             android:textStyle="bold"
             android:fontFamily="@font/cairo_bold"

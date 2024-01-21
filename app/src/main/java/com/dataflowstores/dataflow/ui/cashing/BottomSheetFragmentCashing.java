@@ -27,6 +27,7 @@ import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.adapters.AgentAdapter;
 import com.dataflowstores.dataflow.ui.adapters.CustomerAdapter;
 import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
+import com.dataflowstores.dataflow.utils.SingleLiveEvent;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class BottomSheetFragmentCashing extends BottomSheetDialogFragment implements ProductAdapterCashing.ClickListener {
@@ -86,7 +87,7 @@ public class BottomSheetFragmentCashing extends BottomSheetDialogFragment implem
     public void getProduct() {
         productVM = new ViewModelProvider(getActivity()).get(ProductVM.class);
         productVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(requireActivity(), s, Toast.LENGTH_LONG).show());
-        productVM.productMutableLiveData = new MutableLiveData<>();
+        productVM.productMutableLiveData = new SingleLiveEvent<>();
         productVM.productMutableLiveData.observe(getActivity(), product -> {
             binding.serialDialog.serialContainer.setVisibility(View.GONE);
             binding.progressBar.setVisibility(View.GONE);
@@ -126,7 +127,7 @@ public class BottomSheetFragmentCashing extends BottomSheetDialogFragment implem
     public void serialClicked(int position) {
         binding.serialDialog.serialContainer.setVisibility(View.VISIBLE);
         binding.serialDialog.confirm.setOnClickListener(view -> {
-            productVM.getProduct(App.product.getItemName(), uuid, binding.serialDialog.serialNumberInput.getText().toString(), moveType);
+            productVM.getProduct(App.product.getItemName(), uuid, binding.serialDialog.serialNumberInput.getText().toString(), moveType, null);
             isSerial = true;
         });
     }

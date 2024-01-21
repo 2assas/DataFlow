@@ -27,7 +27,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:gravity="center"
-                android:textColor="@color/black"
+
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -39,7 +39,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
                 android:gravity="center"
-                android:textColor="@color/black"
+
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -51,7 +51,7 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:text="Foundation Name"
-                android:textColor="@color/black"
+
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -65,7 +65,7 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:text="مقبوضات"
-                android:textColor="@color/black"
+
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -80,7 +80,7 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginEnd="10dp"
                 android:text="العميل : احمد محمد محمود محمد احمد"
-                android:textColor="@color/black"
+
                 android:textSize="17sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -95,7 +95,7 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginEnd="10dp"
                 android:text="المندوب : احمد محمد محمود محمد احمد"
-                android:textColor="@color/black"
+
                 android:textSize="17sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -110,7 +110,7 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginEnd="10dp"
                 android:text="121212"
-                android:textColor="@color/black"
+
                 android:textSize="17sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -124,7 +124,7 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginEnd="10dp"
                 android:text="التاريخ: 15-5-2021 20:30 PM"
-                android:textColor="@color/black"
+
                 android:textSize="17sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -148,7 +148,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="المبلغ"
-                    android:textColor="@color/black"
+
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
@@ -166,7 +166,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="5dp"
                     android:text="535 جنيه"
-                    android:textColor="@color/black"
+
                     android:textSize="20sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -189,7 +189,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="نوع الدفع"
-                    android:textColor="@color/black"
+
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
@@ -207,7 +207,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="5dp"
                     android:text="شيك"
-                    android:textColor="@color/black"
+
                     android:textSize="20sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -219,7 +219,7 @@
                 android:layout_marginTop="20dp"
                 android:gravity="center"
                 android:text="ملاحظات"
-                android:textColor="@color/black"
+
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -247,7 +247,7 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:visibility="gone"
-                android:textColor="@color/black"
+
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -282,7 +282,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="DATAFLOW SoftWare Solutions T:01002000235"
-                    android:textColor="@color/black"
+
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -294,7 +294,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="01002000235"
-                    android:textColor="@color/black"
+
 
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -308,7 +308,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="01002000235"
-                    android:textColor="@color/black"
+
                     android:textSize="16sp"
                     app:layout_constraintEnd_toStartOf="@+id/tel1"
                     app:layout_constraintStart_toStartOf="parent"
@@ -336,7 +336,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="40dp"
                 android:text="DATAFLOW SoftWare Solutions T:01002000235"
-                android:textColor="@color/black"
+
                 android:textSize="11sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -13,6 +13,7 @@ import com.dataflowstores.dataflow.pojo.receipts.ReceiptResponse;
 import com.dataflowstores.dataflow.pojo.users.Customer;
 import com.dataflowstores.dataflow.pojo.users.CustomerBalance;
 import com.dataflowstores.dataflow.pojo.users.SalesMan;
+import com.dataflowstores.dataflow.utils.SingleLiveEvent;
 import com.dataflowstores.dataflow.webService.ApiClient;
 import com.dataflowstores.dataflow.webService.Constants;
 import com.dataflowstores.dataflow.webService.ServiceGenerator;
@@ -31,14 +32,10 @@ import retrofit2.HttpException;
 
 public class PaymentsViewModel extends ViewModel {
 
-    public MutableLiveData<String> toastErrorMutableLiveData = new MutableLiveData<>();
-    public MutableLiveData<ReceiptResponse> paymentResponseMutableLiveData = new MutableLiveData<>();
-    public MutableLiveData<ReceiptModel> paymentModelMutableLiveData = new MutableLiveData<>();
-    public MutableLiveData<CustomerBalance> customerBalanceLiveData = new MutableLiveData<>();
-    public MutableLiveData<Customer> supplierLiveData = new MutableLiveData<>();
-
-    public MutableLiveData<SalesMan> salesManLiveData = new MutableLiveData<>();
-
+    public SingleLiveEvent<String> toastErrorMutableLiveData = new SingleLiveEvent<>();
+    public SingleLiveEvent<ReceiptResponse> paymentResponseMutableLiveData = new SingleLiveEvent<>();
+    public SingleLiveEvent<ReceiptModel> paymentModelMutableLiveData = new SingleLiveEvent<>();
+    public SingleLiveEvent<CustomerBalance> customerBalanceLiveData = new SingleLiveEvent<>();
     ApiClient apiClient = ServiceGenerator.tokenService(
             ApiClient.class, Constants.BASE_URL);
 
@@ -65,7 +62,17 @@ public class PaymentsViewModel extends ViewModel {
                 App.currentUser.getLogIn_WSName(),
                 App.currentUser.getLogIn_CS(),
                 App.currentUser.getLogIn_VN(),
-                App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread());
+                App.currentUser.getLogIn_FAlternative()
+                ,App.currentUser.getMobileSalesMaxDiscPer()
+                ,App.currentUser.getShiftSystemActivate()
+                ,App.currentUser.getLogIn_ShiftBranchISN()
+                ,App.currentUser.getLogIn_ShiftISN()
+                ,App.currentUser.getLogIn_Spare1()
+                ,App.currentUser.getLogIn_Spare2()
+                ,App.currentUser.getLogIn_Spare3()
+                ,App.currentUser.getLogIn_Spare4()
+                ,App.currentUser.getLogIn_Spare5()
+                ,App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread());
 
         receiptResponseObservable.subscribe(new Observer<ReceiptResponse>() {
             @Override
@@ -118,7 +125,17 @@ public class PaymentsViewModel extends ViewModel {
                         App.currentUser.getLogIn_WSName(),
                         App.currentUser.getLogIn_CS(),
                         App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative())
+                        App.currentUser.getLogIn_FAlternative()
+                        ,App.currentUser.getMobileSalesMaxDiscPer()
+                        ,App.currentUser.getShiftSystemActivate()
+                        ,App.currentUser.getLogIn_ShiftBranchISN()
+                        ,App.currentUser.getLogIn_ShiftISN()
+                        ,App.currentUser.getLogIn_Spare1()
+                        ,App.currentUser.getLogIn_Spare2()
+                        ,App.currentUser.getLogIn_Spare3()
+                        ,App.currentUser.getLogIn_Spare4()
+                        ,App.currentUser.getLogIn_Spare5()
+                        ,App.currentUser.getLogIn_Spare6())
                 .subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread());
         receiptModelObservable.subscribe(new Observer<ReceiptModel>() {
             @Override
@@ -171,6 +188,16 @@ public class PaymentsViewModel extends ViewModel {
                 App.currentUser.getLogIn_VN(),
                 App.currentUser.getLogIn_FAlternative()
                 , moveBranchISN, moveISN, remainValue, netValue, moveType, null, App.currentUser.getInvoiceCurrentBalanceTimeInInvoice()
+                ,App.currentUser.getMobileSalesMaxDiscPer()
+                ,App.currentUser.getShiftSystemActivate()
+                ,App.currentUser.getLogIn_ShiftBranchISN()
+                ,App.currentUser.getLogIn_ShiftISN()
+                ,App.currentUser.getLogIn_Spare1()
+                ,App.currentUser.getLogIn_Spare2()
+                ,App.currentUser.getLogIn_Spare3()
+                ,App.currentUser.getLogIn_Spare4()
+                ,App.currentUser.getLogIn_Spare5()
+                ,App.currentUser.getLogIn_Spare6()
 
         ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observer<CustomerBalance> observer = new Observer<CustomerBalance>() {
