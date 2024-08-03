@@ -10,7 +10,7 @@ android {
         minSdk= 19
         targetSdk = 34
         compileSdk = 34
-        versionCode 47
+        versionCode 48
         versionName "24.0803"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
