@@ -9,10 +9,13 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.dataflowstores.dataflow.App;
+import com.dataflowstores.dataflow.pojo.GeneralRequestBody;
+import com.dataflowstores.dataflow.pojo.GeneralRequestBodyUtil;
 import com.dataflowstores.dataflow.pojo.product.SearchProductResponse;
 import com.dataflowstores.dataflow.webService.ApiClient;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.core.Observable;
@@ -39,7 +42,8 @@ public class SearchUtility {
 
     @SuppressLint("CheckResult")
     private static void performSearch(ApiClient apiClient, String query, String uuid, Integer selectedFoundation, MutableLiveData<List<SearchProductResponse>> searchResults) {
-        apiClient.searchProduct(query, uuid, selectedFoundation)
+        Map<String, String> queryParams = GeneralRequestBodyUtil.toQueryParams();
+        apiClient.searchProduct(queryParams ,App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),query, uuid, selectedFoundation)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
                 .subscribe(searchProductResponse -> {

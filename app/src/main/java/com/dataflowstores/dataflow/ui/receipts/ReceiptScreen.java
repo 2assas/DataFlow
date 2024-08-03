@@ -109,8 +109,10 @@ public class ReceiptScreen extends BaseActivity implements MyDialogCloseListener
         binding.cashCheck.setChecked(true);
         binding.cashCheck.performClick();
         binding.showProgress.setVisibility(View.GONE);
+        if (App.currentUser.getMobileGPSMust() == 1) {
         if (checkPermission()) getLocation(this);
         else requestPermission();
+        }
         invoiceVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
 
         receiptsVM.customerBalanceLiveData.observe(this, customerBalance -> {
@@ -144,7 +146,7 @@ public class ReceiptScreen extends BaseActivity implements MyDialogCloseListener
     @SuppressLint("UseCompatLoadingForDrawables")
     public void confirmProcess(View view) {
         if (validateData()) {
-            if (lat != 0 || _long != 0) {
+            if (App.currentUser.getMobileGPSMust() == 0 || lat != 0 || _long != 0 ) {
                 binding.confirmProcess.setClickable(false);
                 binding.showProgress.setVisibility(View.VISIBLE);
                 createReceipt();
@@ -475,6 +477,7 @@ public class ReceiptScreen extends BaseActivity implements MyDialogCloseListener
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case 123:
                 if (grantResults.length > 0) {
@@ -516,11 +519,11 @@ public class ReceiptScreen extends BaseActivity implements MyDialogCloseListener
             salesManBranchISN = App.agent.getBranchISN();
             salesManISN = App.agent.getDealer_ISN();
         }
-        total = Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", Float.parseFloat(binding.receiptTotal.getText().toString())));
+        total = Double.parseDouble(String.format(Locale.ENGLISH, "%.3f", Float.parseFloat(binding.receiptTotal.getText().toString())));
 
         receiptsVM.createReceipt(App.currentUser.getBranchISN(), uuid, paymentMethod,
                 0, App.customer.getDealerType(), App.customer.getBranchISN(), App.customer.getDealer_ISN(), salesManBranchISN, salesManISN,
-                binding.receiptNotes.getText().toString(), Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", total)),
+                                 binding.receiptNotes.getText().toString(), Double.parseDouble(String.format(Locale.ENGLISH, "%.3f", total)),
                 0, 0, 0, total, 0, 0, total, 0, 0,
                 total, total, 0, total,
                 safeDepositData.getBranchISN(), safeDepositData.getSafeDeposit_ISN(), banksCreditData.getBranchISN(), banksCreditData.getBank_ISN(), null,

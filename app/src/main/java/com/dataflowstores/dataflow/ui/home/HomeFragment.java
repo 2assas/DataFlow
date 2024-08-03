@@ -12,6 +12,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -43,6 +44,8 @@ import com.dataflowstores.dataflow.ui.cashing.SearchCashing;
 import com.dataflowstores.dataflow.ui.expenses.SearchExpenses;
 import com.dataflowstores.dataflow.ui.payments.SearchPayments;
 import com.dataflowstores.dataflow.ui.reports.ReportsFragment;
+import com.dataflowstores.dataflow.ui.shifts.ShiftsActivity;
+import com.dataflowstores.dataflow.webService.Constants;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
@@ -74,15 +77,6 @@ public class HomeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static HomeFragment newInstance(String param1, String param2) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
@@ -118,6 +112,20 @@ public class HomeFragment extends Fragment {
         return binding.getRoot();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (App.currentUser.getShiftSystemActivate() == 1) {
+            if (App.currentUser.getLogIn_ShiftISN() > 0) {
+                binding.home.shiftNumber.setText("متصل بوردية رقم " + App.currentUser.getLogIn_ShiftISN());
+            } else {
+                binding.home.shiftNumber.setText("غير متصل بوردية");
+            }
+        }
+
+    }
+
+    @SuppressLint("SetTextI18n")
     private void setupViews() {
         App.invoiceType = null;
         binding.home.exitApp.setOnClickListener(view -> {
@@ -146,6 +154,7 @@ public class HomeFragment extends Fragment {
         invoice();
         storeOperations();
         reports();
+        shifts();
     }
 
     private void finance() {
@@ -205,6 +214,23 @@ public class HomeFragment extends Fragment {
                 if (banksDone && priceTypeDone && safeDepositDone && storesDone)
                     if (App.safeDeposit.getData() != null) {
                         manager.beginTransaction().replace(R.id.container, new ReportsFragment()).addToBackStack("home").commit();
+                    } else
+                        new AlertDialog.Builder(requireActivity()).setTitle("لا توجد لديكم خزنة").setMessage("برجاء إضافة الخزنه الخاصة بكم.").setCancelable(false).setIcon(R.drawable.ic_baseline_error_outline_24).setNegativeButton("حسنا", (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                        }).show();
+            }
+        });
+    }
+
+    private void shifts() {
+        if (App.currentUser.getShiftSystemActivate() == 0) {
+            binding.home.shifts.setEnabled(false);
+        }
+        binding.home.shifts.setOnClickListener(view -> {
+            if (App.isNetworkAvailable(requireActivity())) {
+                if (banksDone && priceTypeDone && safeDepositDone && storesDone)
+                    if (App.safeDeposit.getData() != null) {
+                        startActivity(new Intent(requireActivity(), ShiftsActivity.class));
                     } else
                         new AlertDialog.Builder(requireActivity()).setTitle("لا توجد لديكم خزنة").setMessage("برجاء إضافة الخزنه الخاصة بكم.").setCancelable(false).setIcon(R.drawable.ic_baseline_error_outline_24).setNegativeButton("حسنا", (dialogInterface, i) -> {
                             dialogInterface.dismiss();
@@ -285,21 +311,7 @@ public class HomeFragment extends Fragment {
             }
         });
         navigationView = binding.navView;
-        Menu nav_Menu = navigationView.getMenu();
-        if (App.currentUser.getMobileStockOut() == 0) {
-            nav_Menu.findItem(R.id.searchCashingPermission).setVisible(false);
-        }
-        if (App.currentUser.getMobileStockIn() == 0) {
-            nav_Menu.findItem(R.id.searchReceivingPermission).setVisible(false);
-        }
-        if (App.currentUser.getMobileStoreTransfer() == 0) {
-            nav_Menu.findItem(R.id.searchStoreTransfer).setVisible(false);
-        }
-        if (!Objects.equals(App.currentUser.getDeviceID(), "0")) {
-            nav_Menu.findItem(R.id.nav_device_id).setTitle(App.currentUser.getDeviceID());
-        } else {
-            nav_Menu.findItem(R.id.nav_device_id_title).setVisible(false);
-        }
+        handlePrintingPrivileges();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @SuppressLint("NonConstantResourceId")
             @Override
@@ -395,14 +407,106 @@ public class HomeFragment extends Fragment {
                             startActivity(intent7);
                             break;
                         }
+                    case R.id.mobileItemsList:
+                        if (App.isNetworkAvailable(requireActivity())) {
+                            Intent intent8 = new Intent(requireActivity(), SearchCashing.class);
+                            intent8.putExtra("moveType", 21);
+                            startActivity(intent8);
+                            break;
+                        }
                     case R.id.changeTheme:
                         showThemeSelectionDialog();
+                        break;
+                    case R.id.deviceId:
+                        Toast.makeText(requireActivity(), "Your device Id is " + App.currentUser.getDeviceID(), Toast.LENGTH_LONG).show();
+                        break;
+                    case R.id.appVersion:
+                        Toast.makeText(requireActivity(), "Application version number is " + Constants.APP_VERSION, Toast.LENGTH_LONG).show();
                         break;
 
                 }
                 return false;
             }
         });
+    }
+
+    private void handlePrintingPrivileges() {
+        Menu nav_Menu = navigationView.getMenu();
+        if (App.currentUser.getMobileStockOut() == 0) {
+            nav_Menu.findItem(R.id.searchCashingPermission).setVisible(false);
+        }
+        if (App.currentUser.getMobileStockIn() == 0) {
+            nav_Menu.findItem(R.id.searchReceivingPermission).setVisible(false);
+        }
+        if (App.currentUser.getMobileStoreTransfer() == 0) {
+            nav_Menu.findItem(R.id.searchStoreTransfer).setVisible(false);
+        }
+        if (App.currentUser.getMobileSales() == 0) {
+            nav_Menu.findItem(R.id.sales).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileReSales() == 0) {
+            nav_Menu.findItem(R.id.returnSales).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileSupply() == 0) {
+            nav_Menu.findItem(R.id.purchaseOrder).setVisible(false);
+        }
+        if (App.currentUser.getMobileReSupply() == 0) {
+            nav_Menu.findItem(R.id.returnPurchased).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileCashReceipts() == 0) {
+            nav_Menu.findItem(R.id.searchReceiptsInvoice).setVisible(false);
+        }
+
+        if (App.currentUser.getMobilePayment() == 0) {
+            nav_Menu.findItem(R.id.searchPaymentInvoice).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileExpenses() == 0) {
+            nav_Menu.findItem(R.id.searchExpensesInvoice).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileStockOut() == 0) {
+            nav_Menu.findItem(R.id.searchCashingPermission).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileStockIn() == 0) {
+            nav_Menu.findItem(R.id.searchReceivingPermission).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileStoreTransfer() == 0) {
+            nav_Menu.findItem(R.id.searchStoreTransfer).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileFirstPeriod() == 0) {
+            nav_Menu.findItem(R.id.mobileFirstPeriod).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileLosses() == 0) {
+            nav_Menu.findItem(R.id.mobileLoses).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileItemConfiguring() == 0) {
+            nav_Menu.findItem(R.id.itemCreate).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileItemQuanModify() == 0) {
+            nav_Menu.findItem(R.id.mobileInventory).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileItemsList() == 0) {
+            nav_Menu.findItem(R.id.mobileItemsList).setVisible(false);
+        }
+
+        if (!Objects.equals(App.currentUser.getDeviceID(), "0")) {
+            nav_Menu.findItem(R.id.nav_device_id).setTitle(App.currentUser.getDeviceID());
+        } else {
+            nav_Menu.findItem(R.id.deviceId).setVisible(false);
+        }
+
+
     }
 
     private void showThemeSelectionDialog() {

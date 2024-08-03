@@ -110,6 +110,26 @@ public class StoreReportScreen extends BaseActivity implements MyDialogCloseList
         }
 
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+            productVM.compositeDisposable.clear();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+            productVM.compositeDisposable.clear();
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+            productVM.compositeDisposable.clear();
+
+    }
 
     private void handleCheckboxes() {
         if (App.currentUser.getPermission() == 0) {
@@ -235,7 +255,7 @@ public class StoreReportScreen extends BaseActivity implements MyDialogCloseList
 
     private void observeSearchProduct() {
         productVM.productMutableLiveData.observe(this, product -> {
-            if (product != null) {
+            if (product.getData() != null) {
                 App.product = product.getData().get(0);
                 binding.searchProducts.setQuery(App.product.getItemName(), false);
                 selectedProduct = App.product;

@@ -2,6 +2,7 @@ package com.dataflowstores.dataflow.ViewModels;
 
 import static com.dataflowstores.dataflow.App.selectedFoundation;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -46,6 +47,7 @@ public class GateWayViewModel extends ViewModel {
             ApiClient.class, Constants.BASE_URL);
 
 
+    @SuppressLint("CheckResult")
     public void getLoginStatus(String uuid, String user_name, String password, String foundation_name, String phone, String selectedBranchISN, String selectedSafeDepositBranchISN,
                                String selectedSafeDepositISN, String selectedStoreBranchISN, String selectedStoreISN, int demo) {
         Observable<LoginStatus> login = apiClient.loginGateWay(uuid, user_name, password, foundation_name, phone, 2, Constants.APP_VERSION,
@@ -140,7 +142,7 @@ public class GateWayViewModel extends ViewModel {
     public void SelectBranchStaff(String uuid, int moveType) {
         ApiClient tokenService = ServiceGenerator.tokenService(
                 ApiClient.class, Constants.BASE_URL);
-        Observable<Branches> getBranches = tokenService.getBranches(uuid, selectedFoundation,
+        Observable<Branches> getBranches = tokenService.getBranches(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid, selectedFoundation,
                 null,
                 null,
                 null,
@@ -162,7 +164,7 @@ public class GateWayViewModel extends ViewModel {
                 , App.currentUser.getLogIn_Spare4()
                 , App.currentUser.getLogIn_Spare5()
                 , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-        Observable<Stores> getStores = tokenService.getStores(null, 1, uuid, null, null, -1, moveType, selectedFoundation,
+        Observable<Stores> getStores = tokenService.getStores(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),null, 1, uuid, null, null, -1, moveType, selectedFoundation,
                 null,
                 null,
                 null,
@@ -184,7 +186,7 @@ public class GateWayViewModel extends ViewModel {
                 , App.currentUser.getLogIn_Spare4()
                 , App.currentUser.getLogIn_Spare5()
                 , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-        Observable<SafeDeposit> getSafeDeposits = tokenService.getSafeDeposit(null, 1, uuid, null, null, -1, moveType, selectedFoundation,
+        Observable<SafeDeposit> getSafeDeposits = tokenService.getSafeDeposit(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),null, 1, uuid, null, null, -1, moveType, selectedFoundation,
                 null,
                 null,
                 null,

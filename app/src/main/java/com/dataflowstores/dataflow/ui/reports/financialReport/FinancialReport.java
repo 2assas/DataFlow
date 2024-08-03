@@ -96,8 +96,8 @@ public class FinancialReport extends BaseActivity {
         String date = sdf.format(calendar.getTime());
         binding.startTime.setText(date);
         binding.endTime.setText(date);
-        binding.workStartTime.setText(date);
-        binding.workEndTime.setText(date);
+        binding.workStartTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
+        binding.workEndTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
     }
 
     void observers() {
@@ -184,8 +184,8 @@ public class FinancialReport extends BaseActivity {
             binding.workDateCheckbox.setChecked(true);
             binding.workDateCheckbox.setEnabled(false);
             currentDate = sdf.format(Calendar.getInstance().getTime());
-            binding.workStartTime.setText(currentDate);
-            binding.workEndTime.setText(currentDate);
+            binding.workStartTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
+            binding.workEndTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
 
             //check, cash and credit.
             binding.checkCheckbox.setChecked(true);

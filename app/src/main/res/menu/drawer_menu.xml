@@ -68,6 +68,9 @@
             <item
                 android:id="@+id/mobileInventory"
                 android:title="جرد الأصناف" />
+            <item
+                android:id="@+id/mobileItemsList"
+                android:title="طلب أصناف" />
         </menu>
     </item>
     <item android:title="Themes">
@@ -80,12 +83,12 @@
     <item android:title="App Version">
         <menu>
             <item
-                android:id="@+id/nav_item_six"
-                android:title="24.0104" />
+                android:id="@+id/appVersion"
+                android:title="24.0803" />
         </menu>
     </item>
     <item
-        android:id="@+id/nav_device_id_title"
+        android:id="@+id/deviceId"
         android:title="Device ID">
         <menu>
             <item

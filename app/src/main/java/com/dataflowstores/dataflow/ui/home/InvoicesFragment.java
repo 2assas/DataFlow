@@ -159,10 +159,6 @@ public class InvoicesFragment extends Fragment {
     }
 
     private void back() {
-//        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.replace(R.id.container, new HomeFragment());
-//        fragmentTransaction.commit();
         requireActivity().onBackPressed();
     }
 }

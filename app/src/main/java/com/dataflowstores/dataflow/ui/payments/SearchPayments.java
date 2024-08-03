@@ -181,7 +181,7 @@ public class SearchPayments extends BaseActivity {
         binding.invoiceTemplate.foundationName.setText(App.currentUser.getFoundationName());
 
         binding.invoiceTemplate.date.setText("التاريخ: " + paymentModel.getData().get(0).getCreateDate());
-        binding.invoiceTemplate.receiptTotal.setText(String.format(Locale.US, "%.2f", Float.parseFloat(paymentModel.getData().get(0).getNetValue())) + " جنيه");
+        binding.invoiceTemplate.receiptTotal.setText(String.format(Locale.US, "%.3f", Float.parseFloat(paymentModel.getData().get(0).getNetValue())) + " جنيه");
         binding.invoiceTemplate.receiptNotes.setText("ملاحضات \n" + paymentModel.getData().get(0).getHeaderNotes());
         binding.invoiceTemplate.paymentMethod.setText(paymentModel.getData().get(0).getCashTypeName());
         binding.invoiceTemplate.tradeRecord2.setText("السجل التجاري" + "\n" +

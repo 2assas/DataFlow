@@ -6,6 +6,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -38,13 +39,16 @@ import com.dataflowstores.dataflow.ViewModels.CheckoutVM;
 import com.dataflowstores.dataflow.ViewModels.ProductVM;
 import com.dataflowstores.dataflow.ViewModels.SettingVM;
 import com.dataflowstores.dataflow.databinding.AddProductsBinding;
+import com.dataflowstores.dataflow.pojo.login.UserData;
+import com.dataflowstores.dataflow.pojo.product.ProductData;
 import com.dataflowstores.dataflow.pojo.product.SearchProductResponse;
 import com.dataflowstores.dataflow.pojo.users.CustomerData;
 import com.dataflowstores.dataflow.pojo.workStation.BranchData;
 import com.dataflowstores.dataflow.ui.BaseActivity;
-import com.dataflowstores.dataflow.ui.Checkout;
 import com.dataflowstores.dataflow.ui.ScanBarCode;
 import com.dataflowstores.dataflow.ui.SplashScreen;
+import com.dataflowstores.dataflow.ui.adapters.CartItemListener;
+import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
 import com.dataflowstores.dataflow.utils.SingleShotLocationProvider;
 import com.dataflowstores.dataflow.utils.SwipeHelper;
 
@@ -53,7 +57,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public class SearchProductsCashing extends BaseActivity {
+public class SearchProductsCashing extends BaseActivity implements MyDialogCloseListener, CartItemListener {
     AddProductsBinding binding;
     ProductVM productVM;
     SettingVM settingVM;
@@ -71,6 +75,7 @@ public class SearchProductsCashing extends BaseActivity {
     Boolean isSerial = false;
     List<SearchProductResponse> searchProductList = new ArrayList<>();
     String itemCode = "";
+    boolean isLoading = false;
 
     @SuppressLint("HardwareIds")
     @Override
@@ -91,7 +96,9 @@ public class SearchProductsCashing extends BaseActivity {
             setupViews();
             settingVM.getStoresCashing(App.currentUser.getBranchISN(), uuid, moveType);
             observeStores();
-            requiredData();
+            if (App.currentUser.getMobileGPSMust() == 1) {
+                requiredData();
+            }
             searchProducts();
             recyclerSwipe();
             barCodeScan();
@@ -103,13 +110,40 @@ public class SearchProductsCashing extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        App.selectedProducts = new ArrayList<>();
-        finish();
+        if (!isLoading) {
+            checkoutVM.compositeDisposable.clear();
+            App.selectedProducts = new ArrayList<>();
+            productVM.compositeDisposable.clear();
+            finish();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        productVM.compositeDisposable.clear();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        productVM.compositeDisposable.clear();
+
     }
 
     public void setupViews() {
-        settingVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
+        settingVM.toastErrorMutableLiveData.observe(this, s -> {
+            isLoading = false;
+            binding.progress.setVisibility(View.GONE);
+            Toast.makeText(this, s, Toast.LENGTH_LONG).show();
+        });
+        checkoutVM.toastErrorMutableLiveData.observe(this, s -> {
+            isLoading = false;
+            binding.progress.setVisibility(View.GONE);
+            Toast.makeText(this, s, Toast.LENGTH_LONG).show();
+            binding.invoice.setClickable(true);
+        });
         binding.notes.setVisibility(View.VISIBLE);
         writeSaveButton();
         if (App.selectedProducts.size() > 0) {
@@ -166,16 +200,19 @@ public class SearchProductsCashing extends BaseActivity {
             count = App.selectedProducts.size();
         }
         if (showDialog) {
-            new androidx.appcompat.app.AlertDialog.Builder(this).setMessage("لديك عدد "+"(" + count + ")" + " سطور بإجمالى كمية " +"("+ String.format(Locale.ENGLISH, "%.2f", quantity) + ")" +
+            new androidx.appcompat.app.AlertDialog.Builder(this).setMessage("لديك عدد " + "(" + count + ")" + " سطور بإجمالى كمية " + "(" + String.format(Locale.ENGLISH, "%.3f", quantity) + ")" +
                     " هل أنت متأكد؟").setPositiveButton("تأكيد", ((dialogInterface, i) -> {
+                isLoading = true;
                 invoicePost();
                 dialogInterface.dismiss();
             })).setNegativeButton("إلغاء", ((dialogInterface, i) -> {
                 dialogInterface.dismiss();
+                binding.progress.setVisibility(View.GONE);
+                binding.invoice.setClickable(true);
             })).setCancelable(false).show();
         } else {
             binding.cartLinesCount.setText("السطور: " + count);
-            binding.cartLinesQuantity.setText("الكمية: " + String.format(Locale.ENGLISH, "%.2f", quantity));
+            binding.cartLinesQuantity.setText("الكمية: " + String.format(Locale.ENGLISH, "%.3f", quantity));
             binding.cartLinesTotal.setVisibility(View.GONE);
         }
     }
@@ -187,8 +224,6 @@ public class SearchProductsCashing extends BaseActivity {
             }
         });
     }
-
-
     private void branchSpinner() {
         ArrayList<String> branchesName = new ArrayList<>();
         for (int i = 0; i < branchesList.size(); i++) {
@@ -289,7 +324,8 @@ public class SearchProductsCashing extends BaseActivity {
         });
 
         binding.productsRecycler.setLayoutManager(new LinearLayoutManager(this));
-        selectedProductsAdapter = new SelectedProductsCashingAdapter(App.selectedProducts, this, moveType);
+        selectedProductsAdapter = new SelectedProductsCashingAdapter(this, moveType, this);
+        selectedProductsAdapter.submitList(App.selectedProducts);
         selectedProductsAdapter.notifyDataSetChanged();
         binding.productsRecycler.setAdapter(selectedProductsAdapter);
 
@@ -314,9 +350,10 @@ public class SearchProductsCashing extends BaseActivity {
 
     private void observeSearchProduct() {
         productVM.productMutableLiveData.observe(this, product -> {
-            if (product != null) {
+            if (product.getData() != null) {
                 App.product = product.getData().get(0);
                 if (product.getData().get(0).getSerial() && !isSerial) {
+                    Log.e("checkSerial", "Serial 1");
                     binding.serialDialog.getRoot().setVisibility(View.VISIBLE);
                     binding.serialDialog.confirm.setOnClickListener(view -> {
                         binding.serialDialog.confirm.setVisibility(View.GONE);
@@ -328,6 +365,7 @@ public class SearchProductsCashing extends BaseActivity {
                         isSerial = true;
                     });
                 } else if (isSerial) {
+                    Log.e("checkSerial", "Serial 2");
                     if (!App.product.getxBarCodeSerial().isEmpty())
                         binding.serialDialog.serialNumberInput.setText(App.product.getxBarCodeSerial());
                     App.serialNumber = binding.serialDialog.serialNumberInput.getText().toString();
@@ -340,6 +378,7 @@ public class SearchProductsCashing extends BaseActivity {
                     startActivity(intent);
                     finish();
                 } else {
+                    Log.e("checkSerial", "Serial 3");
                     Intent intent = new Intent(this, ProductScreenCashing.class);
                     App.editingPos = 0;
                     intent.putExtra("moveType", moveType);
@@ -366,6 +405,7 @@ public class SearchProductsCashing extends BaseActivity {
         });
 
         checkoutVM.responseDataMutableLiveData.observe(this, response -> {
+            isLoading = false;
             binding.invoice.setClickable(true);
             binding.progress.setVisibility(View.GONE);
             String errorMessage = response.getMessage();
@@ -374,7 +414,7 @@ public class SearchProductsCashing extends BaseActivity {
             }
             if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 2) {
                 new AlertDialog.Builder(this).
-                        setTitle("binding.invoiceTemplate.ص فالمخزن")
+                        setTitle("نص فالمخزن")
                         .setMessage(errorMessage)
                         .setCancelable(false)
                         .setPositiveButton("متابعة", (dialogInterface, i) -> {
@@ -389,6 +429,14 @@ public class SearchProductsCashing extends BaseActivity {
                     error = "لا يوجد الكمية الكافية من هذا الصنف";
                 }
 
+                new AlertDialog.Builder(this)
+                        .setMessage(error)
+                        .setCancelable(false)
+                        .setNegativeButton("إلغاء", (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                        }).show();
+            } else if (response.getStatus() == 0) {
+                String error = response.getMessage();
                 new AlertDialog.Builder(this)
                         .setMessage(error)
                         .setCancelable(false)
@@ -470,6 +518,9 @@ public class SearchProductsCashing extends BaseActivity {
                 binding.branch.setVisibility(View.VISIBLE);
                 binding.addBranch.title.setText("فرع الصرف");
                 settingVM.getBranches(uuid);
+                break;
+            case 21:
+                binding.invoice.setText("حفظ طلب أصناف");
                 break;
             case 15:
                 binding.invoice.setText("حفظ تكوين الصنف");
@@ -559,11 +610,13 @@ public class SearchProductsCashing extends BaseActivity {
         ArrayList<Long> toStoreBranchISN = new ArrayList<>();
         ArrayList<Integer> allowStoreMinus = new ArrayList<>();
         ArrayList<String> productStoreName = new ArrayList<>();
+        ArrayList<Double> illustrativeQuantity = new ArrayList<>();
 
         for (int i = 0; i < App.selectedProducts.size(); i++) {
             itemName.add(App.selectedProducts.get(i).getItemName());
             ItemBranchISN.add((long) App.selectedProducts.get(i).getBranchISN());
             allowStoreMinus.add(App.selectedProducts.get(i).getAllowStoreMinus());
+            illustrativeQuantity.add(App.selectedProducts.get(i).getIllustrativeQuantity());
             productStoreName.add(App.selectedProducts.get(i).getSelectedStore().getStoreName());
             ItemISN.add((long) App.selectedProducts.get(i).getItemISN());
             if (App.selectedProducts.get(i).getSelectedPriceType() != null) {
@@ -683,7 +736,7 @@ public class SearchProductsCashing extends BaseActivity {
                         ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN, SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes, numberOFItems,
                         netPrices, basicMeasureUnitQuantity, expireDateBool, colorsBool, seasonsBool, sizesBool, serialBool, group1Bool, group2Bool, serviceItem, itemTax, itemTaxValue, 0,
                         App.currentUser.getAllowStoreMinus(), itemName, discount1, AllowStoreMinusConfirm, lat, _long, "exchange_permission", moveType, moveType == 14 ? toStoreBranchISN : null, moveType == 14 ? toStoreISN : null,
-                        App.currentBranch != null ? String.valueOf(App.currentBranch.getBranchISN()) : null, allowStoreMinus, productStoreName);
+                        App.currentBranch != null ? String.valueOf(App.currentBranch.getBranchISN()) : null, allowStoreMinus, productStoreName, illustrativeQuantity);
             } else {
                 App.noConnectionDialog(this);
             }
@@ -740,7 +793,6 @@ public class SearchProductsCashing extends BaseActivity {
                 break;
         }
     }
-
     public void getLocation(final Context context) {
         SingleShotLocationProvider.requestCurrentLocation(context,
                 location -> {
@@ -750,4 +802,14 @@ public class SearchProductsCashing extends BaseActivity {
                 });
     }
 
+    @Override
+    public void handleDialogClose(DialogInterface dialog) {
+        observeSearchProduct();
+    }
+
+    @Override
+    public void onDeleteItem(ProductData productData) {
+        App.selectedProducts.remove(productData);
+        selectedProductsAdapter.submitList(App.selectedProducts);
+    }
 }

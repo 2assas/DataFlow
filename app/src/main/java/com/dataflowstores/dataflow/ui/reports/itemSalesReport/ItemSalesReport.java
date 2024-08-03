@@ -96,8 +96,8 @@ public class ItemSalesReport extends BaseActivity implements MyDialogCloseListen
         String date = sdf.format(calendar.getTime());
         binding.startTime.setText(date);
         binding.endTime.setText(date);
-        binding.workStartTime.setText(date);
-        binding.workEndTime.setText(date);
+        binding.workStartTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
+        binding.workEndTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
     }
 
     void observers() {
@@ -210,8 +210,8 @@ public class ItemSalesReport extends BaseActivity implements MyDialogCloseListen
             binding.workDateCheckbox.setChecked(true);
             binding.workDateCheckbox.setEnabled(false);
             currentDate = sdf.format(Calendar.getInstance().getTime());
-            binding.workStartTime.setText(currentDate);
-            binding.workEndTime.setText(currentDate);
+            binding.workStartTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
+            binding.workEndTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
 
             if (binding.intervalCheckBox.isChecked()) {
                 startTime = binding.startTime.getText().toString();

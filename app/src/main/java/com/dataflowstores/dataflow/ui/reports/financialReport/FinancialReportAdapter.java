@@ -40,8 +40,8 @@ public class FinancialReportAdapter extends RecyclerView.Adapter<FinancialReport
         binding.executePendingBindings();
         binding.account.setText(list.get(position).getAccountName());
         binding.quantity.setText(list.get(position).getAccountCount());
-        binding.total.setText(String.format(Locale.US,"%.2f", list.get(position).getAccountValue()));
-        binding.actualTotal.setText(String.format(Locale.US,"%.2f", list.get(position).getNetValue()));
+        binding.total.setText(String.format(Locale.US,"%.3f", list.get(position).getAccountValue()));
+        binding.actualTotal.setText(String.format(Locale.US,"%.3f", list.get(position).getNetValue()));
         binding.serial.setText(position+1+"");
     }
 

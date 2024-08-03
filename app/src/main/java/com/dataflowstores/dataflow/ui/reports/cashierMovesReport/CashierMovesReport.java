@@ -49,6 +49,8 @@ import com.dataflowstores.dataflow.ui.reports.ReportViewModel;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
@@ -117,9 +119,10 @@ public class CashierMovesReport extends BaseActivity implements MyDialogCloseLis
         String date = sdf.format(calendar.getTime());
         binding.startTime.setText(date);
         binding.endTime.setText(date);
-        binding.workStartTime.setText(date);
-        binding.workEndTime.setText(date);
+        binding.workStartTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
+        binding.workEndTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
     }
+
 
     void observers() {
         reportVM.branchesMutableLiveData.observe(this, this::branchSpinner);
@@ -327,8 +330,8 @@ public class CashierMovesReport extends BaseActivity implements MyDialogCloseLis
             binding.workDateCheckbox.setChecked(true);
             binding.workDateCheckbox.setEnabled(false);
             currentDate = sdf.format(Calendar.getInstance().getTime());
-            binding.workStartTime.setText(currentDate);
-            binding.workEndTime.setText(currentDate);
+            binding.workStartTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
+            binding.workEndTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
 
             //check, cash and credit.
             binding.checkCheckbox.setChecked(true);

@@ -41,7 +41,7 @@ public class SettingVM extends ViewModel {
             ApiClient.class, Constants.BASE_URL);
     public void getStoresCashing(long branchISN, String uuid, int moveType){
             Observable<Stores> getStores
-                    = apiClient.getStores(branchISN, 1, uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getAllBranchesWorker(), moveType,selectedFoundation,
+                    = apiClient.getStores(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),branchISN, 1, uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getAllBranchesWorker(), moveType,selectedFoundation,
                     App.currentUser.getLogIn_BISN(),
                     App.currentUser.getLogIn_UID(),
                     App.currentUser.getLogIn_WBISN(),
@@ -82,7 +82,7 @@ public class SettingVM extends ViewModel {
     @SuppressLint("CheckResult")
     public void getInitialInvoiceApis(long branchISN, String uuid, int moveType) {
         Observable<Banks> getBanks =
-                apiClient.getBanks(branchISN, App.currentUser.getPermission(),uuid,selectedFoundation,
+                apiClient.getBanks(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),branchISN, App.currentUser.getPermission(),uuid,selectedFoundation,
                         App.currentUser.getLogIn_BISN(),
                         App.currentUser.getLogIn_UID(),
                         App.currentUser.getLogIn_WBISN(),
@@ -104,7 +104,7 @@ public class SettingVM extends ViewModel {
                         , App.currentUser.getLogIn_Spare5()
                         , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observable<Stores> getStores =
-                apiClient.getStores(branchISN, App.currentUser.getPermission(), uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getAllBranchesWorker(), moveType, selectedFoundation,
+                apiClient.getStores(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),branchISN, App.currentUser.getPermission(), uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getAllBranchesWorker(), moveType, selectedFoundation,
                         App.currentUser.getLogIn_BISN(),
                         App.currentUser.getLogIn_UID(),
                         App.currentUser.getLogIn_WBISN(),
@@ -126,7 +126,7 @@ public class SettingVM extends ViewModel {
                         , App.currentUser.getLogIn_Spare5()
                         , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observable<SafeDeposit> getSafeDeposits =
-                apiClient.getSafeDeposit(branchISN, App.currentUser.getPermission(), uuid, App.currentUser.getSafeDepositBranchISN(), App.currentUser.getSafeDepositISN(), App.currentUser.getAllBranchesWorker(), moveType, selectedFoundation,
+                apiClient.getSafeDeposit(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),branchISN, App.currentUser.getPermission(), uuid, App.currentUser.getSafeDepositBranchISN(), App.currentUser.getSafeDepositISN(), App.currentUser.getAllBranchesWorker(), moveType, selectedFoundation,
                         App.currentUser.getLogIn_BISN(),
                         App.currentUser.getLogIn_UID(),
                         App.currentUser.getLogIn_WBISN(),
@@ -148,7 +148,7 @@ public class SettingVM extends ViewModel {
                         , App.currentUser.getLogIn_Spare5()
                         , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observable<PriceType> getPriceTypes =
-                apiClient.getPriceType(App.currentUser.getPermission(), uuid, App.currentUser.getPricesTypeBranchISN(), App.currentUser.getPricesTypeISN(), selectedFoundation,
+                apiClient.getPriceType(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),App.currentUser.getPermission(), uuid, App.currentUser.getPricesTypeBranchISN(), App.currentUser.getPricesTypeISN(), selectedFoundation,
                         App.currentUser.getLogIn_BISN(),
                         App.currentUser.getLogIn_UID(),
                         App.currentUser.getLogIn_WBISN(),
@@ -192,7 +192,7 @@ public class SettingVM extends ViewModel {
         });
     }
     public void getBranches(String uuid) {
-        Observable<Branches> getBranches = apiClient.getBranches(uuid,selectedFoundation,
+        Observable<Branches> getBranches = apiClient.getBranches(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid,selectedFoundation,
                 App.currentUser.getLogIn_BISN(),
                 App.currentUser.getLogIn_UID(),
                 App.currentUser.getLogIn_WBISN(),

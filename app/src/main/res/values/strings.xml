@@ -37,6 +37,8 @@
     <string name="no_result">No results found!</string>
     <string name="cannot_print_move">Cannot print this move</string>
     <string name="loading_please_wait">Loading, Please wait...</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

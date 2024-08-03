@@ -98,8 +98,8 @@ public class SupplierSalesReport extends BaseActivity implements MyDialogCloseLi
         String date = sdf.format(calendar.getTime());
         binding.startTime.setText(date);
         binding.endTime.setText(date);
-        binding.workStartTime.setText(date);
-        binding.workEndTime.setText(date);
+        binding.workStartTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
+        binding.workEndTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
     }
 
     void observers() {
@@ -211,8 +211,8 @@ public class SupplierSalesReport extends BaseActivity implements MyDialogCloseLi
             binding.workDateCheckbox.setChecked(true);
             binding.workDateCheckbox.setEnabled(false);
             currentDate = sdf.format(Calendar.getInstance().getTime());
-            binding.workStartTime.setText(currentDate);
-            binding.workEndTime.setText(currentDate);
+            binding.workStartTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
+            binding.workEndTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
 
             if (binding.intervalCheckBox.isChecked()) {
                 startTime = binding.startTime.getText().toString();
@@ -264,7 +264,7 @@ public class SupplierSalesReport extends BaseActivity implements MyDialogCloseLi
                     workDayStart = binding.workStartTime.getText().toString();
                     workDayEnd = binding.workEndTime.getText().toString();
                     binding.progress.setVisibility(View.VISIBLE);
-                    reportVM.getItemSalesReport(uuid, App.currentUser.getBranchISN(),
+                    reportVM.getSupplierSalesReport(uuid, App.currentUser.getBranchISN(),
                             workDayStart, workDayEnd, shiftNum, App.currentUser.getWorkerBranchISN(),
                             String.valueOf(App.currentUser.getWorkerISN()), startTime, endTime, App.currentUser.getVendorID(), String.valueOf(App.currentUser.getWorkerISN()), String.valueOf(App.currentUser.getWorkerBranchISN())
                             , customerData == null ? null : customerData.getDealerType()
@@ -272,8 +272,7 @@ public class SupplierSalesReport extends BaseActivity implements MyDialogCloseLi
                             , customerData == null ? null : customerData.getDealer_ISN());
                 }
             });
-        }
-        else {
+        } else {
             binding.shiftISN.setVisibility(View.VISIBLE);
             reportVM.getBranches(uuid);
             reportVM.getWorkers(uuid);

@@ -43,7 +43,7 @@ public class ExpensesViewModel extends ViewModel {
             ApiClient.class, Constants.BASE_URL);
 
     public void SelectBranchStaff(String uuid) {
-        Observable<MainExpResponse> getMainExp = tokenService.getMainExpenses(uuid, selectedFoundation,
+        Observable<MainExpResponse> getMainExp = tokenService.getMainExpenses(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid, selectedFoundation,
                 App.currentUser.getLogIn_BISN(),
                 App.currentUser.getLogIn_UID(),
                 App.currentUser.getLogIn_WBISN(),
@@ -65,7 +65,7 @@ public class ExpensesViewModel extends ViewModel {
                 , App.currentUser.getLogIn_Spare4()
                 , App.currentUser.getLogIn_Spare5()
                 , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-        Observable<SubExpResponse> getSubExp = tokenService.getSubExpenses(uuid, selectedFoundation,
+        Observable<SubExpResponse> getSubExp = tokenService.getSubExpenses(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid, selectedFoundation,
                 App.currentUser.getLogIn_BISN(),
                 App.currentUser.getLogIn_UID(),
                 App.currentUser.getLogIn_WBISN(),
@@ -87,7 +87,7 @@ public class ExpensesViewModel extends ViewModel {
                 , App.currentUser.getLogIn_Spare4()
                 , App.currentUser.getLogIn_Spare5()
                 , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-        Observable<WorkerResponse> getWorkers = tokenService.getExpWorkers(uuid, App.currentUser.getBranchISN(), App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN(), App.currentUser.getPermission(), 11, selectedFoundation,
+        Observable<WorkerResponse> getWorkers = tokenService.getExpWorkers(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid, App.currentUser.getBranchISN(), App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN(), App.currentUser.getPermission(), 11, selectedFoundation,
                 App.currentUser.getLogIn_BISN(),
                 App.currentUser.getLogIn_UID(),
                 App.currentUser.getLogIn_WBISN(),
@@ -148,7 +148,7 @@ public class ExpensesViewModel extends ViewModel {
             }
         });
     }
-    public void createExpenses(long BranchISN, String uuid, int CashType, int SaleType,
+    public void createExpenses(String mustChooseWorker ,long BranchISN, String uuid, int CashType, int SaleType,
                               String HeaderNotes, double TotalLinesValue, double ServiceValue, double ServicePer, double DeliveryValue,
                               double TotalValueAfterServices,double BasicDiscountVal, double BasicDiscountPer, double TotalValueAfterDisc,double BasicTaxVal,
                               double BasicTaxPer,double TotalValueAfterTax, double NetValue, double PaidValue, double RemainValue, long SafeDepositeBranchISN, long SafeDepositeISN, long BankBranchISN,
@@ -156,7 +156,7 @@ public class ExpensesViewModel extends ViewModel {
                               String CheckDueDate,long CheckBankBranchISN, long CheckBankISN, int createSource, float latitude, float longitude, Long ShiftISN, Long MainExpMenuISN
     ,Long MainExpMenuBranchISN, String MainExpMenuName, Long SubExpMenuISN, Long SubExpMenuBranchISN, String SubExpMenuName, Long SelectedWorkerBranchISN, Long SelectedWorkerISN){
 
-        Observable<ReceiptResponse> receiptResponseObservable = tokenService.createExpense(BranchISN, uuid, CashType, SaleType,
+        Observable<ReceiptResponse> receiptResponseObservable = tokenService.createExpense(mustChooseWorker,App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),BranchISN, uuid, CashType, SaleType,
                 HeaderNotes, TotalLinesValue, ServiceValue, ServicePer, DeliveryValue, TotalValueAfterServices, BasicDiscountVal, BasicDiscountPer, TotalValueAfterDisc,
                 BasicTaxVal, BasicTaxPer, TotalValueAfterTax, NetValue, PaidValue, RemainValue, SafeDepositeBranchISN, SafeDepositeISN, BankBranchISN, BankISN, TableNumber, DeliveryPhone, DeliveryAddress, WorkerCBranchISN,
                 WorkerCISN, CheckNumber, CheckDueDate, CheckBankBranchISN, CheckBankISN, createSource, latitude, longitude, ShiftISN, MainExpMenuISN,
@@ -227,7 +227,7 @@ public class ExpensesViewModel extends ViewModel {
 
     public void getExpenses(long branchISN, String uuid, String moveId, long workerCBranchISN, long workerCISN, int permission) {
 
-        Observable<ExpensesResponse> receiptModelObservable = tokenService.getExpenses(branchISN, uuid, moveId, workerCBranchISN, workerCISN, permission, 11, selectedFoundation,
+        Observable<ExpensesResponse> receiptModelObservable = tokenService.getExpenses(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),branchISN, uuid, moveId, workerCBranchISN, workerCISN, permission, 11, selectedFoundation,
                         App.currentUser.getLogIn_BISN(),
                         App.currentUser.getLogIn_UID(),
                         App.currentUser.getLogIn_WBISN(),
@@ -287,7 +287,7 @@ public class ExpensesViewModel extends ViewModel {
         });
     }
     public void getCustomerBalance(String uuid, String dealerISN, String branchISN, String dealerType, String dealerName) {
-        Observable<CustomerBalance> customerObservable = tokenService.getCustomerBalance(uuid, dealerISN, branchISN, dealerType, selectedFoundation,
+        Observable<CustomerBalance> customerObservable = tokenService.getCustomerBalance(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid, dealerISN, branchISN, dealerType, selectedFoundation,
                 App.currentUser.getLogIn_BISN(),
                 App.currentUser.getLogIn_UID(),
                 App.currentUser.getLogIn_WBISN(),

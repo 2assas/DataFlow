@@ -111,8 +111,10 @@ public class PaymentsScreen extends BaseActivity implements MyDialogCloseListene
         binding.cashCheck.setChecked(true);
         binding.cashCheck.performClick();
         binding.showProgress.setVisibility(View.GONE);
+        if (App.currentUser.getMobileGPSMust() == 1) {
         if (checkPermission()) getLocation(this);
         else requestPermission();
+        }
         viewModel.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
 
         viewModel.customerBalanceLiveData.observe(this, customerBalance -> {
@@ -145,7 +147,7 @@ public class PaymentsScreen extends BaseActivity implements MyDialogCloseListene
     @SuppressLint("UseCompatLoadingForDrawables")
     public void confirmProcess(View view) {
         if (validateData()) {
-            if (lat != 0 || _long != 0) {
+            if (App.currentUser.getMobileGPSMust() == 0 || lat != 0 || _long != 0) {
                 binding.confirmProcess.setClickable(false);
                 createReceipt();
             } else {
@@ -516,11 +518,10 @@ public class PaymentsScreen extends BaseActivity implements MyDialogCloseListene
             salesManBranchISN = App.agent.getBranchISN();
             salesManISN = App.agent.getDealer_ISN();
         }
-        total = Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", Float.parseFloat(binding.receiptTotal.getText().toString())));
+        total = Double.parseDouble(String.format(Locale.ENGLISH, "%.3f", Float.parseFloat(binding.receiptTotal.getText().toString())));
         binding.showProgress.setVisibility(View.VISIBLE);
         viewModel.createPayment(App.currentUser.getBranchISN(), uuid, paymentMethod,
-                0, App.customer.getDealerType(), App.customer.getBranchISN(), App.customer.getDealer_ISN(), salesManBranchISN, salesManISN,
-                binding.receiptNotes.getText().toString(), Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", total)),
+                0, App.customer.getDealerType(), App.customer.getBranchISN(), App.customer.getDealer_ISN(), salesManBranchISN, salesManISN, binding.receiptNotes.getText().toString(), Double.parseDouble(String.format(Locale.ENGLISH, "%.3f", total)),
                 0, 0, 0, total, 0, 0, total, 0, 0,
                 total, total, 0, total,
                 safeDepositData.getBranchISN(), safeDepositData.getSafeDeposit_ISN(), banksCreditData.getBranchISN(), banksCreditData.getBank_ISN(), null,

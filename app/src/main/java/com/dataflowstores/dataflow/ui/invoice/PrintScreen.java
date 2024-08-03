@@ -33,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -112,6 +113,7 @@ public class PrintScreen extends BaseActivity implements View.OnClickListener {
     ImageView printImg, invoicePic, sharePdf;
     Receiver netReciever;
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,8 +131,7 @@ public class PrintScreen extends BaseActivity implements View.OnClickListener {
                 initView();
                 setlistener();
                 netReciever = new Receiver();
-                registerReceiver(netReciever, new IntentFilter(PrintScreen.DISCONNECT));
-//        Tiny.getInstance().init(getApplication());
+                registerReceiver(netReciever, new IntentFilter(PrintScreen.DISCONNECT), Context.RECEIVER_NOT_EXPORTED);
                 SharedPreferences prefs = getSharedPreferences("AppShared", MODE_PRIVATE);
                 String printerMac = prefs.getString("printerMac", "");
                 Log.e("checkPrinter", printerMac + "s ss s");
@@ -141,6 +142,7 @@ public class PrintScreen extends BaseActivity implements View.OnClickListener {
                         connetBle();
                     }
                 }, 1000);
+
             } catch (Exception ex) {
                 Log.e("Exception", ex.toString());
             }
@@ -523,6 +525,7 @@ public class PrintScreen extends BaseActivity implements View.OnClickListener {
                 showET.setText(mac);
                 App.lastConnected = mac;
                 @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = getSharedPreferences("AppShared", MODE_PRIVATE).edit();
+
                 editor.putString("printerMac", mac);
                 editor.apply();
                 //Log.i("TAG", "mac="+mac);

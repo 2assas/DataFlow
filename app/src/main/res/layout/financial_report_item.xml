@@ -61,11 +61,10 @@
 
             <TextView
                 android:id="@+id/actualTotal"
-                android:layout_width="75dp"
+                android:layout_width="95dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="الفعلى"
-
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/view111"
@@ -136,7 +135,6 @@
                 android:gravity="center"
                 android:textSize="12sp"
                 android:text="الحساب"
-
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/view11"
                 app:layout_constraintStart_toEndOf="@+id/view12"
@@ -154,12 +152,11 @@
 
             <TextView
                 android:id="@+id/serial"
-                android:layout_width="15dp"
+                android:layout_width="12dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="1dp"
                 android:gravity="center"
-                android:textSize="12sp"
                 android:text="م"
+                android:textSize="12sp"
 
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/view14"

@@ -40,7 +40,7 @@ public class PrintInvoiceVM extends ViewModel {
 
 
     public void getPrintingData(String branchISN, String uuid, String moveID, String workerCBranchISN, String workerCISN, Context context, Integer moveType){
-        Observable<Invoice> invoiceObservable = apiClient.getPrintingData(branchISN,uuid, moveID, workerCBranchISN,workerCISN, App.currentUser.getPermission(), moveType,selectedFoundation,
+        Observable<Invoice> invoiceObservable = apiClient.getPrintingData(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),branchISN,uuid, moveID, workerCBranchISN,workerCISN, App.currentUser.getPermission(), moveType,selectedFoundation,
                 App.currentUser.getLogIn_BISN(),
                 App.currentUser.getLogIn_UID(),
                 App.currentUser.getLogIn_WBISN(),
@@ -96,7 +96,7 @@ public class PrintInvoiceVM extends ViewModel {
 
     public void getCustomerBalance(String uuid, String dealerISN, String branchISN, String dealerType,
                                    String moveBranchISN, String moveISN, String remainValue, String netValue, String moveType) {
-        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(uuid, dealerISN, branchISN, dealerType, selectedFoundation,
+        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid, dealerISN, branchISN, dealerType, selectedFoundation,
                 App.currentUser.getLogIn_BISN(),
                 App.currentUser.getLogIn_UID(),
                 App.currentUser.getLogIn_WBISN(),

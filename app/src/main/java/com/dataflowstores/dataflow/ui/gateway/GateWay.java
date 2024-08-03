@@ -6,7 +6,9 @@ import static com.dataflowstores.dataflow.App.theme;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -26,6 +28,7 @@ import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.GateWayViewModel;
 import com.dataflowstores.dataflow.databinding.GatewayBinding;
+import com.dataflowstores.dataflow.pojo.login.LoginStatus;
 import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
 import com.dataflowstores.dataflow.pojo.settings.StoresData;
 import com.dataflowstores.dataflow.pojo.workStation.BranchData;
@@ -34,6 +37,11 @@ import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.home.MainActivity;
 import com.dataflowstores.dataflow.webService.Constants;
+import com.google.android.gms.tasks.Task;
+import com.google.android.play.core.appupdate.AppUpdateInfo;
+import com.google.android.play.core.appupdate.AppUpdateManager;
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
+import com.google.android.play.core.install.model.AppUpdateType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -192,14 +200,10 @@ public class GateWay extends BaseActivity implements SelectFoundationDialog.Dial
                     finish();
                 }
                 break;
-                default:
-                    new AlertDialog.Builder(this)
-                            .setMessage(loginStatus.getMessage())
-                            .setCancelable(false)
-                            .setIcon(R.drawable.ic_baseline_error_outline_24)
-                            .setNegativeButton("حسنا", (dialogInterface, i) -> {
-                                dialogInterface.dismiss();
-                            }).show();
+                default: {
+                    AlertDialog alertDialog = getAlertDialog(loginStatus);
+                    alertDialog.show();
+                }
                     break;
             }
 
@@ -289,6 +293,27 @@ public class GateWay extends BaseActivity implements SelectFoundationDialog.Dial
                 Toast.makeText(this, workstation.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private AlertDialog getAlertDialog(LoginStatus loginStatus) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(loginStatus.getMessage());
+        builder.setCancelable(false);
+        builder.setIcon(R.drawable.ic_baseline_error_outline_24);
+        builder.setNegativeButton("إغلاق", (dialogInterface, i) -> {
+            dialogInterface.dismiss();
+        });
+        if (loginStatus.getMessage().contains("Go to Play Store To Update")) {
+            builder.setPositiveButton("الذهاب للمتجر", (dialogInterface, i) -> {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.dataflowstores.dataflow&hl=en&gl=US"));
+                startActivity(intent);
+                dialogInterface.dismiss();
+                finish();
+            });
+        }
+
+        return builder.create();
     }
 
     public void observeSelectBranch() {

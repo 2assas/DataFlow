@@ -212,6 +212,7 @@ public class CashierMovesReportPrinting extends BaseActivity implements CashierM
             case "كميات اول المدة":
             case "تحويلات مخزنية":
             case "اذن استلام":
+            case "طلب اصناف":
                 Intent intent1 = new Intent(this, SearchCashing.class);
                 startActivity(putIntentExtra(intent1, cashierMoveData));
                 break;

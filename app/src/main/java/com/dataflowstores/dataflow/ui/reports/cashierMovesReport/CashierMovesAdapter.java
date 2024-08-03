@@ -62,7 +62,7 @@ public class CashierMovesAdapter extends RecyclerView.Adapter<CashierMovesAdapte
         binding.createdDate.setText(Html.fromHtml(createdDate));
         String workingDayDate = "<b>" + "اليومية:" + "</b> " + list.get(position).getWorkingDayDate();
         binding.workingDayDate.setText(Html.fromHtml(workingDayDate));
-        String netValue = "<b>" + "الصافي:" + "</b> " + String.format(Locale.US, "%.2f", Double.parseDouble(list.get(position).getNetValue()));
+        String netValue = "<b>" + "الصافي:" + "</b> " + String.format(Locale.US, "%.3f", Double.parseDouble(list.get(position).getNetValue()));
         binding.netValue.setText(Html.fromHtml(netValue));
         int serialNum = position + 1;
         binding.serialNum.setText(serialNum + "");

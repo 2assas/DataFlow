@@ -73,7 +73,7 @@ public class PrintExpenses extends BaseActivity {
         binding.back.setOnClickListener(view -> finish());
         ExpenseData expenseData = (ExpenseData) getIntent().getSerializableExtra("expensesModel");
         binding.expTemplate.mainExp.setText("المصروف الرئيسي: " + expenseData.getExpMenuName());
-        App.pdfName = "المصروف الرئيسي: " + expenseData.getExpMenuName() + " رقم " + expenseData.getMoveID();
+        App.pdfName = "المصروف الرئيسي: " + expenseData.getExpMenuName() + " رقم المصروف " + expenseData.getMoveID();
 
         if (expenseData.getSubExpMenuName() != null)
             binding.expTemplate.subExp.setText("المصروف الفرعي: " + expenseData.getSubExpMenuName());
@@ -86,7 +86,7 @@ public class PrintExpenses extends BaseActivity {
 
         binding.expTemplate.date.setText("التاريخ: " + expenseData.getCreateDate());
 //        binding.expTemplate.
-        binding.expTemplate.expensesTotal.setText(String.format(Locale.US, "%.2f", Float.parseFloat(expenseData.getNetValue())) + " جنيه");
+        binding.expTemplate.expensesTotal.setText(String.format(Locale.US, "%.3f", Float.parseFloat(expenseData.getNetValue())) + " جنيه");
         binding.expTemplate.receiptNotes.setText("ملاحضات \n" + expenseData.getHeaderNotes());
         binding.expTemplate.paymentMethod.setText(expenseData.getCashTypeName());
 //        binding.expTemplate.tradeRecord2.setText("السجل التجاري" + "\n" +

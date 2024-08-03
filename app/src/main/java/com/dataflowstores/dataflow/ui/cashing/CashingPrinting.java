@@ -165,6 +165,13 @@ public class CashingPrinting extends BaseActivity implements Runnable {
                 binding.toStore.setVisibility(View.GONE);
             }
             break;
+            case 21: {
+                binding.cashingNumber.setText("طلب أصناف رقم " + App.printInvoice.getMoveHeader().getMove_ID());
+                App.pdfName = "طلب أصناف رقم " + App.printInvoice.getMoveHeader().getMove_ID();
+                binding.fromStore.setText("المخزن");
+                binding.toStore.setVisibility(View.GONE);
+            }
+            break;
             case 15: {
                 binding.cashingNumber.setText("تكوين صنف رقم " + App.printInvoice.getMoveHeader().getMove_ID());
                 App.pdfName = "تكوين صنف رقم " + App.printInvoice.getMoveHeader().getMove_ID();

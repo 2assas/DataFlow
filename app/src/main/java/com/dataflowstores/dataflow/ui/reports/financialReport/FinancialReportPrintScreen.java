@@ -67,10 +67,10 @@ public class FinancialReportPrintScreen extends BaseActivity {
             binding.shiftNumber.setText("وردية رقم: " + App.financialReportData.getShift().getShiftISN());
 
             binding.shiftStatus.setText(App.financialReportData.getShift().getShiftStatus());
-            binding.openShiftAmount.setText(String.format(Locale.US, "%.2f", Double.parseDouble(App.financialReportData.getShift().getOpenCash())));
-            binding.closeShiftAmount.setText(String.format(Locale.US, "%.2f", Double.parseDouble(App.financialReportData.getShift().getCloseCash())));
-            binding.toBePaidAmount.setText(String.format(Locale.US, "%.2f", App.financialReportData.getShift().getAssumedCash()));
-            binding.paidAmount.setText(String.format(Locale.US, "%.2f", Double.parseDouble(App.financialReportData.getShift().getHandedCash())));
+            binding.openShiftAmount.setText(String.format(Locale.US, "%.3f", Double.parseDouble(App.financialReportData.getShift().getOpenCash())));
+            binding.closeShiftAmount.setText(String.format(Locale.US, "%.3f", Double.parseDouble(App.financialReportData.getShift().getCloseCash())));
+            binding.toBePaidAmount.setText(String.format(Locale.US, "%.3f", App.financialReportData.getShift().getAssumedCash()));
+            binding.paidAmount.setText(String.format(Locale.US, "%.3f", Double.parseDouble(App.financialReportData.getShift().getHandedCash())));
             Date startTime = null;
             try {
                 startTime = sdf.parse(App.financialReportData.getShift().getShiftOpenDate());
@@ -85,12 +85,12 @@ public class FinancialReportPrintScreen extends BaseActivity {
             }
             binding.openShiftTime.setText(sdf.format(requireNonNull(startTime)));
             binding.closeShiftTime.setText(sdf.format(requireNonNull(endTime)));
-            binding.finalTotal.setText(String.format(Locale.US, "%.2f", App.financialReportData.getShift().getShiftTotal()));
+            binding.finalTotal.setText(String.format(Locale.US, "%.3f", App.financialReportData.getShift().getShiftTotal()));
         }
 //        if(App.financialReportData.get)
-        binding.totalRevenue.setText(String.format(Locale.US, "%.2f", App.financialReportData.getTotalRevenue()));
-        binding.totalExpenses.setText(String.format(Locale.US, "%.2f", App.financialReportData.getTotalExpenses()));
-        binding.finalBalance.setText(String.format(Locale.US, "%.2f", App.financialReportData.getFinalBalance()));
+        binding.totalRevenue.setText(String.format(Locale.US, "%.3f", App.financialReportData.getTotalRevenue()));
+        binding.totalExpenses.setText(String.format(Locale.US, "%.3f", App.financialReportData.getTotalExpenses()));
+        binding.finalBalance.setText(String.format(Locale.US, "%.3f", App.financialReportData.getFinalBalance()));
         binding.branchName.setText("فرع: " + getIntent().getStringExtra("branch"));
         if (App.financialReportData.getReport().size() > 0) {
             FinancialReportAdapter financialReportAdapter = new FinancialReportAdapter(App.financialReportData.getReport());

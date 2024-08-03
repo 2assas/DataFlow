@@ -1,12 +1,16 @@
 package com.dataflowstores.dataflow.pojo.product;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.dataflowstores.dataflow.pojo.settings.PriceTypeData;
 import com.dataflowstores.dataflow.pojo.settings.StoresData;
 import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductData implements Serializable {
+public class ProductData implements Serializable, Parcelable {
     String selectedExpireDate;
     String selectedSerial;
     ColorsList selectedColor;
@@ -143,7 +147,55 @@ public class ProductData implements Serializable {
     @SerializedName("xBarCodeGroup2Name")
     private String xBarCodeGroup2Name;
 
-    private boolean BarCodePrice =false ;
+    @SerializedName("QuanSumAddStartIndex")
+    private String QuanSumAddStartIndex;
+    @SerializedName("QuanSumAddLenght")
+    private String QuanSumAddLength;
+    @SerializedName("ShowQuanSumAdd")
+    private String ShowQuanSumAdd;
+    @SerializedName("QuanSumAddDevideOn")
+    private String QuanSumAddDevideOn;
+
+    private double illustrativeQuantity = 0;
+
+    private boolean BarCodePrice = false;
+
+    @SerializedName("QuanSumAddWriteToNotes")
+    Integer QuanSumAddWriteToNotes;
+
+    public Integer getQuanSumAddWriteToNotes() {
+        return QuanSumAddWriteToNotes;
+    }
+
+
+    public String getQuanSumAddDevideOn() {
+        return QuanSumAddDevideOn;
+    }
+
+    public void setQuanSumAddDevideOn(String quanSumAddDevideOn) {
+        QuanSumAddDevideOn = quanSumAddDevideOn;
+    }
+
+    public void setIllustrativeQuantity(double illustrativeQuantity) {
+        this.illustrativeQuantity = illustrativeQuantity;
+    }
+
+    public double getIllustrativeQuantity() {
+        return illustrativeQuantity;
+    }
+
+    public String getQuanSumAddStartIndex() {
+        return QuanSumAddStartIndex;
+    }
+
+    public String getQuanSumAddLength() {
+        return QuanSumAddLength;
+    }
+
+    public String getShowQuanSumAdd() {
+        return ShowQuanSumAdd;
+    }
+
     public int getAllowStoreMinus() {
         return allowStoreMinus;
     }
@@ -671,4 +723,254 @@ public class ProductData implements Serializable {
     public void setNetPrice(double netPrice) {
         this.netPrice = netPrice;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.selectedExpireDate);
+        dest.writeString(this.selectedSerial);
+        dest.writeSerializable(this.selectedColor);
+        dest.writeSerializable(this.selectedGroup1);
+        dest.writeSerializable(this.selectedGroup2);
+        dest.writeSerializable(this.selectedUnit);
+        dest.writeSerializable(this.selectedSeason);
+        dest.writeSerializable(this.selectedSize);
+        dest.writeSerializable(this.selectedStore);
+        dest.writeSerializable(this.selectedToStore);
+        dest.writeSerializable(this.selectedPriceType);
+        dest.writeFloat(this.quantity);
+        dest.writeFloat(this.actualQuantity);
+        dest.writeFloat(this.bonusQuantity);
+        dest.writeDouble(this.priceItem);
+        dest.writeDouble(this.priceTotal);
+        dest.writeString(this.userNote);
+        dest.writeSerializable(this.basicMeasureUnit);
+        dest.writeDouble(this.totalTax);
+        dest.writeDouble(this.discount1);
+        dest.writeDouble(this.netPrice);
+        dest.writeInt(this.allowStoreMinus);
+        dest.writeInt(this.itemISNBranch);
+        dest.writeInt(this.branchISN);
+        dest.writeInt(this.itemISN);
+        dest.writeString(this.itemName);
+        dest.writeValue(this.expireDate);
+        dest.writeValue(this.colors);
+        dest.writeList(this.colorsList);
+        dest.writeValue(this.seasons);
+        dest.writeList(this.seasonsLists);
+        dest.writeValue(this.sizes);
+        dest.writeList(this.sizesList);
+        dest.writeValue(this.serial);
+        dest.writeValue(this.group1);
+        dest.writeList(this.group1List);
+        dest.writeValue(this.group2);
+        dest.writeList(this.group2List);
+        dest.writeValue(this.serviceItem);
+        dest.writeValue(this.stopDeal);
+        dest.writeString(this.itemNotes);
+        dest.writeList(this.measureUnits);
+        dest.writeString(this.itemTax);
+        dest.writeDouble(this.xPriceFromBarcode);
+        dest.writeInt(this.xBarCodeColorISN);
+        dest.writeInt(this.xBarCodeGroup2BranchISN);
+        dest.writeString(this.xQuanFromBarcode);
+        dest.writeInt(this.xBarCodeGroup2ISN);
+        dest.writeInt(this.xBarCodeMeasureUnitBranchISN);
+        dest.writeInt(this.xBarCodeGroup1BranchISN);
+        dest.writeString(this.xBarCodeMeasureUnitName);
+        dest.writeInt(this.xBarCodeColorBranchISN);
+        dest.writeInt(this.xBarCodeSizeISN);
+        dest.writeString(this.xBarCodeSerial);
+        dest.writeString(this.xBarCodeColorName);
+        dest.writeInt(this.xBarCodeMeasureUnitISN);
+        dest.writeString(this.xBarCodeSizeName);
+        dest.writeInt(this.xBarCodeGroup1ISN);
+        dest.writeInt(this.xBarCodeSeasonISN);
+        dest.writeString(this.xItemCode);
+        dest.writeString(this.xBarCodeGroup1Name);
+        dest.writeInt(this.xBarCodeSizeBranchISN);
+        dest.writeInt(this.xBarCodeSeasonBranchISN);
+        dest.writeString(this.xBarCodeSeasonName);
+        dest.writeString(this.xBarCodeExpireDate);
+        dest.writeString(this.xBarCodeGroup2Name);
+        dest.writeByte(this.BarCodePrice ? (byte) 1 : (byte) 0);
+    }
+
+    public void readFromParcel(Parcel source) {
+        this.selectedExpireDate = source.readString();
+        this.selectedSerial = source.readString();
+        this.selectedColor = (ColorsList) source.readSerializable();
+        this.selectedGroup1 = (Group1List) source.readSerializable();
+        this.selectedGroup2 = (Group2List) source.readSerializable();
+        this.selectedUnit = (MeasureUnit) source.readSerializable();
+        this.selectedSeason = (SeasonsList) source.readSerializable();
+        this.selectedSize = (SizesList) source.readSerializable();
+        this.selectedStore = (StoresData) source.readSerializable();
+        this.selectedToStore = (StoresData) source.readSerializable();
+        this.selectedPriceType = (PriceTypeData) source.readSerializable();
+        this.quantity = source.readFloat();
+        this.actualQuantity = source.readFloat();
+        this.bonusQuantity = source.readFloat();
+        this.priceItem = source.readDouble();
+        this.priceTotal = source.readDouble();
+        this.userNote = source.readString();
+        this.basicMeasureUnit = (MeasureUnit) source.readSerializable();
+        this.totalTax = source.readDouble();
+        this.discount1 = source.readDouble();
+        this.netPrice = source.readDouble();
+        this.allowStoreMinus = source.readInt();
+        this.itemISNBranch = source.readInt();
+        this.branchISN = source.readInt();
+        this.itemISN = source.readInt();
+        this.itemName = source.readString();
+        this.expireDate = (Boolean) source.readValue(Boolean.class.getClassLoader());
+        this.colors = (Boolean) source.readValue(Boolean.class.getClassLoader());
+        this.colorsList = new ArrayList<ColorsList>();
+        source.readList(this.colorsList, ColorsList.class.getClassLoader());
+        this.seasons = (Boolean) source.readValue(Boolean.class.getClassLoader());
+        this.seasonsLists = new ArrayList<SeasonsList>();
+        source.readList(this.seasonsLists, SeasonsList.class.getClassLoader());
+        this.sizes = (Boolean) source.readValue(Boolean.class.getClassLoader());
+        this.sizesList = new ArrayList<SizesList>();
+        source.readList(this.sizesList, SizesList.class.getClassLoader());
+        this.serial = (Boolean) source.readValue(Boolean.class.getClassLoader());
+        this.group1 = (Boolean) source.readValue(Boolean.class.getClassLoader());
+        this.group1List = new ArrayList<Group1List>();
+        source.readList(this.group1List, Group1List.class.getClassLoader());
+        this.group2 = (Boolean) source.readValue(Boolean.class.getClassLoader());
+        this.group2List = new ArrayList<Group2List>();
+        source.readList(this.group2List, Group2List.class.getClassLoader());
+        this.serviceItem = (Boolean) source.readValue(Boolean.class.getClassLoader());
+        this.stopDeal = (Boolean) source.readValue(Boolean.class.getClassLoader());
+        this.itemNotes = source.readString();
+        this.measureUnits = new ArrayList<MeasureUnit>();
+        source.readList(this.measureUnits, MeasureUnit.class.getClassLoader());
+        this.itemTax = source.readString();
+        this.xPriceFromBarcode = source.readDouble();
+        this.xBarCodeColorISN = source.readInt();
+        this.xBarCodeGroup2BranchISN = source.readInt();
+        this.xQuanFromBarcode = source.readString();
+        this.xBarCodeGroup2ISN = source.readInt();
+        this.xBarCodeMeasureUnitBranchISN = source.readInt();
+        this.xBarCodeGroup1BranchISN = source.readInt();
+        this.xBarCodeMeasureUnitName = source.readString();
+        this.xBarCodeColorBranchISN = source.readInt();
+        this.xBarCodeSizeISN = source.readInt();
+        this.xBarCodeSerial = source.readString();
+        this.xBarCodeColorName = source.readString();
+        this.xBarCodeMeasureUnitISN = source.readInt();
+        this.xBarCodeSizeName = source.readString();
+        this.xBarCodeGroup1ISN = source.readInt();
+        this.xBarCodeSeasonISN = source.readInt();
+        this.xItemCode = source.readString();
+        this.xBarCodeGroup1Name = source.readString();
+        this.xBarCodeSizeBranchISN = source.readInt();
+        this.xBarCodeSeasonBranchISN = source.readInt();
+        this.xBarCodeSeasonName = source.readString();
+        this.xBarCodeExpireDate = source.readString();
+        this.xBarCodeGroup2Name = source.readString();
+        this.BarCodePrice = source.readByte() != 0;
+    }
+
+    public ProductData() {
+    }
+
+    protected ProductData(Parcel in) {
+        this.selectedExpireDate = in.readString();
+        this.selectedSerial = in.readString();
+        this.selectedColor = (ColorsList) in.readSerializable();
+        this.selectedGroup1 = (Group1List) in.readSerializable();
+        this.selectedGroup2 = (Group2List) in.readSerializable();
+        this.selectedUnit = (MeasureUnit) in.readSerializable();
+        this.selectedSeason = (SeasonsList) in.readSerializable();
+        this.selectedSize = (SizesList) in.readSerializable();
+        this.selectedStore = (StoresData) in.readSerializable();
+        this.selectedToStore = (StoresData) in.readSerializable();
+        this.selectedPriceType = (PriceTypeData) in.readSerializable();
+        this.quantity = in.readFloat();
+        this.actualQuantity = in.readFloat();
+        this.bonusQuantity = in.readFloat();
+        this.priceItem = in.readDouble();
+        this.priceTotal = in.readDouble();
+        this.userNote = in.readString();
+        this.basicMeasureUnit = (MeasureUnit) in.readSerializable();
+        this.totalTax = in.readDouble();
+        this.discount1 = in.readDouble();
+        this.netPrice = in.readDouble();
+        this.allowStoreMinus = in.readInt();
+        this.itemISNBranch = in.readInt();
+        this.branchISN = in.readInt();
+        this.itemISN = in.readInt();
+        this.itemName = in.readString();
+        this.expireDate = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.colors = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.colorsList = new ArrayList<ColorsList>();
+        in.readList(this.colorsList, ColorsList.class.getClassLoader());
+        this.seasons = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.seasonsLists = new ArrayList<SeasonsList>();
+        in.readList(this.seasonsLists, SeasonsList.class.getClassLoader());
+        this.sizes = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.sizesList = new ArrayList<SizesList>();
+        in.readList(this.sizesList, SizesList.class.getClassLoader());
+        this.serial = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.group1 = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.group1List = new ArrayList<Group1List>();
+        in.readList(this.group1List, Group1List.class.getClassLoader());
+        this.group2 = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.group2List = new ArrayList<Group2List>();
+        in.readList(this.group2List, Group2List.class.getClassLoader());
+        this.serviceItem = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.stopDeal = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.itemNotes = in.readString();
+        this.measureUnits = new ArrayList<MeasureUnit>();
+        in.readList(this.measureUnits, MeasureUnit.class.getClassLoader());
+        this.itemTax = in.readString();
+        this.xPriceFromBarcode = in.readDouble();
+        this.xBarCodeColorISN = in.readInt();
+        this.xBarCodeGroup2BranchISN = in.readInt();
+        this.xQuanFromBarcode = in.readString();
+        this.xBarCodeGroup2ISN = in.readInt();
+        this.xBarCodeMeasureUnitBranchISN = in.readInt();
+        this.xBarCodeGroup1BranchISN = in.readInt();
+        this.xBarCodeMeasureUnitName = in.readString();
+        this.xBarCodeColorBranchISN = in.readInt();
+        this.xBarCodeSizeISN = in.readInt();
+        this.xBarCodeSerial = in.readString();
+        this.xBarCodeColorName = in.readString();
+        this.xBarCodeMeasureUnitISN = in.readInt();
+        this.xBarCodeSizeName = in.readString();
+        this.xBarCodeGroup1ISN = in.readInt();
+        this.xBarCodeSeasonISN = in.readInt();
+        this.xItemCode = in.readString();
+        this.xBarCodeGroup1Name = in.readString();
+        this.xBarCodeSizeBranchISN = in.readInt();
+        this.xBarCodeSeasonBranchISN = in.readInt();
+        this.xBarCodeSeasonName = in.readString();
+        this.xBarCodeExpireDate = in.readString();
+        this.xBarCodeGroup2Name = in.readString();
+        this.BarCodePrice = in.readByte() != 0;
+    }
+
+    public ProductData copy() {
+        Parcel parcel = Parcel.obtain();
+        writeToParcel(parcel, 0);
+        parcel.setDataPosition(0);
+        return CREATOR.createFromParcel(parcel);
+    }
+
+    public static final Parcelable.Creator<ProductData> CREATOR = new Parcelable.Creator<ProductData>() {
+        @Override
+        public ProductData createFromParcel(Parcel source) {
+            return new ProductData(source);
+        }
+
+        @Override
+        public ProductData[] newArray(int size) {
+            return new ProductData[size];
+        }
+    };
 }

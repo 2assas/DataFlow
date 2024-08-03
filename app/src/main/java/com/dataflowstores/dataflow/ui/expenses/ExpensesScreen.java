@@ -104,15 +104,22 @@ public class ExpensesScreen extends BaseActivity implements LocationListener {
         App.selectedProducts = new ArrayList<>();
         binding.cashCheck.setChecked(true);
         binding.cashCheck.performClick();
+        if (App.currentUser.getMobileGPSMust() == 1) {
         if (checkPermission()) getLocation(this);
         else requestPermission();
+        }
 
     }
 
     private void observers() {
         expensesViewModel.allExpResponseMutableLiveData.observe(this, allExpensesResponse -> {
-            if (allExpensesResponse.getMainExpResponse() != null) {
+            if (allExpensesResponse.getMainExpResponse() != null && allExpensesResponse.getMainExpResponse().getData() != null && !allExpensesResponse.getMainExpResponse().getData().isEmpty()) {
                 mainExpSpinner(allExpensesResponse.getMainExpResponse().getData(), allExpensesResponse.getSubExpResponse().getData());
+            } else {
+                new AlertDialog.Builder(this).setMessage("يجب إضافة قائمة مصروفات واحدة علي الأقل").setCancelable(false)
+                        .setPositiveButton("حسنا", (dialog, which) -> {
+                            finish();
+                        }).show();
             }
             if (allExpensesResponse.getSubExpResponse() != null) {
                 workersSpinner(allExpensesResponse.getWorkerResponse().getData());
@@ -184,11 +191,10 @@ public class ExpensesScreen extends BaseActivity implements LocationListener {
 
     private void workersSpinner(List<WorkerItem> workerItems) {
         ArrayList<String> workerNames = new ArrayList<>();
-        if (Objects.equals(selectedMainExp.getMustChooseWorker(), "0"))
-            workerItems.add(0, new WorkerItem(true));
-
+        workerItems.add(0, new WorkerItem(true));
         for (int i = 0; i < workerItems.size(); i++) {
-            if (i == 0 && selectedMainExp.getMustChooseWorker().equals("0")) workerNames.add("");
+            if (i == 0)
+                workerNames.add("");
             else
                 workerNames.add(workerItems.get(i).getWorkerName());
         }
@@ -199,7 +205,7 @@ public class ExpensesScreen extends BaseActivity implements LocationListener {
         binding.workersSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i == 0 && selectedMainExp.getMustChooseWorker().equals("0"))
+                if (i == 0 && workerItems.get(0).getWorkerName() == null)
                     selectedWorker = null;
                 else
                     selectedWorker = workerItems.get(i);
@@ -207,9 +213,6 @@ public class ExpensesScreen extends BaseActivity implements LocationListener {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                if (selectedMainExp.getMustChooseWorker().equals("0"))
-                    selectedWorker = null;
-                else
                     selectedWorker = workerItems.get(0);
             }
 
@@ -236,13 +239,9 @@ public class ExpensesScreen extends BaseActivity implements LocationListener {
 
     @SuppressLint("UseCompatLoadingForDrawables")
     public void confirmProcess(View view) {
-        if (lat != 0 || _long != 0) {
+        if (App.currentUser.getMobileGPSMust() == 0 || lat != 0 || _long != 0) {
             binding.confirmProcess.setClickable(false);
-            if (Objects.equals(selectedMainExp.getMustChooseWorker(), "1") && selectedWorker == null) {
-                binding.workersSpinner.performClick();
-                binding.confirmProcess.setClickable(true);
-                Toast.makeText(this, "لابد من إختيار الموظف مع المصروف الرئيسي المحدد", Toast.LENGTH_LONG).show();
-            } else if (binding.receiptTotal.getText().toString().isEmpty()) {
+            if (binding.receiptTotal.getText().toString().isEmpty()) {
                 binding.receiptTotal.setError("مطلوب");
                 binding.confirmProcess.setClickable(true);
             } else {
@@ -428,10 +427,9 @@ public class ExpensesScreen extends BaseActivity implements LocationListener {
     }
 
     public void createExpenses() {
-        double total = Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", Float.parseFloat(binding.receiptTotal.getText().toString())));
-
-        expensesViewModel.createExpenses(App.currentUser.getBranchISN(), uuid, paymentMethod,
-                0, binding.receiptNotes.getText().toString(), Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", total)),
+        double total = Double.parseDouble(String.format(Locale.ENGLISH, "%.3f", Float.parseFloat(binding.receiptTotal.getText().toString())));
+        expensesViewModel.createExpenses(selectedMainExp.getMustChooseWorker(), App.currentUser.getBranchISN(), uuid, paymentMethod,
+                                         0, binding.receiptNotes.getText().toString(), Double.parseDouble(String.format(Locale.ENGLISH, "%.3f", total)),
                 0, 0, 0, total, 0, 0, total, 0, 0,
                 total, total, 0, total,
                 safeDepositData.getBranchISN(), safeDepositData.getSafeDeposit_ISN(), banksCreditData.getBranchISN(), banksCreditData.getBank_ISN(), null,

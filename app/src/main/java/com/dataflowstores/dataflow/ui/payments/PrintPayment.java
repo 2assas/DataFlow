@@ -82,7 +82,7 @@ public class PrintPayment extends BaseActivity {
             binding.view19.setVisibility(View.GONE);
         }
         binding.date.setText("التاريخ: "+ App.receiptModel.getData().get(0).getCreateDate());
-        binding.receiptTotal.setText(String.format(Locale.US,"%.2f",Float.parseFloat(App.receiptModel.getData().get(0).getNetValue()))+" جنيه");
+        binding.receiptTotal.setText(String.format(Locale.US,"%.3f",Float.parseFloat(App.receiptModel.getData().get(0).getNetValue()))+" جنيه");
         binding.receiptNotes.setText("ملاحضات \n"+App.receiptModel.getData().get(0).getHeaderNotes());
         binding.paymentMethod.setText(App.receiptModel.getData().get(0).getCashTypeName());
         binding.tradeRecord2.setText("السجل التجاري"+"\n"+

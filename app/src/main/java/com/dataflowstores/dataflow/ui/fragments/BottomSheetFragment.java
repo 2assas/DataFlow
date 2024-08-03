@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,7 +68,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Pr
 
     @SuppressLint("HardwareIds")
     public void firstInvoice() {
-        invoiceVM = new ViewModelProvider(getActivity()).get(InvoiceViewModel.class);
+        invoiceVM = new ViewModelProvider(requireActivity()).get(InvoiceViewModel.class);
         invoiceVM.salesManLiveData = new MutableLiveData<>();
         invoiceVM.customerLiveData = new MutableLiveData<>();
         uuid = Settings.Secure.getString(getActivity().getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -92,9 +93,10 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Pr
 
     public void getProduct() {
         App.product = new ProductData();
-        productVM = new ViewModelProvider(getActivity()).get(ProductVM.class);
+        productVM = new ViewModelProvider(requireActivity()).get(ProductVM.class);
         productVM.productMutableLiveData = new SingleLiveEvent<>();
-        productVM.productMutableLiveData.observe(getActivity(), product -> {
+        productVM.productMutableLiveData.observe(requireActivity(), product -> {
+            Log.e("checkProduct", "observed in the sheet");
             binding.serialDialog.getRoot().setVisibility(View.GONE);
             binding.progressBar.setVisibility(View.GONE);
             if (product.getStatus() == 1) {
@@ -126,9 +128,11 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Pr
     public void onDismiss(@NonNull DialogInterface dialog) {
         super.onDismiss(dialog);
         Activity activity = getActivity();
+        binding.serialDialog.getRoot().setVisibility(View.GONE);
+        productVM.productMutableLiveData = new SingleLiveEvent<>();
         if (activity instanceof MyDialogCloseListener)
             ((MyDialogCloseListener) activity).handleDialogClose(dialog);
-
+        productVM.compositeDisposable.clear();
     }
 
     @Override

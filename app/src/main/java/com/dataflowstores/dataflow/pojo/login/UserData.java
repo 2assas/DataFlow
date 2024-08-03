@@ -267,6 +267,86 @@ public class UserData implements Serializable {
 
     @SerializedName("MobileSearchTypeLetterCount")
     Integer MobileSearchTypeLetterCount;
+    @SerializedName("MobileOpenLogInNewShift")
+    Integer MobileOpenLogInNewShift;
+    @SerializedName("MobileOpenNewShift")
+    Integer MobileOpenNewShift;
+    @SerializedName("MobileLogInToShift")
+    Integer MobileLogInToShift;
+    @SerializedName("MobileCloseShift")
+    Integer MobileCloseShift;
+    @SerializedName("MobileOpenClosedShift")
+    Integer MobileOpenClosedShift;
+    @SerializedName("MobileLogOutFromShift")
+    Integer MobileLogOutFromShift;
+
+    @SerializedName("LogIn_CurrentWorkingDayDate")
+    String LogIn_CurrentWorkingDayDate;
+
+    @SerializedName("MobileDealersBalancesReport")
+    Integer MobileDealersBalancesReport;
+    @SerializedName("MobileSuppliersBalancesReport")
+    Integer MobileSuppliersBalancesReport;
+    @SerializedName("IllustrativeQuantity")
+    Integer IllustrativeQuantity;
+    @SerializedName("MobileGPSMust")
+    Integer MobileGPSMust;
+    @SerializedName("MobileItemsList")
+    Integer MobileItemsList;
+
+    public Integer getMobileItemsList() {
+        return MobileItemsList;
+    }
+    public Integer getIllustrativeQuantity() {
+        return IllustrativeQuantity;
+    }
+    public void setIllustrativeQuantity(Integer illustrativeQuantity) {
+        IllustrativeQuantity = illustrativeQuantity;
+    }
+
+    public Integer getMobileGPSMust() {
+        return MobileGPSMust;
+    }
+
+    public Integer getMobileSuppliersBalancesReport() {
+        return MobileSuppliersBalancesReport;
+    }
+
+    public Integer getMobileDealersBalancesReport() {
+        return MobileDealersBalancesReport;
+    }
+
+    public void setMobileDealersBalancesReport(Integer mobileDealersBalancesReport) {
+        MobileDealersBalancesReport = mobileDealersBalancesReport;
+    }
+
+    public String getLogIn_CurrentWorkingDayDate() {
+        return LogIn_CurrentWorkingDayDate;
+    }
+
+    public Integer getMobileOpenLogInNewShift() {
+        return MobileOpenLogInNewShift;
+    }
+
+    public Integer getMobileOpenNewShift() {
+        return MobileOpenNewShift;
+    }
+
+    public Integer getMobileLogInToShift() {
+        return MobileLogInToShift;
+    }
+
+    public Integer getMobileCloseShift() {
+        return MobileCloseShift;
+    }
+
+    public Integer getMobileOpenClosedShift() {
+        return MobileOpenClosedShift;
+    }
+
+    public Integer getMobileLogOutFromShift() {
+        return MobileLogOutFromShift;
+    }
 
     public Integer getMobileSearchMilliSecondsWait() {
         return MobileSearchMilliSecondsWait;
@@ -286,6 +366,14 @@ public class UserData implements Serializable {
 
     public Integer getLogIn_ShiftBranchISN() {
         return LogIn_ShiftBranchISN;
+    }
+
+    public void setLogIn_ShiftISN(Integer logIn_ShiftISN) {
+        LogIn_ShiftISN = logIn_ShiftISN;
+    }
+
+    public void setLogIn_ShiftBranchISN(Integer logIn_ShiftBranchISN) {
+        LogIn_ShiftBranchISN = logIn_ShiftBranchISN;
     }
 
     public Integer getLogIn_Spare1() {

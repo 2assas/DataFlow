@@ -278,13 +278,15 @@ public class SearchInvoice extends BaseActivity {
             binding.invoiceTemplate.textView44.setVisibility(View.VISIBLE);
         } else
             binding.invoiceTemplate.textView44.setVisibility(View.GONE);
+
         checkPermission();
+
         findViewById(R.id.invoiceTemplate).setVisibility(View.VISIBLE);
     }
 
     double roundTwoDecimals(double d) {
         DecimalFormat twoDForm = new DecimalFormat("#.##");
-        return Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", d));
+        return Double.parseDouble(String.format(Locale.ENGLISH, "%.3f", d));
     }
 
     public void checkPermission() {

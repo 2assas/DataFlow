@@ -40,7 +40,7 @@ public class SupplierSalesAdapter extends RecyclerView.Adapter<SupplierSalesAdap
         binding.itemName.setText(list.get(position).getItemName());
         binding.moveName.setText( list.get(position).getMoveName());
         binding.quantityDescription.setText( list.get(position).getQuantityDescription());
-        binding.netPrice.setText(String.format(Locale.US,"%.2f", Double.parseDouble( list.get(position).getNetPrice())));
+        binding.netPrice.setText(String.format(Locale.US,"%.3f", Double.parseDouble( list.get(position).getNetPrice())));
         binding.serial.setText(position+1+"");
     }
 

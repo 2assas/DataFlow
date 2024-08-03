@@ -1,5 +1,6 @@
 package com.dataflowstores.dataflow.ui.cashing;
 
+import static com.dataflowstores.dataflow.App.editingPos;
 import static com.dataflowstores.dataflow.App.product;
 import static com.dataflowstores.dataflow.App.theme;
 
@@ -35,6 +36,7 @@ import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.products.AvailableProductAdapter;
 import com.dataflowstores.dataflow.ui.products.AvailableProductDialog;
+import com.dataflowstores.dataflow.ui.products.addQuantity.AddQuantityFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,7 +44,7 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Objects;
 
-public class ProductScreenCashing extends BaseActivity implements AvailableProductAdapter.ItemClickListener {
+public class ProductScreenCashing extends BaseActivity implements AvailableProductAdapter.ItemClickListener, AddQuantityFragment.DialogListener {
     ProductScreenCashingBinding binding;
     MeasureUnit measureUnit = new MeasureUnit();
     Calendar myCalendar = Calendar.getInstance();
@@ -54,6 +56,9 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
     String uuid;
     ProductData productDataOriginal;
     int moveType = 16;
+    double illQuantity = 0;
+    boolean firstAdding = true;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,12 +87,24 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
     @SuppressLint("SetTextI18n")
     public void fillViews() {
         productVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
-        productDataOriginal = App.product;
+        if (App.selectedProducts.size() > 0 && App.isEditing) {
+            productDataOriginal = product.copy();
+        }
+        if (Objects.equals(product.getShowQuanSumAdd(), "0")) {
+            binding.quantityButton.setVisibility(View.GONE);
+        }
         binding.textView10.setText(App.product.getItemName());
-        binding.orderNotes.setText(App.product.getItemNotes());
-        binding.branchISN.setText(Integer.toString(App.product.getBranchISN()));
+        if (product.getItemNotes().isEmpty()) {
+            binding.orderNotes.setVisibility(View.GONE);
+            binding.textView15.setVisibility(View.GONE);
+        } else
+            binding.orderNotes.setText(App.product.getItemNotes());
+        if (product.getIllustrativeQuantity() != 0) {
+            binding.illQuantity.illQuantity.setText(product.getIllustrativeQuantity() + "");
+        }
+        binding.itemBranchISN.setText(App.product.getItemISNBranch() + "");
         uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        binding.item.setText(Integer.toString(App.product.getItemISN()));
+        binding.item.setText(App.product.getItemISN() + "-" + product.getBranchISN());
         binding.itemBranchISN.setText(Long.toString(App.product.getItemISNBranch()));
         if (moveType != 14) {
             binding.ToStoresList.setVisibility(View.GONE);
@@ -97,7 +114,7 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
             binding.quantityTxt.setText("الكمية الحالية");
         if (App.product.getQuantity() != 0) {
             quantity = App.product.getQuantity();
-            binding.textView26.setText(String.format(Locale.US, "%.2f", quantity) + "");
+            binding.textView26.setText(String.format(Locale.US, "%.3f", quantity) + "");
             Log.e("checkTotalQuantity", "setQuantity " + quantity + " -12- ");
 
         } else if (!Objects.equals(App.product.getxQuanFromBarcode(), "0") && !App.isEditing) {
@@ -111,6 +128,9 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
         App.product.setActualQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
         Log.e("checkPrice", App.product.getPriceTotal() + "");
         binding.close.setOnClickListener(view -> {
+            if (App.isEditing) {
+                App.selectedProducts.set(editingPos, productDataOriginal);
+            }
             Intent intent = new Intent(this, SearchProductsCashing.class);
             intent.putExtra("moveType", moveType);
             startActivity(intent);
@@ -120,7 +140,8 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
             if (App.product.getMeasureUnits().get(i).getBasicMeasureUnit() == 1)
                 App.product.setBasicMeasureUnit(App.product.getMeasureUnits().get(i));
         }
-
+        addQuantityButton();
+        illustrativeQuantity();
     }
 
 
@@ -410,7 +431,12 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
                             pos = i;
                             break;
                         }
-
+                    if (moveType == 21)
+                        if (App.storesCashing.getData().get(i).getStore_ISN() == App.currentUser.getStockInDefaultStoreISN()
+                                && App.storesCashing.getData().get(i).getBranchISN() == App.currentUser.getStockInDefaultStoreBranchISN()) {
+                            pos = i;
+                            break;
+                        }
                     if (moveType == 15)
                         if (App.storesCashing.getData().get(i).getStore_ISN() == App.currentUser.getItemConfiguringDefaultStoreISN()
                                 && App.storesCashing.getData().get(i).getBranchISN() == App.currentUser.getItemConfiguringDefaultStoreBranchISN()) {
@@ -556,10 +582,9 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
     public void quantityButtons() {
         binding.plusItem.setOnClickListener(view -> {
             quantity++;
-            App.product.setQuantity(Float.parseFloat(String.format(Locale.US, "%.2f", quantity)));
-            Log.e("checkTotalQuantity", "setQuantity " + product.getQuantity() + " -2- ");
-            binding.textView26.setText(String.format(Locale.US, "%.2f", quantity) + "");
-            App.product.setActualQuantity(Float.parseFloat(String.format(Locale.US, "%.2f", quantity)));
+            App.product.setQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
+            binding.textView26.setText(String.format(Locale.US, "%.3f", quantity) + "");
+            App.product.setActualQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
         });
         binding.minusItem.setOnClickListener(view -> {
             if (!App.product.getSerial()) {
@@ -648,6 +673,7 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
             } else {
                 App.product.setUserNote(binding.productNote.getText().toString());
                 App.product.setPriceTotal(measureUnit.getPrice() * quantity);
+                App.product.setIllustrativeQuantity(Double.parseDouble(binding.illQuantity.illQuantity.getText().toString()));
                 App.product.setTotalTax((App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax())));
                 product.setAllowStoreMinus(product.getSelectedStore().getAllowCurrentStoreMinus());
                 if (App.product.getSerial() && !binding.serial.getText().toString().isEmpty()) {
@@ -677,7 +703,7 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
                         finish();
                     } else {
                         Log.e("checkCurrentStore", "storeName= " + product.getSelectedStore().getStoreName() + " storeMinus " + product.getSelectedStore().getStore_ISN());
-                        if (moveType != 17 && moveType != 12 && moveType != 15 && (App.currentUser.getAllowStoreMinus() == 1 || App.currentUser.getAllowStoreMinus() == 2 || (App.currentUser.getAllowStoreMinus() == 4 && product.getSelectedStore().getAllowCurrentStoreMinus() == 1))) {
+                        if (moveType != 17 && moveType != 21 && moveType != 12 && moveType != 15 && (App.currentUser.getAllowStoreMinus() == 1 || App.currentUser.getAllowStoreMinus() == 2 || (App.currentUser.getAllowStoreMinus() == 4 && product.getSelectedStore().getAllowCurrentStoreMinus() == 1))) {
                             minusCheck();
                         } else {
                             if (!App.isEditing) {
@@ -766,6 +792,12 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        if (App.isEditing) {
+            App.selectedProducts.set(editingPos, productDataOriginal);
+        }
+
+        checkoutVM.compositeDisposable.clear();
+
         Intent intent = new Intent(this, SearchProductsCashing.class);
         intent.putExtra("moveType", moveType);
         startActivity(intent);
@@ -969,6 +1001,70 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
         if (!item.getSerial().isEmpty() && App.product.getSerial()) {
             binding.serial.setText(item.getSerial());
             App.product.setSelectedSerial(item.getSerial());
+        }
+    }
+
+    private void illustrativeQuantity() {
+        if (App.currentUser.getIllustrativeQuantity() == 1) {
+            binding.illQuantity.getRoot().setVisibility(View.VISIBLE);
+            binding.illQuantity.plusButton.setOnClickListener(v -> {
+                double illQuan = Double.parseDouble(binding.illQuantity.illQuantity.getText().toString());
+                illQuan++;
+                illQuantity = illQuan;
+                binding.illQuantity.illQuantity.setText(illQuantity + "");
+            });
+            binding.illQuantity.minusButton.setOnClickListener(v -> {
+                if (illQuantity > 0) {
+                    double illQuan = Double.parseDouble(binding.illQuantity.illQuantity.getText().toString());
+                    illQuan--;
+                    illQuantity = illQuan;
+                    binding.illQuantity.illQuantity.setText(illQuantity + "");
+                }
+            });
+        } else
+            binding.illQuantity.getRoot().setVisibility(View.GONE);
+    }
+
+    private void addQuantityButton() {
+        if (Objects.equals(product.getShowQuanSumAdd(), "0")) {
+            binding.quantityButton.setVisibility(View.GONE);
+        }
+        binding.quantityButton.setOnClickListener(v -> {
+            binding.quantityFragment.setVisibility(View.VISIBLE);
+            AddQuantityFragment addQuantityFragment = new AddQuantityFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString("startIndex", product.getQuanSumAddStartIndex());
+            bundle.putString("length", product.getQuanSumAddLength());
+            bundle.putString("divideOn", product.getQuanSumAddDevideOn());
+            addQuantityFragment.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.quantityFragment, addQuantityFragment)
+                    .addToBackStack(null)
+                    .commit();
+            addQuantityFragment.setListener(this);
+        });
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onDialogDismissed(double totalQuantity, int count) {
+        binding.quantityFragment.setVisibility(View.GONE);
+
+        if (totalQuantity > 0) {
+            if (firstAdding) {
+                quantity = 0;
+                firstAdding = false;
+            }
+            quantity += totalQuantity;
+            App.product.setQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
+            binding.textView26.setText(String.format(Locale.US, "%.3f", quantity) + "");
+            App.product.setActualQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
+            illQuantity += count;
+            if (product.getQuanSumAddWriteToNotes() == 1)
+                binding.productNote.setText("بعدد " + "(" + illQuantity + ")");
+            if (App.currentUser.getIllustrativeQuantity() == 1) {
+                binding.illQuantity.illQuantity.setText(illQuantity + "");
+            }
         }
     }
 }

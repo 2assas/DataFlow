@@ -133,8 +133,8 @@ public class SearchExpenses extends BaseActivity {
     @SuppressLint("SetTextI18n")
     public void fillData(ExpenseData expenseData) {
         binding.expTemplate.mainExp.setText("المصروف الرئيسي: " + expenseData.getExpMenuName());
-        App.pdfName= "المصروف الرئيسي: " + expenseData.getExpMenuName();
-        //TODO::
+        App.pdfName = "المصروف الرئيسي: " + expenseData.getExpMenuName() + " رقم المصروف" + expenseData.getMoveID();
+
         if (expenseData.getSubExpMenuName() != null)
             binding.expTemplate.subExp.setText("المصروف الفرعي: " + expenseData.getSubExpMenuName());
         if (expenseData.getSelectedWorkerName() != null)
@@ -147,7 +147,7 @@ public class SearchExpenses extends BaseActivity {
 
         binding.expTemplate.date.setText("التاريخ: " + expenseData.getCreateDate());
 //        binding.expTemplate.
-        binding.expTemplate.expensesTotal.setText(String.format(Locale.US, "%.2f", Float.parseFloat(expenseData.getNetValue())) + " جنيه");
+        binding.expTemplate.expensesTotal.setText(String.format(Locale.US, "%.3f", Float.parseFloat(expenseData.getNetValue())) + " جنيه");
         binding.expTemplate.receiptNotes.setText("ملاحضات \n" + expenseData.getHeaderNotes());
         binding.expTemplate.paymentMethod.setText(expenseData.getCashTypeName());
 //        binding.expTemplate.tradeRecord2.setText("السجل التجاري" + "\n" +

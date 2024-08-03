@@ -90,7 +90,7 @@ public class SearchCustomerBalance extends BaseActivity implements MyDialogClose
     public void searchButtons() {
         binding.getClient.setOnEditorActionListener((textView, actionId, keyEvent) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                binding.getClient.performClick();
+                binding.searchClient.performClick();
                 return true; // Indicates that the action has been handled
             }
             return false;

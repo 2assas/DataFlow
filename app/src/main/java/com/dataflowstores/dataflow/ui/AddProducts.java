@@ -7,6 +7,7 @@ import static com.dataflowstores.dataflow.App.priceType;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -31,17 +32,21 @@ import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.ProductVM;
 import com.dataflowstores.dataflow.databinding.AddProductsBinding;
+import com.dataflowstores.dataflow.pojo.product.ProductData;
 import com.dataflowstores.dataflow.pojo.product.SearchProductResponse;
+import com.dataflowstores.dataflow.ui.adapters.CartItemListener;
 import com.dataflowstores.dataflow.ui.adapters.SelectedProductsAdapter;
 import com.dataflowstores.dataflow.ui.fragments.BottomSheetFragment;
+import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
 import com.dataflowstores.dataflow.ui.products.ProductDetails;
 import com.dataflowstores.dataflow.utils.SwipeHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
-public class AddProducts extends BaseActivity {
+public class AddProducts extends BaseActivity implements MyDialogCloseListener , CartItemListener {
     AddProductsBinding binding;
     ProductVM productVM;
     String uuid;
@@ -55,7 +60,6 @@ public class AddProducts extends BaseActivity {
     @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             startActivity(new Intent(this, SplashScreen.class));
@@ -69,12 +73,13 @@ public class AddProducts extends BaseActivity {
             productVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
             App.isEditing = false;
             if (App.selectedProducts.size() > 0) {
-                if (App.priceType != App.selectedProducts.get(0).getSelectedPriceType()) {
+                if (App.priceType.getPricesType_ISN() != App.selectedProducts.get(0).getSelectedPriceType().getPricesType_ISN()) {
                     App.selectedProducts = new ArrayList<>();
                     return;
                 }
                 binding.productsRecycler.setLayoutManager(new LinearLayoutManager(this));
-                selectedProductsAdapter = new SelectedProductsAdapter(App.selectedProducts, this);
+                selectedProductsAdapter = new SelectedProductsAdapter( this, AddProducts.this);
+                selectedProductsAdapter.submitList(App.selectedProducts);
                 selectedProductsAdapter.notifyDataSetChanged();
                 binding.productsRecycler.setAdapter(selectedProductsAdapter);
                 setOrderSummary(false);
@@ -88,6 +93,15 @@ public class AddProducts extends BaseActivity {
             observeSearching();
             observeSearchProduct();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.e("checkVM", "VM instantiated");
+        productVM = new ViewModelProvider(this).get(ProductVM.class);
+        observeSearchProduct();
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -104,24 +118,24 @@ public class AddProducts extends BaseActivity {
             count = App.selectedProducts.size();
         }
         if (showDialog) {
-            new androidx.appcompat.app.AlertDialog.Builder(this).setMessage("لديك عدد " + "(" + count + ")" + " سطور بإجمالى كمية " + "(" + String.format(Locale.ENGLISH, "%.2f", quantity) + ")" +
-                    " بإجمالى مبلغ " + "(" + String.format(Locale.ENGLISH, "%.2f", total) + ")" +
+            new androidx.appcompat.app.AlertDialog.Builder(this).setMessage("لديك عدد " + "(" + count + ")" + " سطور بإجمالى كمية " + "(" + String.format(Locale.ENGLISH, "%.3f", quantity) + ")" +
+                    " بإجمالى مبلغ " + "(" + String.format(Locale.ENGLISH, "%.3f", total) + ")" +
                     " هل أنت متأكد؟").setPositiveButton("تأكيد", ((dialogInterface, i) -> {
                 startActivity(new Intent(this, Checkout.class));
                 finish();
                 dialogInterface.dismiss();
             })).setNegativeButton("إلغاء", ((dialogInterface, i) -> {
                 dialogInterface.dismiss();
+                binding.progress.setVisibility(View.GONE);
             })).setCancelable(false).show();
         } else {
             binding.cartLinesCount.setText("السطور: " + count);
-            binding.cartLinesQuantity.setText("الكمية: " + String.format(Locale.ENGLISH, "%.2f", quantity));
-            binding.cartLinesTotal.setText("الاجمالي: " + String.format(Locale.ENGLISH, "%.2f", total));
+            binding.cartLinesQuantity.setText("الكمية: " + String.format(Locale.ENGLISH, "%.3f", quantity));
+            binding.cartLinesTotal.setText("الاجمالي: " + String.format(Locale.ENGLISH, "%.3f", total));
         }
     }
 
     private void searchProducts() {
-
         binding.searchProducts.setOnClickListener(view -> {
             binding.searchProducts.onActionViewExpanded(); // Expand the SearchView
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -140,7 +154,6 @@ public class AddProducts extends BaseActivity {
                 bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
                 Log.e("checkType2", App.invoiceType.name());
                 invoiceName();
-
                 return false;
             }
 
@@ -211,7 +224,8 @@ public class AddProducts extends BaseActivity {
 
     private void observeSearchProduct() {
         productVM.productMutableLiveData.observe(this, product -> {
-            if (product != null) {
+
+            if (product.getData() != null) {
                 App.product = product.getData().get(0);
                 if (product.getData().get(0).getSerial() && !isSerial) {
                     binding.serialDialog.getRoot().setVisibility(View.VISIBLE);
@@ -283,9 +297,11 @@ public class AddProducts extends BaseActivity {
                     .setMessage("لقد تم إضافة منتجات بأسعار خاصة، فاذا تم تغيير العميل سيتم حذف المنتجات المضافة حاليا من الفاتورة")
                     .setPositiveButton("إلغاء", (dialogInterface, i) -> dialogInterface.dismiss())
                     .setNegativeButton("متابعة", ((dialogInterface, i) -> {
+                        productVM.compositeDisposable.clear();
                         super.onBackPressed();
                     })).show();
         } else {
+            productVM.compositeDisposable.clear();
             super.onBackPressed();
         }
     }
@@ -333,4 +349,28 @@ public class AddProducts extends BaseActivity {
     }
 
 
+    @Override
+    public void handleDialogClose(DialogInterface dialog) {
+        observeSearchProduct();
+    }
+
+    @Override
+    public void onDeleteItem(ProductData productData) {
+        App.selectedProducts.remove(productData);
+        selectedProductsAdapter.submitList(App.selectedProducts);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+            productVM.compositeDisposable.clear();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+            productVM.compositeDisposable.clear();
+
+    }
 }

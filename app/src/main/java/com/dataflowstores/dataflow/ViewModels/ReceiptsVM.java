@@ -45,7 +45,7 @@ public class ReceiptsVM extends ViewModel {
                               long BankISN, String TableNumber, String DeliveryPhone, String DeliveryAddress, long WorkerCBranchISN, long WorkerCISN, String CheckNumber,
             String CheckDueDate,long CheckBankBranchISN, long CheckBankISN, int createSource, float latitude, float longitude){
 
-        Observable<ReceiptResponse> receiptResponseObservable = apiClient.createReceipt(BranchISN,uuid,CashType,SaleType,DealerType, DealerBranchISN,DealerISN,SalesManBranchISN,SalesManISN,
+        Observable<ReceiptResponse> receiptResponseObservable = apiClient.createReceipt(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),BranchISN,uuid,CashType,SaleType,DealerType, DealerBranchISN,DealerISN,SalesManBranchISN,SalesManISN,
                 HeaderNotes, TotalLinesValue, ServiceValue, ServicePer, DeliveryValue, TotalValueAfterServices, BasicDiscountVal, BasicDiscountPer, TotalValueAfterDisc,
                 BasicTaxVal, BasicTaxPer, TotalValueAfterTax,NetValue,PaidValue,RemainValue, SafeDepositeBranchISN, SafeDepositeISN, BankBranchISN, BankISN, TableNumber,DeliveryPhone,DeliveryAddress,WorkerCBranchISN,
                 WorkerCISN, CheckNumber,CheckDueDate,CheckBankBranchISN,CheckBankISN, createSource, latitude, longitude, App.currentUser.getWorkerName(),
@@ -111,7 +111,7 @@ public class ReceiptsVM extends ViewModel {
     }
     public void getReceipt(long branchISN, String uuid, String moveId, long workerCBranchISN, long workerCISN, int permission){
 
-        Observable<ReceiptModel> receiptModelObservable = apiClient.getReceipt(branchISN, uuid, moveId, workerCBranchISN,workerCISN,permission,selectedFoundation,
+        Observable<ReceiptModel> receiptModelObservable = apiClient.getReceipt(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),branchISN, uuid, moveId, workerCBranchISN,workerCISN,permission,selectedFoundation,
                         App.currentUser.getLogIn_BISN(),
                         App.currentUser.getLogIn_UID(),
                         App.currentUser.getLogIn_WBISN(),
@@ -170,7 +170,7 @@ public class ReceiptsVM extends ViewModel {
     }
 
     public void getCustomerBalance(String uuid, String dealerISN, String branchISN, String dealerType, String moveBranchISN, String moveISN, String remainValue, String netValue, String moveType) {
-        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(uuid, dealerISN, branchISN, dealerType, selectedFoundation,
+        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid, dealerISN, branchISN, dealerType, selectedFoundation,
                 App.currentUser.getLogIn_BISN(),
                 App.currentUser.getLogIn_UID(),
                 App.currentUser.getLogIn_WBISN(),

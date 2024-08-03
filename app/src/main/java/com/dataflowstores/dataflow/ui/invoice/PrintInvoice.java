@@ -287,7 +287,7 @@ public class PrintInvoice extends BaseActivity implements Runnable {
 
     double roundTwoDecimals(double d) {
         DecimalFormat twoDForm = new DecimalFormat("#.##");
-        return Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", d));
+        return Double.parseDouble(String.format(Locale.ENGLISH, "%.3f", d));
     }
 
     public void checkPermission() {

@@ -59,7 +59,7 @@ public class SearchItemPrice extends BaseActivity implements MyDialogCloseListen
         } else {
             binding = DataBindingUtil.setContentView(this, R.layout.search_item_price);
             productVM = new ViewModelProvider(this).get(ProductVM.class);
-            uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+             uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
             setupViews();
             barCodeScan();
             observeItemPrice();
@@ -67,6 +67,20 @@ public class SearchItemPrice extends BaseActivity implements MyDialogCloseListen
             observeSearching();
             observeSearchProduct();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+            productVM.compositeDisposable.clear();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+            productVM.compositeDisposable.clear();
+
     }
 
     private void setupViews() {
@@ -172,7 +186,7 @@ public class SearchItemPrice extends BaseActivity implements MyDialogCloseListen
 
     private void observeSearchProduct() {
         productVM.productMutableLiveData.observe(this, product -> {
-            if (product != null) {
+            if (product.getData() != null) {
                 App.product = product.getData().get(0);
                 if (App.product.getItemName() != null) {
                     getItemPrice(App.product);

@@ -39,7 +39,7 @@ public class PrintingCashingAdapter extends RecyclerView.Adapter<PrintingCashing
         Log.e("checkStore From", list.get(position).getStoreNameFrom() + "     --       "+ list.get(position).getStoreNameTo());
         if (list.get(position).getStoreNameTo() != null)
             holder.toStore.setText(list.get(position).getStoreNameTo());
-        holder.itemQuantity.setText(String.format(Locale.US, "%.2f", Double.parseDouble(list.get(position).getTotalQuantity())));
+        holder.itemQuantity.setText(String.format(Locale.US, "%.3f", Double.parseDouble(list.get(position).getTotalQuantity())));
 
     }
 

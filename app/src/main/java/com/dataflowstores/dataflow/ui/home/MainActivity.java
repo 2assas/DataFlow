@@ -42,7 +42,6 @@ public class MainActivity extends BaseActivity {
                 .add(R.id.container, fragment1)
                 .addToBackStack("home")
                 .commit();
-
     }
 
 

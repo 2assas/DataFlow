@@ -87,7 +87,23 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/foundationName"
-            app:layout_constraintVertical_bias="0.61" />
+            app:layout_constraintVertical_bias="0.52" />
+
+        <TextView
+            android:id="@+id/shiftNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/cardView3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView"
+             />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView3"
@@ -101,7 +117,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.58000004">
+            app:layout_constraintVertical_bias="0.65">
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -127,6 +143,21 @@
                         app:layout_constraintHorizontal_bias="0.937"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/storeOperations" />
+
+                    <Button
+                        android:id="@+id/shifts"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
+                        android:background="@drawable/blue_rounded"
+                        android:text="إدارة الورديات"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.937"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/reports" />
 
                     <Button
                         android:id="@+id/invoice"

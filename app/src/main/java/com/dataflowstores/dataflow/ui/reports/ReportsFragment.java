@@ -15,6 +15,7 @@ import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.FragmentReportsBinding;
 import com.dataflowstores.dataflow.ui.StoreReportScreen;
 import com.dataflowstores.dataflow.ui.reports.cashierMovesReport.CashierMovesReport;
+import com.dataflowstores.dataflow.ui.reports.dealersBalancesReport.DealersBalancesReport;
 import com.dataflowstores.dataflow.ui.reports.financialReport.FinancialReport;
 import com.dataflowstores.dataflow.ui.reports.itemSalesReport.ItemSalesReport;
 import com.dataflowstores.dataflow.ui.reports.supplierSalesReport.SupplierSalesReport;
@@ -109,6 +110,10 @@ public class ReportsFragment extends Fragment {
             if (App.isNetworkAvailable(requireActivity()))
                 startActivity(new Intent(requireActivity(), CashierMovesReport.class));
         });
+        binding.dealersBalancesReport.setOnClickListener(view -> {
+            if (App.isNetworkAvailable(requireActivity()))
+                startActivity(new Intent(requireActivity(), DealersBalancesReport.class));
+        });
 
     }
 
@@ -154,6 +159,12 @@ public class ReportsFragment extends Fragment {
             binding.cashierMovesReport.setEnabled(false);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 binding.cashierMovesReport.setBackground(requireActivity().getDrawable(R.drawable.gray_rounded));
+            }
+        }
+        if (App.currentUser.getMobileDealersBalancesReport() == 0 && App.currentUser.getMobileSuppliersBalancesReport() ==0) {
+            binding.dealersBalancesReport.setEnabled(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                binding.dealersBalancesReport.setBackground(requireActivity().getDrawable(R.drawable.gray_rounded));
             }
         }
 

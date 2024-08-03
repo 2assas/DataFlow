@@ -148,6 +148,16 @@ public class StoreOperationsFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        binding.mobileItemsList.setOnClickListener(view -> {
+            if (App.isNetworkAvailable(requireActivity())) {
+                Intent intent = new Intent(requireActivity(), SearchProductsCashing.class);
+                intent.putExtra("moveType", 21);
+                intent.putExtra("store", true);
+                App.customer = new CustomerData();
+                App.agent = new SalesManData();
+                startActivity(intent);
+            }
+        });
     }
 
     private void permission() {
@@ -194,6 +204,12 @@ public class StoreOperationsFragment extends Fragment {
             binding.mobileInventory.setEnabled(false);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 binding.mobileInventory.setBackground(requireActivity().getDrawable(R.drawable.gray_rounded));
+            }
+        }
+        if (App.currentUser.getMobileItemsList() == 0) {
+            binding.mobileItemsList.setEnabled(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                binding.mobileItemsList.setBackground(requireActivity().getDrawable(R.drawable.gray_rounded));
             }
         }
 

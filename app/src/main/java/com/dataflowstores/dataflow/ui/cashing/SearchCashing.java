@@ -202,6 +202,14 @@ public class SearchCashing extends BaseActivity {
                 binding.invoiceTemplate.toStore.setVisibility(View.GONE);
             }
             break;
+            case 21: {
+                binding.invoiceTemplate.cashingNumber.setText("طلب أصناف رقم " + App.printInvoice.getMoveHeader().getMove_ID());
+                App.pdfName = "طلب أصناف رقم " + App.printInvoice.getMoveHeader().getMove_ID();
+
+                binding.invoiceTemplate.fromStore.setText("المخزن");
+                binding.invoiceTemplate.toStore.setVisibility(View.GONE);
+            }
+            break;
             case 15: {
                 binding.invoiceTemplate.cashingNumber.setText("تكوين صنف رقم " + App.printInvoice.getMoveHeader().getMove_ID());
                 App.pdfName = "تكوين صنف رقم " + App.printInvoice.getMoveHeader().getMove_ID();
