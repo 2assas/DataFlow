@@ -615,7 +615,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/extraDiscountCon"
+            android:id="@+id/serviceContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
@@ -761,7 +761,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/extraDiscountCon">
+            app:layout_constraintTop_toBottomOf="@+id/serviceContainer">
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
