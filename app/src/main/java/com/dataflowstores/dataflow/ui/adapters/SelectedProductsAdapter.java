@@ -4,7 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -18,68 +21,79 @@ import com.dataflowstores.dataflow.ui.products.ProductDetails;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.ProductItemBinding;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
-public class SelectedProductsAdapter extends RecyclerView.Adapter<SelectedProductsAdapter.SelectedProductsHolder> {
-    ProductItemBinding binding;
-    Context context;
-    private ArrayList<ProductData> list;
+public class SelectedProductsAdapter extends ListAdapter<ProductData, SelectedProductsAdapter.SelectedProductsHolder> {
+    private final Context context;
+    private final CartItemListener listener;
 
-    public SelectedProductsAdapter(ArrayList<ProductData> list, Context context) {
-        this.list = list;
+    public SelectedProductsAdapter(Context context, CartItemListener listener) {
+        super(new ProductDiffCallback());
         this.context = context;
+        this.listener = listener;
     }
 
+    @NonNull
     @Override
-    public SelectedProductsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        binding= DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),R.layout.product_item, parent, false);
+    public SelectedProductsHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        ProductItemBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.product_item, parent, false);
         return new SelectedProductsHolder(binding.getRoot());
     }
+
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(final SelectedProductsHolder holder, final int position) {
-        binding.productName.setText(list.get(position).getItemName());
-        binding.price.setText(String.format(Locale.US,"%.2f", list.get(position).getNetPrice()));
-        binding.totalPrice.setText( list.get(position).getQuantity()+" "+list.get(position).getSelectedUnit().getMeasureUnitArName());
-        binding.totalQuantity.setText(String.format(Locale.US,"%.2f", list.get(position).getPriceItem()));
-    }
-    @Override
-    public int getItemCount() {
-        return list.size();
+    public void onBindViewHolder(@NonNull final SelectedProductsHolder holder, final int position) {
+        ProductData productData = getItem(position);
+        holder.bind(productData);
     }
 
     public void callDeleteFunction(int pos) {
-        list.remove(pos);
         notifyItemRemoved(pos);
-    }
-
-    @Override
-    public int getItemViewType(int position)
-    {
-        return position;
-    }
-    @Override
-    public long getItemId(int position) {
-        return position;
+        notifyItemRangeChanged(pos, getItemCount() - pos);
+        listener.onDeleteItem(getItem(pos));
     }
 
     public void callEditFunction(int pos) {
-        App.product = list.get(pos);
+        final ProductData productData = getItem(pos);
+        App.product = productData;
         App.isEditing = true;
-        App.editingPos =pos;
+        App.editingPos = pos;
         context.startActivity(new Intent(context, ProductDetails.class));
-        ((Activity)context).finish();
+        ((Activity) context).finish();
     }
 
     public class SelectedProductsHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private final ProductItemBinding binding;
+
         public SelectedProductsHolder(View itemView) {
             super(itemView);
+            binding = DataBindingUtil.bind(itemView);
             itemView.setOnClickListener(this);
         }
+
+        public void bind(ProductData productData) {
+            binding.productName.setText(productData.getItemName());
+            binding.netPrice.setText(String.format(Locale.US, "%.3f", productData.getNetPrice()));
+            binding.quantity.setText(productData.getQuantity() + " " + (productData.getSelectedUnit() != null ? productData.getSelectedUnit().getMeasureUnitArName() : ""));
+            binding.price.setText(String.format(Locale.US, "%.3f", productData.getPriceItem()));
+            binding.sequence.setText(String.valueOf(getAdapterPosition() + 1));
+        }
+
         @Override
         public void onClick(View v) {
+            // Handle click event if needed
+        }
+    }
+
+    private static class ProductDiffCallback extends DiffUtil.ItemCallback<ProductData> {
+        @Override
+        public boolean areItemsTheSame(@NonNull ProductData oldItem, @NonNull ProductData newItem) {
+            return oldItem.getItemISN() == newItem.getItemISN();
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull ProductData oldItem, @NonNull ProductData newItem) {
+            return oldItem.equals(newItem);
         }
     }
 }
-

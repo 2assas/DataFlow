@@ -32,6 +32,36 @@ public class CashierMoveData implements Serializable {
 	private String WorkerCBranchISN;
 	@SerializedName("WorkerCISN")
 	private String WorkerCISN;
+	@SerializedName("HeaderNotes")
+	private String HeaderNotes;
+	@SerializedName("prev_balance")
+	private String prev_balance;
+	@SerializedName("current_balance")
+	private String current_balance;
+
+	public String getHeaderNotes() {
+		return HeaderNotes;
+	}
+
+	public void setHeaderNotes(String headerNotes) {
+		HeaderNotes = headerNotes;
+	}
+
+	public String getPrev_balance() {
+		return prev_balance;
+	}
+
+	public void setPrev_balance(String prev_balance) {
+		this.prev_balance = prev_balance;
+	}
+
+	public String getCurrent_balance() {
+		return current_balance;
+	}
+
+	public void setCurrent_balance(String current_balance) {
+		this.current_balance = current_balance;
+	}
 
 	public void setWorkingDayDate(String workingDayDate) {
 		this.workingDayDate = workingDayDate;

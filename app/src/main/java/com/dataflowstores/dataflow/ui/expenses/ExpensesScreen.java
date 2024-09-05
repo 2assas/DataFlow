@@ -1,5 +1,7 @@
 package com.dataflowstores.dataflow.ui.expenses;
 
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -29,15 +31,16 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.dataflowstores.dataflow.App;
+import com.dataflowstores.dataflow.R;
+import com.dataflowstores.dataflow.databinding.ExpensesScreenBinding;
+import com.dataflowstores.dataflow.pojo.expenses.MainExpItem;
 import com.dataflowstores.dataflow.pojo.expenses.SubExpItem;
 import com.dataflowstores.dataflow.pojo.expenses.WorkerItem;
 import com.dataflowstores.dataflow.pojo.settings.BanksData;
 import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.utils.SingleShotLocationProvider;
-import com.dataflowstores.dataflow.R;
-import com.dataflowstores.dataflow.databinding.ExpensesScreenBinding;
-import com.dataflowstores.dataflow.pojo.expenses.MainExpItem;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationRequest;
@@ -54,7 +57,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public class ExpensesScreen extends AppCompatActivity implements LocationListener {
+public class ExpensesScreen extends BaseActivity implements LocationListener {
 
     ExpensesScreenBinding binding;
     ExpensesViewModel expensesViewModel;
@@ -78,6 +81,7 @@ public class ExpensesScreen extends AppCompatActivity implements LocationListene
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.expenses_screen);
         if (savedInstanceState != null) {
@@ -100,15 +104,22 @@ public class ExpensesScreen extends AppCompatActivity implements LocationListene
         App.selectedProducts = new ArrayList<>();
         binding.cashCheck.setChecked(true);
         binding.cashCheck.performClick();
+        if (App.currentUser.getMobileGPSMust() == 1) {
         if (checkPermission()) getLocation(this);
         else requestPermission();
+        }
 
     }
 
     private void observers() {
         expensesViewModel.allExpResponseMutableLiveData.observe(this, allExpensesResponse -> {
-            if (allExpensesResponse.getMainExpResponse() != null) {
+            if (allExpensesResponse.getMainExpResponse() != null && allExpensesResponse.getMainExpResponse().getData() != null && !allExpensesResponse.getMainExpResponse().getData().isEmpty()) {
                 mainExpSpinner(allExpensesResponse.getMainExpResponse().getData(), allExpensesResponse.getSubExpResponse().getData());
+            } else {
+                new AlertDialog.Builder(this).setMessage("يجب إضافة قائمة مصروفات واحدة علي الأقل").setCancelable(false)
+                        .setPositiveButton("حسنا", (dialog, which) -> {
+                            finish();
+                        }).show();
             }
             if (allExpensesResponse.getSubExpResponse() != null) {
                 workersSpinner(allExpensesResponse.getWorkerResponse().getData());
@@ -180,11 +191,10 @@ public class ExpensesScreen extends AppCompatActivity implements LocationListene
 
     private void workersSpinner(List<WorkerItem> workerItems) {
         ArrayList<String> workerNames = new ArrayList<>();
-        if (Objects.equals(selectedMainExp.getMustChooseWorker(), "0"))
-            workerItems.add(0, new WorkerItem(true));
-
+        workerItems.add(0, new WorkerItem(true));
         for (int i = 0; i < workerItems.size(); i++) {
-            if (i == 0 && selectedMainExp.getMustChooseWorker().equals("0")) workerNames.add("");
+            if (i == 0)
+                workerNames.add("");
             else
                 workerNames.add(workerItems.get(i).getWorkerName());
         }
@@ -195,7 +205,7 @@ public class ExpensesScreen extends AppCompatActivity implements LocationListene
         binding.workersSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i == 0 && selectedMainExp.getMustChooseWorker().equals("0"))
+                if (i == 0 && workerItems.get(0).getWorkerName() == null)
                     selectedWorker = null;
                 else
                     selectedWorker = workerItems.get(i);
@@ -203,9 +213,6 @@ public class ExpensesScreen extends AppCompatActivity implements LocationListene
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                if (selectedMainExp.getMustChooseWorker().equals("0"))
-                    selectedWorker = null;
-                else
                     selectedWorker = workerItems.get(0);
             }
 
@@ -232,18 +239,14 @@ public class ExpensesScreen extends AppCompatActivity implements LocationListene
 
     @SuppressLint("UseCompatLoadingForDrawables")
     public void confirmProcess(View view) {
-        if (lat != 0 || _long != 0) {
+        if (App.currentUser.getMobileGPSMust() == 0 || lat != 0 || _long != 0) {
             binding.confirmProcess.setClickable(false);
-            if (Objects.equals(selectedMainExp.getMustChooseWorker(), "1") && selectedWorker == null) {
-                binding.workersSpinner.performClick();
-                binding.confirmProcess.setClickable(true);
-                Toast.makeText(this, "لابد من إختيار الموظف مع المصروف الرئيسي المحدد", Toast.LENGTH_LONG).show();
-            } else if (binding.receiptTotal.getText().toString().isEmpty()) {
+            if (binding.receiptTotal.getText().toString().isEmpty()) {
                 binding.receiptTotal.setError("مطلوب");
                 binding.confirmProcess.setClickable(true);
             } else {
-                createExpenses();
                 binding.showProgress.setVisibility(View.VISIBLE);
+                createExpenses();
             }
         } else {
             new AlertDialog.Builder(this).
@@ -424,10 +427,9 @@ public class ExpensesScreen extends AppCompatActivity implements LocationListene
     }
 
     public void createExpenses() {
-        double total = Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", Float.parseFloat(binding.receiptTotal.getText().toString())));
-
-        expensesViewModel.createExpenses(App.currentUser.getBranchISN(), uuid, paymentMethod,
-                0, binding.receiptNotes.getText().toString(), Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", total)),
+        double total = Double.parseDouble(String.format(Locale.ENGLISH, "%.3f", Float.parseFloat(binding.receiptTotal.getText().toString())));
+        expensesViewModel.createExpenses(selectedMainExp.getMustChooseWorker(), App.currentUser.getBranchISN(), uuid, paymentMethod,
+                                         0, binding.receiptNotes.getText().toString(), Double.parseDouble(String.format(Locale.ENGLISH, "%.3f", total)),
                 0, 0, 0, total, 0, 0, total, 0, 0,
                 total, total, 0, total,
                 safeDepositData.getBranchISN(), safeDepositData.getSafeDeposit_ISN(), banksCreditData.getBranchISN(), banksCreditData.getBank_ISN(), null,
@@ -438,21 +440,34 @@ public class ExpensesScreen extends AppCompatActivity implements LocationListene
         );
 
         expensesViewModel.expensesResponseMutableLiveData.observe(this, expensesResponse -> {
-            new AlertDialog.Builder(this).setTitle("عملية ناجحة")
-                    .setMessage("تم تسجيل عملية الدفع بنجاح")
-                    .setCancelable(false)
-                    .setIcon(getResources().getDrawable(R.drawable.ic_baseline_verified_24))
-                    .setPositiveButton("طباعة", (dialog, which) -> {
-                        expensesViewModel.getExpenses(App.currentUser.getBranchISN(), uuid, String.valueOf(expensesResponse.getData().getMoveId()),
-                                App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN(), App.currentUser.getPermission());
-                        binding.showProgress.setVisibility(View.VISIBLE);
-                        dialog.dismiss();
-                    }).setNegativeButton("إغلاق", (dialog, which) -> {
-                        dialog.dismiss();
-                        finish();
-                        startActivity(new Intent(this, ExpensesScreen.class));
-                    }).show();
-        });
+                    if (expensesResponse.getStatus() == 1) {
+                        new AlertDialog.Builder(this).setTitle("عملية ناجحة")
+                                .setMessage("تم تسجيل عملية الدفع بنجاح")
+                                .setCancelable(false)
+                                .setIcon(getResources().getDrawable(R.drawable.ic_baseline_verified_24))
+                                .setPositiveButton("طباعة", (dialog, which) -> {
+                                    expensesViewModel.getExpenses(App.currentUser.getBranchISN(), uuid, String.valueOf(expensesResponse.getData().getMoveId()),
+                                            App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN(), App.currentUser.getPermission());
+                                    binding.showProgress.setVisibility(View.VISIBLE);
+                                    dialog.dismiss();
+                                }).setNegativeButton("إغلاق", (dialog, which) -> {
+                                    dialog.dismiss();
+                                    finish();
+                                    startActivity(new Intent(this, ExpensesScreen.class));
+                                }).show();
+                    } else {
+                        binding.confirmProcess.setClickable(true);
+                        new AlertDialog.Builder(this)
+                                .setMessage(expensesResponse.getMessage())
+                                .setIcon(getResources().getDrawable(R.drawable.baseline_cancel_presentation_24))
+                                .setCancelable(false)
+                                .setPositiveButton("إغلاق", (dialog, which) -> {
+                                    dialog.dismiss();
+                                    binding.showProgress.setVisibility(View.GONE);
+                                }).show();
+                    }
+                }
+        );
 
 
         expensesViewModel.expensesModelMutableLiveData.observe(this, expensesModel -> {

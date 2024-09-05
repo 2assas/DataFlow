@@ -1,5 +1,7 @@
 package com.dataflowstores.dataflow.ui.reports.cashierMovesReport;
 
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -7,6 +9,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -37,6 +41,7 @@ import com.dataflowstores.dataflow.pojo.settings.SafeDeposit;
 import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
 import com.dataflowstores.dataflow.pojo.users.CustomerData;
 import com.dataflowstores.dataflow.pojo.workStation.BranchData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.fragments.BottomSheetFragment;
 import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
@@ -44,11 +49,13 @@ import com.dataflowstores.dataflow.ui.reports.ReportViewModel;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class CashierMovesReport extends AppCompatActivity implements MyDialogCloseListener {
+public class CashierMovesReport extends BaseActivity implements MyDialogCloseListener {
     CashierMovesReportBinding binding;
     ReportBody reportBody = new ReportBody();
     ReportViewModel reportVM;
@@ -74,11 +81,14 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
     private String workDayStart, workDayEnd;
     InvoiceViewModel invoiceViewModel;
     CustomerData customerData;
+    CustomerData supplierData;
 
+    boolean searchCustomer = true;
 
     @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             startActivity(new Intent(this, SplashScreen.class));
@@ -101,6 +111,7 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
         collectData();
         fillDates();
         searchButtons();
+        clientAndSupplierWatchers();
     }
 
     void fillDates() {
@@ -108,9 +119,10 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
         String date = sdf.format(calendar.getTime());
         binding.startTime.setText(date);
         binding.endTime.setText(date);
-        binding.workStartTime.setText(date);
-        binding.workEndTime.setText(date);
+        binding.workStartTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
+        binding.workEndTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
     }
+
 
     void observers() {
         reportVM.branchesMutableLiveData.observe(this, this::branchSpinner);
@@ -124,6 +136,11 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
             if (cashierMovesReportResponse.getStatus() == 1) {
                 if (cashierMovesReportResponse.getData() != null) {
                     Intent intent = new Intent(this, CashierMovesReportPrinting.class);
+
+                    if (supplierData != null && binding.supplierCheckBox.isChecked()) {
+                        intent.putExtra("supplierName", supplierData.getDealerName());
+                    }
+
                     if (binding.safeDepositCheckbox.isChecked())
                         intent.putExtra("safeDeposit", selectedSafeDeposit);
                     if (binding.intervalCheckBox.isChecked()) {
@@ -173,24 +190,84 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
 
 
     public void searchButtons() {
+        if (App.currentUser.getMobileReportsSuppliersSearch().equals("0")) {
+            binding.getsupplier.setEnabled(false);
+            binding.supplierCheckBox.setEnabled(false);
+            binding.searchsupplier.setEnabled(false);
+        }
+
         binding.getClient.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 if (!binding.getClient.getText().toString().isEmpty()) {
-                    performSearch();
+                    performSearch(true);
                     return true;
-                } else
-                    return false;
+                } else return false;
             }
             return false;
         });
         binding.searchClient.setOnClickListener(view -> {
-            performSearch();
+            performSearch(true);
+        });
+        binding.getsupplier.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                if (!binding.getsupplier.getText().toString().isEmpty()) {
+                    performSearch(false);
+                    return true;
+                } else return false;
+            }
+            return false;
+        });
+        binding.searchsupplier.setOnClickListener(view -> {
+            performSearch(false);
         });
     }
 
-    private void performSearch() {
-        if (App.isNetworkAvailable(this))
+    public void clientAndSupplierWatchers() {
+        binding.getClient.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                customerData = null;
+                binding.getClient.setError(null);
+            }
+        });
+        binding.getsupplier.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                supplierData = null;
+                binding.getsupplier.setError(null);
+
+            }
+        });
+    }
+
+    private void performSearch(boolean customer) {
+        if (App.isNetworkAvailable(this)) if (customer) {
             invoiceViewModel.getCustomer(uuid, binding.getClient.getText().toString(), App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN());
+            searchCustomer = true;
+        } else {
+            invoiceViewModel.getSupplier(uuid, binding.getsupplier.getText().toString(), App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN());
+            searchCustomer = false;
+        }
         else {
             App.noConnectionDialog(this);
         }
@@ -201,8 +278,13 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
     @Override
     public void handleDialogClose(DialogInterface dialog) {
         if (App.customer != null && App.customer.getDealerName() != null) {
-            binding.getClient.setText(App.customer.getDealerName());
-            customerData = App.customer;
+            if (searchCustomer) {
+                binding.getClient.setText(App.customer.getDealerName());
+                customerData = App.customer;
+            } else {
+                binding.getsupplier.setText(App.customer.getDealerName());
+                supplierData = App.customer;
+            }
         }
     }
 
@@ -248,8 +330,8 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
             binding.workDateCheckbox.setChecked(true);
             binding.workDateCheckbox.setEnabled(false);
             currentDate = sdf.format(Calendar.getInstance().getTime());
-            binding.workStartTime.setText(currentDate);
-            binding.workEndTime.setText(currentDate);
+            binding.workStartTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
+            binding.workEndTime.setText(App.currentUser.getLogIn_CurrentWorkingDayDate());
 
             //check, cash and credit.
             binding.checkCheckbox.setChecked(true);
@@ -262,18 +344,20 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
             //showReport
             binding.reportButton.setOnClickListener(v -> {
                 if (App.isNetworkAvailable(this)) {
-                    binding.progressBar.setVisibility(View.VISIBLE);
                     reportBody = new ReportBody();
                     selectedWorker = new DataItem();
                     selectedWorker.setWorkerISN(String.valueOf(App.currentUser.getWorkerISN()));
                     selectedWorker.setBranchISN(String.valueOf(App.currentUser.getWorkerBranchISN()));
 
-                    if (fillCashierReport())
+                    if (fillCashierReport()) {
+                        binding.progressBar.setVisibility(View.VISIBLE);
                         reportVM.getCashierMoves(reportBody, uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getWorkerBranchISN()
                                 , selectedMove == null ? null : Integer.valueOf(selectedMove.getMoveType()),
                                 customerData == null ? null : customerData
                                 , selectedWorker == null ? null : selectedWorker
+                                , binding.supplierCheckBox.isChecked() ? supplierData : null
                         );
+                    }
                 }
             });
         } else {
@@ -288,13 +372,15 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
             binding.workDateCheckbox.setChecked(true);
             binding.reportButton.setOnClickListener(v -> {
                 if (App.isNetworkAvailable(this)) {
-                    binding.progressBar.setVisibility(View.VISIBLE);
-                    if (prepareAdminReport())
+                    if (prepareAdminReport()) {
+                        binding.progressBar.setVisibility(View.VISIBLE);
                         reportVM.getCashierMoves(reportBody, uuid, App.currentUser.getCashierStoreBranchISN(), App.currentUser.getCashierStoreISN(), App.currentUser.getWorkerBranchISN()
                                 , selectedMove == null ? null : Integer.valueOf(selectedMove.getMoveType()),
                                 customerData == null ? null : customerData,
-                                selectedWorker == null ? null : selectedWorker
+                                selectedWorker == null ? null : selectedWorker,
+                                binding.supplierCheckBox.isChecked() ? supplierData : null
                         );
+                    }
                 }
             });
 
@@ -360,7 +446,7 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
 
     boolean fillCashierReport() {
         if (binding.clientCheckBox.isChecked()) {
-            if (binding.getClient.getText().toString().isEmpty()) {
+            if (binding.getClient.getText().toString().isEmpty() || customerData == null) {
                 binding.getClient.setError(getString(R.string.select_customer_error));
                 Toast.makeText(this, getString(R.string.select_customer_toast), Toast.LENGTH_LONG).show();
                 return false;
@@ -369,6 +455,15 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
             }
         } else {
             customerData = null;
+        }
+        if (binding.supplierCheckBox.isChecked()) {
+            if (binding.getsupplier.getText().toString().isEmpty() || supplierData == null) {
+                binding.getsupplier.setError(getString(R.string.select_supplier_error));
+                Toast.makeText(this, getString(R.string.select_supplier_toast), Toast.LENGTH_LONG).show();
+                return false;
+            }
+        } else {
+            supplierData = null;
         }
 
         if (binding.movesCheckBox.isChecked()) {
@@ -421,16 +516,24 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
 
     private boolean prepareAdminReport() {
         if (binding.clientCheckBox.isChecked()) {
-            if (App.customer == null) {
+            if (binding.getClient.getText().toString().isEmpty() || customerData == null) {
                 binding.getClient.setError(getString(R.string.select_customer_error));
                 Toast.makeText(this, getString(R.string.select_customer_toast), Toast.LENGTH_LONG).show();
                 return false;
             } else {
                 customerData = App.customer;
             }
-
         } else {
             customerData = null;
+        }
+        if (binding.supplierCheckBox.isChecked()) {
+            if (binding.getsupplier.getText().toString().isEmpty() || supplierData == null) {
+                binding.getsupplier.setError(getString(R.string.select_supplier_error));
+                Toast.makeText(this, getString(R.string.select_supplier_toast), Toast.LENGTH_LONG).show();
+                return false;
+            }
+        } else {
+            supplierData = null;
         }
         if (binding.movesCheckBox.isChecked()) {
             selectedMove = moveTypesResponse.getData().get(binding.moveSpinner.getSelectedItemPosition());
@@ -451,7 +554,7 @@ public class CashierMovesReport extends AppCompatActivity implements MyDialogClo
                 return false;
             }
         if (binding.userCheckbox.isChecked()) {
-            selectedWorker =  workersResponse.getData().get(binding.userSpinner.getSelectedItemPosition());
+            selectedWorker = workersResponse.getData().get(binding.userSpinner.getSelectedItemPosition());
         } else
             selectedWorker = null;
 

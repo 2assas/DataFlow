@@ -4,16 +4,16 @@ import static com.dataflowstores.dataflow.App.selectedFoundation;
 
 import android.util.Log;
 
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.dataflowstores.dataflow.App;
-import com.dataflowstores.dataflow.webService.ServiceGenerator;
 import com.dataflowstores.dataflow.pojo.receipts.ReceiptModel;
 import com.dataflowstores.dataflow.pojo.receipts.ReceiptResponse;
 import com.dataflowstores.dataflow.pojo.users.CustomerBalance;
+import com.dataflowstores.dataflow.utils.SingleLiveEvent;
 import com.dataflowstores.dataflow.webService.ApiClient;
 import com.dataflowstores.dataflow.webService.Constants;
+import com.dataflowstores.dataflow.webService.ServiceGenerator;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -29,23 +29,23 @@ import retrofit2.HttpException;
 
 public class ReceiptsVM extends ViewModel {
 
-    public MutableLiveData<ReceiptResponse> receiptResponseMutableLiveData= new MutableLiveData<>();
-    public MutableLiveData<ReceiptModel> receiptModelMutableLiveData= new MutableLiveData<>();
-    public MutableLiveData<CustomerBalance> customerBalanceLiveData = new MutableLiveData<>();
-    public MutableLiveData<String> toastErrorMutableLiveData = new MutableLiveData<>();
+    public SingleLiveEvent<ReceiptResponse> receiptResponseMutableLiveData = new SingleLiveEvent<>();
+    public SingleLiveEvent<ReceiptModel> receiptModelMutableLiveData = new SingleLiveEvent<>();
+    public SingleLiveEvent<CustomerBalance> customerBalanceLiveData = new SingleLiveEvent<>();
+    public SingleLiveEvent<String> toastErrorMutableLiveData = new SingleLiveEvent<>();
 
     ApiClient apiClient = ServiceGenerator.tokenService(
             ApiClient.class, Constants.BASE_URL);
 
 
     public void createReceipt(long BranchISN, String uuid, int CashType, int SaleType, int DealerType, int DealerBranchISN, long DealerISN, long SalesManBranchISN,
-            long SalesManISN, String HeaderNotes, double TotalLinesValue, double ServiceValue, double ServicePer, double DeliveryValue,
-            double TotalValueAfterServices,double BasicDiscountVal, double BasicDiscountPer, double TotalValueAfterDisc,double BasicTaxVal,
-            double BasicTaxPer,double TotalValueAfterTax, double NetValue, double PaidValue, double RemainValue, long SafeDepositeBranchISN, long SafeDepositeISN, long BankBranchISN,
-            long BankISN, String TableNumber, String DeliveryPhone, String DeliveryAddress, long WorkerCBranchISN, long WorkerCISN, String CheckNumber,
+                              long SalesManISN, String HeaderNotes, double TotalLinesValue, double ServiceValue, double ServicePer, double DeliveryValue,
+                              double TotalValueAfterServices, double BasicDiscountVal, double BasicDiscountPer, double TotalValueAfterDisc, double BasicTaxVal,
+                              double BasicTaxPer, double TotalValueAfterTax, double NetValue, double PaidValue, double RemainValue, long SafeDepositeBranchISN, long SafeDepositeISN, long BankBranchISN,
+                              long BankISN, String TableNumber, String DeliveryPhone, String DeliveryAddress, long WorkerCBranchISN, long WorkerCISN, String CheckNumber,
             String CheckDueDate,long CheckBankBranchISN, long CheckBankISN, int createSource, float latitude, float longitude){
 
-        Observable<ReceiptResponse> receiptResponseObservable = apiClient.createReceipt(BranchISN,uuid,CashType,SaleType,DealerType, DealerBranchISN,DealerISN,SalesManBranchISN,SalesManISN,
+        Observable<ReceiptResponse> receiptResponseObservable = apiClient.createReceipt(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),BranchISN,uuid,CashType,SaleType,DealerType, DealerBranchISN,DealerISN,SalesManBranchISN,SalesManISN,
                 HeaderNotes, TotalLinesValue, ServiceValue, ServicePer, DeliveryValue, TotalValueAfterServices, BasicDiscountVal, BasicDiscountPer, TotalValueAfterDisc,
                 BasicTaxVal, BasicTaxPer, TotalValueAfterTax,NetValue,PaidValue,RemainValue, SafeDepositeBranchISN, SafeDepositeISN, BankBranchISN, BankISN, TableNumber,DeliveryPhone,DeliveryAddress,WorkerCBranchISN,
                 WorkerCISN, CheckNumber,CheckDueDate,CheckBankBranchISN,CheckBankISN, createSource, latitude, longitude, App.currentUser.getWorkerName(),
@@ -60,7 +60,17 @@ public class ReceiptsVM extends ViewModel {
                 App.currentUser.getLogIn_WSName(),
                 App.currentUser.getLogIn_CS(),
                 App.currentUser.getLogIn_VN(),
-                App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread());
+                App.currentUser.getLogIn_FAlternative()
+                , App.currentUser.getMobileSalesMaxDiscPer()
+                , App.currentUser.getShiftSystemActivate()
+                , App.currentUser.getLogIn_ShiftBranchISN()
+                , App.currentUser.getLogIn_ShiftISN()
+                , App.currentUser.getLogIn_Spare1()
+                , App.currentUser.getLogIn_Spare2()
+                , App.currentUser.getLogIn_Spare3()
+                , App.currentUser.getLogIn_Spare4()
+                , App.currentUser.getLogIn_Spare5()
+                , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread());
 
         receiptResponseObservable.subscribe(new Observer<ReceiptResponse>() {
             @Override
@@ -101,7 +111,7 @@ public class ReceiptsVM extends ViewModel {
     }
     public void getReceipt(long branchISN, String uuid, String moveId, long workerCBranchISN, long workerCISN, int permission){
 
-        Observable<ReceiptModel> receiptModelObservable = apiClient.getReceipt(branchISN, uuid, moveId, workerCBranchISN,workerCISN,permission,selectedFoundation,
+        Observable<ReceiptModel> receiptModelObservable = apiClient.getReceipt(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),branchISN, uuid, moveId, workerCBranchISN,workerCISN,permission,selectedFoundation,
                         App.currentUser.getLogIn_BISN(),
                         App.currentUser.getLogIn_UID(),
                         App.currentUser.getLogIn_WBISN(),
@@ -112,7 +122,17 @@ public class ReceiptsVM extends ViewModel {
                         App.currentUser.getLogIn_WSName(),
                         App.currentUser.getLogIn_CS(),
                         App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative())
+                        App.currentUser.getLogIn_FAlternative()
+                        , App.currentUser.getMobileSalesMaxDiscPer()
+                        , App.currentUser.getShiftSystemActivate()
+                        , App.currentUser.getLogIn_ShiftBranchISN()
+                        , App.currentUser.getLogIn_ShiftISN()
+                        , App.currentUser.getLogIn_Spare1()
+                        , App.currentUser.getLogIn_Spare2()
+                        , App.currentUser.getLogIn_Spare3()
+                        , App.currentUser.getLogIn_Spare4()
+                        , App.currentUser.getLogIn_Spare5()
+                        , App.currentUser.getLogIn_Spare6())
                 .subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread());
         receiptModelObservable.subscribe(new Observer<ReceiptModel>() {
             @Override
@@ -148,8 +168,9 @@ public class ReceiptsVM extends ViewModel {
             }
         });
     }
-    public void getCustomerBalance(String uuid, String dealerISN, String branchISN, String dealerType, String dealerName) {
-        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(uuid, dealerISN, branchISN, dealerType,selectedFoundation,
+
+    public void getCustomerBalance(String uuid, String dealerISN, String branchISN, String dealerType, String moveBranchISN, String moveISN, String remainValue, String netValue, String moveType) {
+        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid, dealerISN, branchISN, dealerType, selectedFoundation,
                 App.currentUser.getLogIn_BISN(),
                 App.currentUser.getLogIn_UID(),
                 App.currentUser.getLogIn_WBISN(),
@@ -160,7 +181,19 @@ public class ReceiptsVM extends ViewModel {
                 App.currentUser.getLogIn_WSName(),
                 App.currentUser.getLogIn_CS(),
                 App.currentUser.getLogIn_VN(),
-                App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                App.currentUser.getLogIn_FAlternative()
+                , moveBranchISN, moveISN, remainValue, netValue, moveType, null, App.currentUser.getInvoiceCurrentBalanceTimeInInvoice()
+                , App.currentUser.getMobileSalesMaxDiscPer()
+                , App.currentUser.getShiftSystemActivate()
+                , App.currentUser.getLogIn_ShiftBranchISN()
+                , App.currentUser.getLogIn_ShiftISN()
+                , App.currentUser.getLogIn_Spare1()
+                , App.currentUser.getLogIn_Spare2()
+                , App.currentUser.getLogIn_Spare3()
+                , App.currentUser.getLogIn_Spare4()
+                , App.currentUser.getLogIn_Spare5()
+                , App.currentUser.getLogIn_Spare6()
+        ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observer<CustomerBalance> observer = new Observer<CustomerBalance>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {

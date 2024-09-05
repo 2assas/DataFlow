@@ -1,5 +1,9 @@
 package com.dataflowstores.dataflow.ui.cashing;
 
+import static com.dataflowstores.dataflow.App.editingPos;
+import static com.dataflowstores.dataflow.App.product;
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -28,9 +32,11 @@ import com.dataflowstores.dataflow.databinding.ProductScreenCashingBinding;
 import com.dataflowstores.dataflow.pojo.product.MeasureUnit;
 import com.dataflowstores.dataflow.pojo.product.ProductData;
 import com.dataflowstores.dataflow.pojo.report.ItemAvailableQuantity;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.products.AvailableProductAdapter;
 import com.dataflowstores.dataflow.ui.products.AvailableProductDialog;
+import com.dataflowstores.dataflow.ui.products.addQuantity.AddQuantityFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,7 +44,7 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Objects;
 
-public class ProductScreenCashing extends AppCompatActivity implements AvailableProductAdapter.ItemClickListener {
+public class ProductScreenCashing extends BaseActivity implements AvailableProductAdapter.ItemClickListener, AddQuantityFragment.DialogListener {
     ProductScreenCashingBinding binding;
     MeasureUnit measureUnit = new MeasureUnit();
     Calendar myCalendar = Calendar.getInstance();
@@ -50,9 +56,13 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
     String uuid;
     ProductData productDataOriginal;
     int moveType = 16;
+    double illQuantity = 0;
+    boolean firstAdding = true;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.product_screen_cashing);
         if (savedInstanceState != null) {
@@ -77,12 +87,24 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
     @SuppressLint("SetTextI18n")
     public void fillViews() {
         productVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
-        productDataOriginal = App.product;
+        if (App.selectedProducts.size() > 0 && App.isEditing) {
+            productDataOriginal = product.copy();
+        }
+        if (Objects.equals(product.getShowQuanSumAdd(), "0")) {
+            binding.quantityButton.setVisibility(View.GONE);
+        }
         binding.textView10.setText(App.product.getItemName());
-        binding.orderNotes.setText(App.product.getItemNotes());
-        binding.branchISN.setText(Integer.toString(App.product.getBranchISN()));
+        if (product.getItemNotes().isEmpty()) {
+            binding.orderNotes.setVisibility(View.GONE);
+            binding.textView15.setVisibility(View.GONE);
+        } else
+            binding.orderNotes.setText(App.product.getItemNotes());
+        if (product.getIllustrativeQuantity() != 0) {
+            binding.illQuantity.illQuantity.setText(product.getIllustrativeQuantity() + "");
+        }
+        binding.itemBranchISN.setText(App.product.getItemISNBranch() + "");
         uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        binding.item.setText(Integer.toString(App.product.getItemISN()));
+        binding.item.setText(App.product.getItemISN() + "-" + product.getBranchISN());
         binding.itemBranchISN.setText(Long.toString(App.product.getItemISNBranch()));
         if (moveType != 14) {
             binding.ToStoresList.setVisibility(View.GONE);
@@ -92,15 +114,23 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
             binding.quantityTxt.setText("الكمية الحالية");
         if (App.product.getQuantity() != 0) {
             quantity = App.product.getQuantity();
-            binding.textView26.setText(String.format(Locale.US, "%.2f", quantity) + "");
+            binding.textView26.setText(String.format(Locale.US, "%.3f", quantity) + "");
+            Log.e("checkTotalQuantity", "setQuantity " + quantity + " -12- ");
+
         } else if (!Objects.equals(App.product.getxQuanFromBarcode(), "0") && !App.isEditing) {
             quantity = Float.parseFloat(App.product.getxQuanFromBarcode());
+            product.setQuantity(quantity);
             binding.textView26.setText(String.format(Locale.US, "%.3f", quantity) + "");
+            Log.e("checkTotalQuantity", "setQuantity " + quantity + " -11- ");
         } else
             App.product.setQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
+        Log.e("checkTotalQuantity", "setQuantity " + product.getQuantity() + " -1- ");
         App.product.setActualQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
         Log.e("checkPrice", App.product.getPriceTotal() + "");
         binding.close.setOnClickListener(view -> {
+            if (App.isEditing) {
+                App.selectedProducts.set(editingPos, productDataOriginal);
+            }
             Intent intent = new Intent(this, SearchProductsCashing.class);
             intent.putExtra("moveType", moveType);
             startActivity(intent);
@@ -110,8 +140,10 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
             if (App.product.getMeasureUnits().get(i).getBasicMeasureUnit() == 1)
                 App.product.setBasicMeasureUnit(App.product.getMeasureUnits().get(i));
         }
-
+        addQuantityButton();
+        illustrativeQuantity();
     }
+
 
     private void checkAvailableQuantity() {
         binding.availableQuantity.setOnClickListener(view -> {
@@ -301,7 +333,7 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
             if (!App.isEditing && !App.product.getxBarCodeExpireDate().isEmpty()) {
                 binding.expirePicker.setText(App.product.getxBarCodeExpireDate());
                 App.product.setSelectedExpireDate(App.product.getxBarCodeExpireDate());
-                dateValidation=true;
+                dateValidation = true;
             }
         }
         if (App.product.getSerial()) {
@@ -332,6 +364,7 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
                 App.product.setSelectedUnit(App.product.getMeasureUnits().get(i));
                 App.product.setPriceItem(measureUnit.getPrice());
             }
+
             @SuppressLint("SetTextI18n")
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -339,6 +372,14 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
                 App.product.setSelectedUnit(App.product.getMeasureUnits().get(0));
             }
         });
+        if (App.product.getSelectedUnit() != null) {
+            for (int i = 0; i < App.product.getMeasureUnits().size(); i++) {
+                if (App.product.getMeasureUnits().get(i) == App.product.getSelectedUnit()) {
+                    binding.measureUnitSpinner.setSelection(i);
+                }
+                Log.e("checkDefault", "selected 1");
+            }
+        }
         if (!App.isEditing && App.product.getxBarCodeMeasureUnitBranchISN() != 0 && App.product.getxBarCodeMeasureUnitISN() != 0 && !Objects.equals(App.product.getxBarCodeMeasureUnitName(), "")) {
             for (int i = 0; i < App.product.getMeasureUnits().size(); i++) {
                 if (App.product.getMeasureUnits().get(i).getMeasureUnitBranchISN() == App.product.getxBarCodeMeasureUnitBranchISN() &&
@@ -359,7 +400,6 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
             if (moveType != 14)
                 for (int i = 0; i < App.storesCashing.getData().size(); i++) {
                     stores.add(App.storesCashing.getData().get(i).getStoreName());
-
                 }
             else
                 for (int i = 0; i < App.stores.getData().size(); i++) {
@@ -391,7 +431,12 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
                             pos = i;
                             break;
                         }
-
+                    if (moveType == 21)
+                        if (App.storesCashing.getData().get(i).getStore_ISN() == App.currentUser.getStockInDefaultStoreISN()
+                                && App.storesCashing.getData().get(i).getBranchISN() == App.currentUser.getStockInDefaultStoreBranchISN()) {
+                            pos = i;
+                            break;
+                        }
                     if (moveType == 15)
                         if (App.storesCashing.getData().get(i).getStore_ISN() == App.currentUser.getItemConfiguringDefaultStoreISN()
                                 && App.storesCashing.getData().get(i).getBranchISN() == App.currentUser.getItemConfiguringDefaultStoreBranchISN()) {
@@ -447,8 +492,17 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
                         App.product.setSelectedStore(App.storesCashing.getData().get(0));
                     else
                         App.product.setSelectedStore(App.stores.getData().get(0));
-                }}
+                }
+            }
         });
+        if (App.product.getSelectedStore() != null) {
+            for (int i = 0; i < App.stores.getData().size(); i++) {
+                if (App.stores.getData().get(i) == App.product.getSelectedStore()) {
+                    binding.measureUnitSpinner.setSelection(i);
+                }
+                Log.e("checkDefault", "selected 1");
+            }
+        }
 
         if (App.currentUser.getPermission() == 1) {
             binding.storesList.setSelection(pos);
@@ -503,14 +557,15 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
 
     public void checkSelected() {
         if (App.product.getSelectedStore() != null) {
-            for (int i = 0; i < App.storesCashing.getData().size(); i++) {
-                if (App.product.getSelectedStore().getStore_ISN() == App.storesCashing.getData().get(i).getStore_ISN()
-                        && App.product.getSelectedStore().getBranchISN() == App.storesCashing.getData().get(i).getBranchISN() && App.currentUser.getPermission() == 1) {
-                    binding.storesList.setSelection(i);
-                } else {
-                    binding.storesList.setSelection(0);
+            Log.e("checkSelectedStore", "not null");
+            if (App.currentUser.getPermission() == 1) {
+                for (int i = 0; i < App.storesCashing.getData().size(); i++) {
+                    if (App.product.getSelectedStore().getStore_ISN() == App.storesCashing.getData().get(i).getStore_ISN()
+                            && App.product.getSelectedStore().getBranchISN() == App.storesCashing.getData().get(i).getBranchISN() && App.currentUser.getPermission() == 1) {
+                        Log.e("checkSelectedStore", "selected Store = " + App.storesCashing.getData().get(i).getStoreName());
+                        binding.storesList.setSelection(i);
+                    }
                 }
-
             }
         }
         if (App.product.getSelectedToStore() != null && App.currentUser.getPermission() == 1) {
@@ -518,8 +573,6 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
                 if (App.product.getSelectedToStore().getStore_ISN() == App.storesCashing.getData().get(i).getStore_ISN()
                         && App.product.getSelectedToStore().getBranchISN() == App.storesCashing.getData().get(i).getBranchISN() && App.currentUser.getPermission() == 1) {
                     binding.ToStoresList.setSelection(i);
-                } else {
-                    binding.ToStoresList.setSelection(0);
                 }
             }
         }
@@ -529,9 +582,9 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
     public void quantityButtons() {
         binding.plusItem.setOnClickListener(view -> {
             quantity++;
-            App.product.setQuantity(Float.parseFloat(String.format(Locale.US, "%.2f", quantity)));
-            binding.textView26.setText(String.format(Locale.US, "%.2f", quantity) + "");
-            App.product.setActualQuantity(Float.parseFloat(String.format(Locale.US, "%.2f", quantity)));
+            App.product.setQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
+            binding.textView26.setText(String.format(Locale.US, "%.3f", quantity) + "");
+            App.product.setActualQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
         });
         binding.minusItem.setOnClickListener(view -> {
             if (!App.product.getSerial()) {
@@ -542,6 +595,8 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
                     quantity = Float.parseFloat(binding.textView26.getText().toString());
                 binding.textView26.setText(String.format(Locale.US, "%.3f", quantity) + "");
                 App.product.setQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
+                Log.e("checkTotalQuantity", "setQuantity " + product.getQuantity() + " -3- ");
+
                 App.product.setActualQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
             }
         });
@@ -574,6 +629,8 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
                 }
                 App.product.setActualQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
                 App.product.setQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
+                Log.e("checkTotalQuantity", "setQuantity " + product.getQuantity() + " -4- ");
+
             }
 
             @Override
@@ -606,7 +663,7 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
     }
 
     private void addButton() {
-        binding.button.setOnClickListener(view -> {
+        binding.saveProduct.setOnClickListener(view -> {
             if (App.product.getSelectedToStore() != null && App.product.getSelectedStore().getBranchISN() == App.product.getSelectedToStore().getBranchISN()
                     && App.product.getSelectedStore().getStore_ISN() == App.product.getSelectedToStore().getStore_ISN()) {
                 new AlertDialog.Builder(ProductScreenCashing.this).
@@ -616,7 +673,9 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
             } else {
                 App.product.setUserNote(binding.productNote.getText().toString());
                 App.product.setPriceTotal(measureUnit.getPrice() * quantity);
+                App.product.setIllustrativeQuantity(Double.parseDouble(binding.illQuantity.illQuantity.getText().toString()));
                 App.product.setTotalTax((App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax())));
+                product.setAllowStoreMinus(product.getSelectedStore().getAllowCurrentStoreMinus());
                 if (App.product.getSerial() && !binding.serial.getText().toString().isEmpty()) {
                     App.product.setSelectedSerial(binding.serial.getText().toString());
                 }
@@ -643,7 +702,8 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
                         }
                         finish();
                     } else {
-                        if (moveType != 17 && moveType != 12 && moveType != 15) {
+                        Log.e("checkCurrentStore", "storeName= " + product.getSelectedStore().getStoreName() + " storeMinus " + product.getSelectedStore().getStore_ISN());
+                        if (moveType != 17 && moveType != 21 && moveType != 12 && moveType != 15 && (App.currentUser.getAllowStoreMinus() == 1 || App.currentUser.getAllowStoreMinus() == 2 || (App.currentUser.getAllowStoreMinus() == 4 && product.getSelectedStore().getAllowCurrentStoreMinus() == 1))) {
                             minusCheck();
                         } else {
                             if (!App.isEditing) {
@@ -666,17 +726,14 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
                             binding.progress.setVisibility(View.GONE);
                             if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 2) {
                                 String error = response.getMessage();
-                                String errorTitle = "نقص فالمخزن";
                                 if (response.getMessage().equals("Not saved ... please save again")) {
                                     error = "لا يوجد الكمية الكافية من هذا الصنف";
                                 }
-                                if (response.getMessage().equals("Invoice not saved: Data redundancy.") || response.getMessage().equals("WARNING: Duplicate invoice data.")) {
-                                    errorTitle = "تكرار بيانات";
-                                }
-                                new android.app.AlertDialog.Builder(this).setTitle(errorTitle)
+                                new android.app.AlertDialog.Builder(this)
                                         .setMessage(error)
                                         .setCancelable(false)
                                         .setPositiveButton("متابعة", (dialogInterface, i) -> {
+//                                            assas
                                             if (!App.isEditing) {
                                                 App.selectedProducts.add(App.product);
                                                 Intent intent = new Intent(this, SearchProductsCashing.class);
@@ -695,17 +752,14 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
                                             checkoutVM.checkItemMutableLiveData = new MutableLiveData<>();
                                             dialogInterface.dismiss();
                                         }).show();
-                            } else if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 1) {
+                            } else if
+                            (response.getStatus() == 0 && (App.currentUser.getAllowStoreMinus() == 1 || (App.currentUser.getAllowStoreMinus() == 4 && App.product.getSelectedStore().getAllowCurrentStoreMinus() == 1))) {
                                 String error = response.getMessage();
-                                String errorTitle = "نقص فالمخزن";
                                 if (response.getMessage().equals("Not saved ... please save again")) {
                                     error = "لا يوجد الكمية الكافية من هذا الصنف";
                                 }
-                                if (response.getMessage().equals("Invoice not saved: Data redundancy.") || response.getMessage().equals("WARNING: Duplicate invoice data.")) {
-                                    errorTitle = "تكرار بيانات";
-                                }
-                                new android.app.AlertDialog.Builder(this).
-                                        setTitle(errorTitle)
+
+                                new android.app.AlertDialog.Builder(this)
                                         .setMessage(error)
                                         .setCancelable(false)
                                         .setNegativeButton("إلغاء", (dialogInterface, i) -> {
@@ -738,6 +792,12 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        if (App.isEditing) {
+            App.selectedProducts.set(editingPos, productDataOriginal);
+        }
+
+        checkoutVM.compositeDisposable.clear();
+
         Intent intent = new Intent(this, SearchProductsCashing.class);
         intent.putExtra("moveType", moveType);
         startActivity(intent);
@@ -809,6 +869,7 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
         }
         BasicQuantity.add(App.product.getActualQuantity());
         TotalQuantity.add(App.product.getQuantity());
+        Log.e("checkTotalQuantity", product.getQuantity() + " -- ");
         BonusQuantity.add(App.product.getBonusQuantity());
         Price.add(App.product.getPriceItem());
         netPrices.add(App.product.getNetPrice());
@@ -884,7 +945,7 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
                 BasicQuantity, BonusQuantity, TotalQuantity, Price, MeasureUnitBranchISN, MeasureUnitISN, BasicMeasureUnitBranchISN, BasicMeasureUnitISN, ItemSerial,
                 ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN, SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes,
                 netPrices, basicMeasureUnitQuantity, expireDateBool, colorsBool, seasonsBool, sizesBool, serialBool, group1Bool, group2Bool, serviceItem, itemTax, itemTaxValue,
-                itemName, discount1, App.currentUser.getAllowStoreMinus(), allowStoreMinusConfirm);
+                itemName, discount1, App.currentUser.getAllowStoreMinus(), allowStoreMinusConfirm, App.product.getSelectedStore().getAllowCurrentStoreMinus());
         Log.e("checkout", " checkinnnggg");
     }
 
@@ -940,6 +1001,70 @@ public class ProductScreenCashing extends AppCompatActivity implements Available
         if (!item.getSerial().isEmpty() && App.product.getSerial()) {
             binding.serial.setText(item.getSerial());
             App.product.setSelectedSerial(item.getSerial());
+        }
+    }
+
+    private void illustrativeQuantity() {
+        if (App.currentUser.getIllustrativeQuantity() == 1) {
+            binding.illQuantity.getRoot().setVisibility(View.VISIBLE);
+            binding.illQuantity.plusButton.setOnClickListener(v -> {
+                double illQuan = Double.parseDouble(binding.illQuantity.illQuantity.getText().toString());
+                illQuan++;
+                illQuantity = illQuan;
+                binding.illQuantity.illQuantity.setText(illQuantity + "");
+            });
+            binding.illQuantity.minusButton.setOnClickListener(v -> {
+                if (illQuantity > 0) {
+                    double illQuan = Double.parseDouble(binding.illQuantity.illQuantity.getText().toString());
+                    illQuan--;
+                    illQuantity = illQuan;
+                    binding.illQuantity.illQuantity.setText(illQuantity + "");
+                }
+            });
+        } else
+            binding.illQuantity.getRoot().setVisibility(View.GONE);
+    }
+
+    private void addQuantityButton() {
+        if (Objects.equals(product.getShowQuanSumAdd(), "0")) {
+            binding.quantityButton.setVisibility(View.GONE);
+        }
+        binding.quantityButton.setOnClickListener(v -> {
+            binding.quantityFragment.setVisibility(View.VISIBLE);
+            AddQuantityFragment addQuantityFragment = new AddQuantityFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString("startIndex", product.getQuanSumAddStartIndex());
+            bundle.putString("length", product.getQuanSumAddLength());
+            bundle.putString("divideOn", product.getQuanSumAddDevideOn());
+            addQuantityFragment.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.quantityFragment, addQuantityFragment)
+                    .addToBackStack(null)
+                    .commit();
+            addQuantityFragment.setListener(this);
+        });
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onDialogDismissed(double totalQuantity, int count) {
+        binding.quantityFragment.setVisibility(View.GONE);
+
+        if (totalQuantity > 0) {
+            if (firstAdding) {
+                quantity = 0;
+                firstAdding = false;
+            }
+            quantity += totalQuantity;
+            App.product.setQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
+            binding.textView26.setText(String.format(Locale.US, "%.3f", quantity) + "");
+            App.product.setActualQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
+            illQuantity += count;
+            if (product.getQuanSumAddWriteToNotes() == 1)
+                binding.productNote.setText("بعدد " + "(" + illQuantity + ")");
+            if (App.currentUser.getIllustrativeQuantity() == 1) {
+                binding.illQuantity.illQuantity.setText(illQuantity + "");
+            }
         }
     }
 }

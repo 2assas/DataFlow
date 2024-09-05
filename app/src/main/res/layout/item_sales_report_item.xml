@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="وصف الكمية"
-                android:textColor="@color/black"
+
                 android:textSize="11sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/view111"
@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="الإجمالى"
-                android:textColor="@color/black"
+
                 android:textSize="11sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/view15"
@@ -117,7 +117,7 @@
                 android:gravity="center"
                 android:text="الحركة"
                 android:textSize="11sp"
-                android:textColor="@color/black"
+
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/view122"
                 app:layout_constraintStart_toEndOf="@+id/view111"
@@ -140,7 +140,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="الصنف"
-                android:textColor="@color/black"
+
                 android:textSize="11sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/view12"
@@ -163,7 +163,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="عدد الفواتير"
-                android:textColor="@color/black"
+
                 android:textSize="11sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/view11"
@@ -188,7 +188,7 @@
                 android:gravity="center"
                 android:textSize="12sp"
                 android:text="م"
-                android:textColor="@color/black"
+
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/view14"
                 app:layout_constraintStart_toEndOf="@+id/view11"

@@ -33,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -41,9 +42,10 @@ import androidx.core.content.FileProvider;
 
 import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
-import com.dataflowstores.dataflow.utils.Conts;
 import com.dataflowstores.dataflow.utils.DeviceReceiver;
+import com.dataflowstores.dataflow.webService.Constants;
 import com.google.android.material.snackbar.Snackbar;
 
 import net.posprinter.posprinterface.IMyBinder;
@@ -61,7 +63,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class PrintScreen extends AppCompatActivity implements View.OnClickListener {
+public class PrintScreen extends BaseActivity implements View.OnClickListener {
     public static String DISCONNECT = "com.posconsend.net.disconnetct";
     /*
     let the printer print bitmap
@@ -111,6 +113,7 @@ public class PrintScreen extends AppCompatActivity implements View.OnClickListen
     ImageView printImg, invoicePic, sharePdf;
     Receiver netReciever;
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,9 +131,8 @@ public class PrintScreen extends AppCompatActivity implements View.OnClickListen
                 initView();
                 setlistener();
                 netReciever = new Receiver();
-                registerReceiver(netReciever, new IntentFilter(PrintScreen.DISCONNECT));
-//        Tiny.getInstance().init(getApplication());
-                SharedPreferences prefs = getSharedPreferences("SavePrinter", MODE_PRIVATE);
+                registerReceiver(netReciever, new IntentFilter(PrintScreen.DISCONNECT), Context.RECEIVER_NOT_EXPORTED);
+                SharedPreferences prefs = getSharedPreferences("AppShared", MODE_PRIVATE);
                 String printerMac = prefs.getString("printerMac", "");
                 Log.e("checkPrinter", printerMac + "s ss s");
                 showET.setText(printerMac);
@@ -140,6 +142,7 @@ public class PrintScreen extends AppCompatActivity implements View.OnClickListen
                         connetBle();
                     }
                 }, 1000);
+
             } catch (Exception ex) {
                 Log.e("Exception", ex.toString());
             }
@@ -454,7 +457,7 @@ public class PrintScreen extends AppCompatActivity implements View.OnClickListen
                     return;
                 }
             }
-            startActivityForResult(intent, Conts.ENABLE_BLUETOOTH);
+            startActivityForResult(intent, Constants.ENABLE_BLUETOOTH);
         } else {
             showblueboothlist();
         }
@@ -521,7 +524,8 @@ public class PrintScreen extends AppCompatActivity implements View.OnClickListen
                 dialog.cancel();
                 showET.setText(mac);
                 App.lastConnected = mac;
-                @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = getSharedPreferences("SavePrinter", MODE_PRIVATE).edit();
+                @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = getSharedPreferences("AppShared", MODE_PRIVATE).edit();
+
                 editor.putString("printerMac", mac);
                 editor.apply();
                 //Log.i("TAG", "mac="+mac);
@@ -553,7 +557,7 @@ public class PrintScreen extends AppCompatActivity implements View.OnClickListen
                 dialog.cancel();
                 showET.setText(mac);
                 App.lastConnected = mac;
-                @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = getSharedPreferences("SavePrinter", MODE_PRIVATE).edit();
+                @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = getSharedPreferences("AppShared", MODE_PRIVATE).edit();
                 editor.putString("printerMac", mac);
                 editor.apply();
                 Log.i("TAG", "mac=" + mac);

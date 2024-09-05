@@ -2,62 +2,98 @@ package com.dataflowstores.dataflow.ViewModels;
 
 import static com.dataflowstores.dataflow.App.selectedFoundation;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.pojo.product.Product;
 import com.dataflowstores.dataflow.pojo.product.ProductData;
+import com.dataflowstores.dataflow.pojo.product.SearchProductResponse;
 import com.dataflowstores.dataflow.pojo.report.StoreReportModel;
 import com.dataflowstores.dataflow.pojo.searchItemPrice.ItemPriceResponse;
+import com.dataflowstores.dataflow.utils.SearchManager;
+import com.dataflowstores.dataflow.utils.SearchUtility;
+import com.dataflowstores.dataflow.utils.SingleLiveEvent;
 import com.dataflowstores.dataflow.webService.ApiClient;
 import com.dataflowstores.dataflow.webService.Constants;
 import com.dataflowstores.dataflow.webService.ServiceGenerator;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 
-public class  ProductVM extends ViewModel {
-    public MutableLiveData<Product> productMutableLiveData = new MutableLiveData<>();
+public class ProductVM extends ViewModel {
+    public SingleLiveEvent<Product> productMutableLiveData = new SingleLiveEvent<>();
+    public CompositeDisposable compositeDisposable = new CompositeDisposable();
     public MutableLiveData<ArrayList<ProductData>> selectedProductMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<StoreReportModel> availableQuantityLiveData = new MutableLiveData<>();
     public MutableLiveData<ItemPriceResponse> itemPriceResponseMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<String> toastErrorMutableLiveData = new MutableLiveData<>();
-
+    private LiveData<List<SearchProductResponse>> searchResults;
+    private final SearchUtility searchUtility = new SearchUtility();
+    private final SearchManager searchManager = new SearchManager();
     ApiClient apiClient = ServiceGenerator.tokenService(
             ApiClient.class, Constants.BASE_URL);
 
 
-    public void getProduct(String productName, String uuid, String serial, int moveType){
-        if(App.customer.getDealerName()==null){
-            Observable<Product> productObservable = apiClient.getProduct(productName, uuid, App.priceType.getBranchISN(), App.priceType.getPricesType_ISN(), App.currentUser.getAllowSpecificDealersPrices(),(int) App.currentUser.getBranchISN(),moveType, serial,selectedFoundation,
-                            App.currentUser.getLogIn_BISN(),
-                            App.currentUser.getLogIn_UID(),
-                            App.currentUser.getLogIn_WBISN(),
-                            App.currentUser.getLogIn_WISN(),
-                            App.currentUser.getLogIn_WName(),
-                            App.currentUser.getLogIn_WSBISN(),
-                            App.currentUser.getLogIn_WSISN(),
-                            App.currentUser.getLogIn_WSName(),
-                            App.currentUser.getLogIn_CS(),
-                            App.currentUser.getLogIn_VN(),
-                            App.currentUser.getLogIn_FAlternative())
-                    .subscribeOn(Schedulers.io()).subscribeOn(AndroidSchedulers.mainThread());
-            productObservable.subscribe(product -> {
+    public ProductVM() {
+        Observable<String> searchObservable = searchManager.getSearchObservable();
+        searchResults = SearchUtility.searchQuery(searchObservable, apiClient, App.uuid);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        Log.e("checkViewModel", "cleared");
+    }
+
+    @SuppressLint("CheckResult")
+    public void getProduct(String productName, String uuid, String serial, int moveType, String itemCode) {
+        if (App.customer.getDealerName() == null) {
+            Observable<Product> productObservable = apiClient.getProduct(App.currentUser.getIllustrativeQuantity(), App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(), App.currentUser.getVendorID(), productName, uuid, App.priceType.getBranchISN(), App.priceType.getPricesType_ISN(), App.currentUser.getAllowSpecificDealersPrices(), (int) App.currentUser.getBranchISN(), moveType, serial, selectedFoundation,
+                    App.currentUser.getLogIn_BISN(),
+                    App.currentUser.getLogIn_UID(),
+                    App.currentUser.getLogIn_WBISN(),
+                    App.currentUser.getLogIn_WISN(),
+                    App.currentUser.getLogIn_WName(),
+                    App.currentUser.getLogIn_WSBISN(),
+                    App.currentUser.getLogIn_WSISN(),
+                    App.currentUser.getLogIn_WSName(),
+                    App.currentUser.getLogIn_CS(),
+                    App.currentUser.getLogIn_VN(),
+                    App.currentUser.getLogIn_FAlternative()
+                    , App.currentUser.getMobileSalesMaxDiscPer()
+                    , App.currentUser.getShiftSystemActivate()
+                    , App.currentUser.getLogIn_ShiftBranchISN()
+                    , App.currentUser.getLogIn_ShiftISN()
+                    , App.currentUser.getLogIn_Spare1()
+                    , App.currentUser.getLogIn_Spare2()
+                    , App.currentUser.getLogIn_Spare3()
+                    , App.currentUser.getLogIn_Spare4()
+                    , App.currentUser.getLogIn_Spare5()
+                    , App.currentUser.getLogIn_Spare6()
+                    , itemCode
+            );
+            Disposable productDisposable = productObservable.subscribeOn(Schedulers.io()).subscribeOn(AndroidSchedulers.mainThread()).subscribe(product -> {
+                Log.e("checkProduct", "post value triggered");
                 productMutableLiveData.postValue(product);
             }, throwable -> {
+                Log.e("checkProduct", "post value error");
                 if (throwable instanceof IOException) {
                     //handle network error
                     toastErrorMutableLiveData.postValue("No Internet Connection!");
@@ -70,45 +106,76 @@ public class  ProductVM extends ViewModel {
                     toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
                 }
             });
+            compositeDisposable.add(productDisposable);
         }else{
-            Observable<Product> productObservable = apiClient.getProductCustomer(productName, uuid, App.priceType.getBranchISN(), App.priceType.getPricesType_ISN(), App.customer.getDealerType(), App.customer.getDealer_ISN(), App.customer.getBranchISN(), (int) App.currentUser.getBranchISN(), App.currentUser.getAllowSpecificDealersPrices(),moveType,serial,selectedFoundation,
-                            App.currentUser.getLogIn_BISN(),
-                            App.currentUser.getLogIn_UID(),
-                            App.currentUser.getLogIn_WBISN(),
-                            App.currentUser.getLogIn_WISN(),
-                            App.currentUser.getLogIn_WName(),
-                            App.currentUser.getLogIn_WSBISN(),
-                            App.currentUser.getLogIn_WSISN(),
-                            App.currentUser.getLogIn_WSName(),
-                            App.currentUser.getLogIn_CS(),
-                            App.currentUser.getLogIn_VN(),
-                            App.currentUser.getLogIn_FAlternative())
-                    .subscribeOn(Schedulers.io()).subscribeOn(AndroidSchedulers.mainThread());
-            productObservable.subscribe(product -> {
-                productMutableLiveData.postValue(product);
-            },throwable -> {
-                if (throwable instanceof IOException) {
-                    //handle network error
-                    toastErrorMutableLiveData.postValue("No Internet Connection!");
-                } else if (throwable instanceof HttpException) {
-                    ResponseBody errorBody = Objects.requireNonNull(((HttpException) throwable).response()).errorBody();
-                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
-                    //handle HTTP error response code
-                } else {
-                    //handle other exceptions
-                    toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
-                }
-            });
+            Observable<Product> productObservable = apiClient.getProductCustomer(App.currentUser.getIllustrativeQuantity(), App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(), App.currentUser.getVendorID(), productName, uuid, App.priceType.getBranchISN(),
+                    App.priceType.getPricesType_ISN(), App.customer.getDealerType(), App.customer.getDealer_ISN(),
+                    App.customer.getBranchISN(), (int) App.currentUser.getBranchISN(), App.currentUser.getAllowSpecificDealersPrices()
+                    , moveType, serial, selectedFoundation,
+                    App.currentUser.getLogIn_BISN(),
+                    App.currentUser.getLogIn_UID(),
+                    App.currentUser.getLogIn_WBISN(),
+                    App.currentUser.getLogIn_WISN(),
+                    App.currentUser.getLogIn_WName(),
+                    App.currentUser.getLogIn_WSBISN(),
+                    App.currentUser.getLogIn_WSISN(),
+                    App.currentUser.getLogIn_WSName(),
+                    App.currentUser.getLogIn_CS(),
+                    App.currentUser.getLogIn_VN(),
+                    App.currentUser.getLogIn_FAlternative()
+                    , App.currentUser.getMobileSalesMaxDiscPer()
+                    , App.currentUser.getShiftSystemActivate()
+                    , App.currentUser.getLogIn_ShiftBranchISN()
+                    , App.currentUser.getLogIn_ShiftISN()
+                    , App.currentUser.getLogIn_Spare1()
+                    , App.currentUser.getLogIn_Spare2()
+                    , App.currentUser.getLogIn_Spare3()
+                    , App.currentUser.getLogIn_Spare4()
+                    , App.currentUser.getLogIn_Spare5()
+                    , App.currentUser.getLogIn_Spare6());
+
+            Disposable productDisposable =
+                    productObservable.subscribeOn(Schedulers.io()).subscribeOn(AndroidSchedulers.mainThread()).subscribe(product -> {
+                        Log.e("checkProduct", "post value triggered2");
+
+                        productMutableLiveData.postValue(product);
+                    }, throwable -> {
+                        Log.e("checkProduct", "post value error2");
+
+                        if (throwable instanceof IOException) {
+                            //handle network error
+                            toastErrorMutableLiveData.postValue("No Internet Connection!");
+                        } else if (throwable instanceof HttpException) {
+                            ResponseBody errorBody = Objects.requireNonNull(((HttpException) throwable).response()).errorBody();
+                            toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                            //handle HTTP error response code
+                        } else {
+                            //handle other exceptions
+                            toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+                        }
+                    });
+            compositeDisposable.add(productDisposable);
         }
     }
-    public void setSelectedProducts(ArrayList<ProductData> products){
+
+    public LiveData<List<SearchProductResponse>> getSearchResults() {
+        return searchResults;
+    }
+
+    // Method to set search query from your view or other components
+    public void setSearchQuery(String query) {
+        searchManager.setSearchQuery(query);
+    }
+
+
+    public void setSelectedProducts(ArrayList<ProductData> products) {
         selectedProductMutableLiveData.setValue(products);
         Log.e("checkPost", "done");
     }
 
-    public void checkAvailableQuantity(String uuid, Integer storeBranchISN, Integer storeISN, Integer itemBranchISN, Integer itemISN, Integer moveType){
-        Observable<StoreReportModel> storeReportModelObservable= apiClient.getStoresReport(uuid, storeBranchISN, storeISN,itemBranchISN, itemISN, 1,null, moveType,App.currentUser.getWorkerName(),
-                        App.currentUser.getUserName(),App.currentUser.getWorkStationName(),String.valueOf( App.currentUser.getWorkStationISN()),String.valueOf( App.currentUser.getWorkerBranchISN()),selectedFoundation,
+    public void checkAvailableQuantity(String uuid, Integer storeBranchISN, Integer storeISN, Integer itemBranchISN, Integer itemISN, Integer moveType) {
+        Observable<StoreReportModel> storeReportModelObservable = apiClient.getStoresReport(App.currentUser.getIllustrativeQuantity(), App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(), App.currentUser.getVendorID(), uuid, storeBranchISN, storeISN, itemBranchISN, itemISN, 1, null, moveType, App.currentUser.getWorkerName(),
+                        App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()), selectedFoundation,
                         App.currentUser.getLogIn_BISN(),
                         App.currentUser.getLogIn_UID(),
                         App.currentUser.getLogIn_WBISN(),
@@ -119,7 +186,17 @@ public class  ProductVM extends ViewModel {
                         App.currentUser.getLogIn_WSName(),
                         App.currentUser.getLogIn_CS(),
                         App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative())
+                        App.currentUser.getLogIn_FAlternative()
+                        , App.currentUser.getMobileSalesMaxDiscPer()
+                        , App.currentUser.getShiftSystemActivate()
+                        , App.currentUser.getLogIn_ShiftBranchISN()
+                        , App.currentUser.getLogIn_ShiftISN()
+                        , App.currentUser.getLogIn_Spare1()
+                        , App.currentUser.getLogIn_Spare2()
+                        , App.currentUser.getLogIn_Spare3()
+                        , App.currentUser.getLogIn_Spare4()
+                        , App.currentUser.getLogIn_Spare5()
+                        , App.currentUser.getLogIn_Spare6())
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         storeReportModelObservable.subscribe(new Observer<StoreReportModel>() {
@@ -158,9 +235,9 @@ public class  ProductVM extends ViewModel {
             }
         });
     }
-    public void getItemPrice(String uuid, int itemBranchISN, int itemISN){
-        Observable<ItemPriceResponse> storeReportModelObservable= apiClient.getItemPrice(uuid,itemBranchISN, itemISN,App.currentUser.getWorkerName(),
-                        App.currentUser.getUserName(),App.currentUser.getWorkStationName(),String.valueOf( App.currentUser.getWorkStationISN()),String.valueOf( App.currentUser.getWorkerBranchISN()),selectedFoundation,
+    public void getItemPrice(String uuid, int itemBranchISN, int itemISN, int priceType){
+        Observable<ItemPriceResponse> storeReportModelObservable = apiClient.getItemPrice(App.currentUser.getIllustrativeQuantity(), App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(), App.currentUser.getVendorID(), uuid, itemBranchISN, itemISN, App.currentUser.getWorkerName(),
+                        App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()), selectedFoundation,
                         App.currentUser.getLogIn_BISN(),
                         App.currentUser.getLogIn_UID(),
                         App.currentUser.getLogIn_WBISN(),
@@ -171,7 +248,17 @@ public class  ProductVM extends ViewModel {
                         App.currentUser.getLogIn_WSName(),
                         App.currentUser.getLogIn_CS(),
                         App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative())
+                        App.currentUser.getLogIn_FAlternative(), priceType
+                        , App.currentUser.getMobileSalesMaxDiscPer()
+                        , App.currentUser.getShiftSystemActivate()
+                        , App.currentUser.getLogIn_ShiftBranchISN()
+                        , App.currentUser.getLogIn_ShiftISN()
+                        , App.currentUser.getLogIn_Spare1()
+                        , App.currentUser.getLogIn_Spare2()
+                        , App.currentUser.getLogIn_Spare3()
+                        , App.currentUser.getLogIn_Spare4()
+                        , App.currentUser.getLogIn_Spare5()
+                        , App.currentUser.getLogIn_Spare6())
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         storeReportModelObservable.subscribe(new Observer<ItemPriceResponse>() {

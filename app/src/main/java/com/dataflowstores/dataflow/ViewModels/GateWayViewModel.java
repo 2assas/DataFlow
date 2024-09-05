@@ -2,6 +2,7 @@ package com.dataflowstores.dataflow.ViewModels;
 
 import static com.dataflowstores.dataflow.App.selectedFoundation;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -16,7 +17,6 @@ import com.dataflowstores.dataflow.pojo.settings.Stores;
 import com.dataflowstores.dataflow.pojo.workStation.Branch;
 import com.dataflowstores.dataflow.pojo.workStation.Workstation;
 import com.dataflowstores.dataflow.pojo.workStation.WorkstationList;
-import com.dataflowstores.dataflow.utils.Conts;
 import com.dataflowstores.dataflow.webService.ApiClient;
 import com.dataflowstores.dataflow.webService.Constants;
 import com.dataflowstores.dataflow.webService.ServiceGenerator;
@@ -47,9 +47,10 @@ public class GateWayViewModel extends ViewModel {
             ApiClient.class, Constants.BASE_URL);
 
 
+    @SuppressLint("CheckResult")
     public void getLoginStatus(String uuid, String user_name, String password, String foundation_name, String phone, String selectedBranchISN, String selectedSafeDepositBranchISN,
                                String selectedSafeDepositISN, String selectedStoreBranchISN, String selectedStoreISN, int demo) {
-        Observable<LoginStatus> login = apiClient.loginGateWay(uuid, user_name, password, foundation_name, phone, 2, Conts.APP_VERSION,
+        Observable<LoginStatus> login = apiClient.loginGateWay(uuid, user_name, password, foundation_name, phone, 2, Constants.APP_VERSION,
                 selectedBranchISN, selectedSafeDepositBranchISN, selectedSafeDepositISN, selectedStoreBranchISN, selectedStoreISN, demo, selectedFoundation
         ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         login.subscribe(loginStatus -> {
@@ -141,7 +142,7 @@ public class GateWayViewModel extends ViewModel {
     public void SelectBranchStaff(String uuid, int moveType) {
         ApiClient tokenService = ServiceGenerator.tokenService(
                 ApiClient.class, Constants.BASE_URL);
-        Observable<Branches> getBranches = tokenService.getBranches(uuid, selectedFoundation,
+        Observable<Branches> getBranches = tokenService.getBranches(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid, selectedFoundation,
                 null,
                 null,
                 null,
@@ -152,8 +153,18 @@ public class GateWayViewModel extends ViewModel {
                 null,
                 null,
                 null,
-                null).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-        Observable<Stores> getStores = tokenService.getStores(null, 1, uuid, null, null, -1, moveType, selectedFoundation,
+                null
+                , App.currentUser.getMobileSalesMaxDiscPer()
+                , App.currentUser.getShiftSystemActivate()
+                , App.currentUser.getLogIn_ShiftBranchISN()
+                , App.currentUser.getLogIn_ShiftISN()
+                , App.currentUser.getLogIn_Spare1()
+                , App.currentUser.getLogIn_Spare2()
+                , App.currentUser.getLogIn_Spare3()
+                , App.currentUser.getLogIn_Spare4()
+                , App.currentUser.getLogIn_Spare5()
+                , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<Stores> getStores = tokenService.getStores(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),null, 1, uuid, null, null, -1, moveType, selectedFoundation,
                 null,
                 null,
                 null,
@@ -164,8 +175,18 @@ public class GateWayViewModel extends ViewModel {
                 null,
                 null,
                 null,
-                null).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-        Observable<SafeDeposit> getSafeDeposits = tokenService.getSafeDeposit(null, 1, uuid, null, null, -1, moveType, selectedFoundation,
+                null
+                , App.currentUser.getMobileSalesMaxDiscPer()
+                , App.currentUser.getShiftSystemActivate()
+                , App.currentUser.getLogIn_ShiftBranchISN()
+                , App.currentUser.getLogIn_ShiftISN()
+                , App.currentUser.getLogIn_Spare1()
+                , App.currentUser.getLogIn_Spare2()
+                , App.currentUser.getLogIn_Spare3()
+                , App.currentUser.getLogIn_Spare4()
+                , App.currentUser.getLogIn_Spare5()
+                , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<SafeDeposit> getSafeDeposits = tokenService.getSafeDeposit(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),null, 1, uuid, null, null, -1, moveType, selectedFoundation,
                 null,
                 null,
                 null,
@@ -176,7 +197,17 @@ public class GateWayViewModel extends ViewModel {
                 null,
                 null,
                 null,
-                null).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                null
+                , App.currentUser.getMobileSalesMaxDiscPer()
+                , App.currentUser.getShiftSystemActivate()
+                , App.currentUser.getLogIn_ShiftBranchISN()
+                , App.currentUser.getLogIn_ShiftISN()
+                , App.currentUser.getLogIn_Spare1()
+                , App.currentUser.getLogIn_Spare2()
+                , App.currentUser.getLogIn_Spare3()
+                , App.currentUser.getLogIn_Spare4()
+                , App.currentUser.getLogIn_Spare5()
+                , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         Observable<BranchStaffModel> zipper = Observable.zip(getBranches, getStores, getSafeDeposits, BranchStaffModel::new);
 

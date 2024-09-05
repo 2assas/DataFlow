@@ -1,12 +1,18 @@
 package com.dataflowstores.dataflow.ui.home;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.dataflowstores.dataflow.App.theme;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Purchase;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnPurchased;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnSales;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Sales;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -36,8 +42,13 @@ import com.dataflowstores.dataflow.ui.SearchInvoice;
 import com.dataflowstores.dataflow.ui.SearchReceipts;
 import com.dataflowstores.dataflow.ui.cashing.SearchCashing;
 import com.dataflowstores.dataflow.ui.expenses.SearchExpenses;
+import com.dataflowstores.dataflow.ui.payments.SearchPayments;
+import com.dataflowstores.dataflow.ui.reports.ReportsFragment;
+import com.dataflowstores.dataflow.ui.shifts.ShiftsActivity;
+import com.dataflowstores.dataflow.webService.Constants;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -66,15 +77,6 @@ public class HomeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static HomeFragment newInstance(String param1, String param2) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
@@ -98,8 +100,10 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.home_screen, container, false);
         uuid = Settings.Secure.getString(requireActivity().getContentResolver(), Settings.Secure.ANDROID_ID);
+        App.uuid=uuid;
         settingVM = new ViewModelProvider(this).get(SettingVM.class);
         manager = requireActivity().getSupportFragmentManager();
+        App.selectedProducts=new ArrayList<>();
         setupViews();
         getUserSettings(App.currentUser.getBranchISN(), uuid);
         handleFragments();
@@ -108,19 +112,31 @@ public class HomeFragment extends Fragment {
         return binding.getRoot();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (App.currentUser.getShiftSystemActivate() == 1) {
+            if (App.currentUser.getLogIn_ShiftISN() > 0) {
+                binding.home.shiftNumber.setText("متصل بوردية رقم " + App.currentUser.getLogIn_ShiftISN());
+            } else {
+                binding.home.shiftNumber.setText("غير متصل بوردية");
+            }
+        }
+
+    }
+
+    @SuppressLint("SetTextI18n")
     private void setupViews() {
-        App.resales = -1;
+        App.invoiceType = null;
         binding.home.exitApp.setOnClickListener(view -> {
-            new AlertDialog.Builder(requireActivity()).setTitle("تأكيد الخروج")
-                    .setMessage("هل تريد الخروج من التطبيق؟")
-                    .setPositiveButton("خروج", (dialogInterface, i) -> {
-                        SharedPreferences.Editor editor = requireActivity().getSharedPreferences("SaveLogin", MODE_PRIVATE).edit();
-                        editor.putString("userName", "");
-                        editor.putString("password", "");
-                        editor.apply();
-                        App.selectedFoundation = 0;
-                        requireActivity().finish();
-                    }).setNegativeButton("البقاء", ((dialogInterface, i) -> dialogInterface.dismiss())).show();
+            new AlertDialog.Builder(requireActivity()).setTitle("تأكيد الخروج").setMessage("هل تريد الخروج من التطبيق؟").setPositiveButton("خروج", (dialogInterface, i) -> {
+                SharedPreferences.Editor editor = requireActivity().getSharedPreferences("AppShared", MODE_PRIVATE).edit();
+                editor.putString("userName", "");
+                editor.putString("password", "");
+                editor.apply();
+                App.selectedFoundation = 0;
+                requireActivity().finish();
+            }).setNegativeButton("البقاء", ((dialogInterface, i) -> dialogInterface.dismiss())).show();
         });
         binding.home.textView.setText(getString(R.string.welcome) + " " + App.currentUser.getWorkerName());
         binding.home.foundationName.setText(App.currentUser.getFoundationName());
@@ -138,6 +154,7 @@ public class HomeFragment extends Fragment {
         invoice();
         storeOperations();
         reports();
+        shifts();
     }
 
     private void finance() {
@@ -145,7 +162,6 @@ public class HomeFragment extends Fragment {
             if (App.isNetworkAvailable(requireActivity())) {
                 if (banksDone && priceTypeDone && safeDepositDone && storesDone)
                     if (App.safeDeposit.getData() != null) {
-//                        Intent intent = new Intent(this, SearchProductsCashing.class);
                         FinanceFragment financeFragment = new FinanceFragment();
                         manager.beginTransaction().replace(R.id.container, financeFragment).addToBackStack("home").commit();
                     } else
@@ -198,6 +214,23 @@ public class HomeFragment extends Fragment {
                 if (banksDone && priceTypeDone && safeDepositDone && storesDone)
                     if (App.safeDeposit.getData() != null) {
                         manager.beginTransaction().replace(R.id.container, new ReportsFragment()).addToBackStack("home").commit();
+                    } else
+                        new AlertDialog.Builder(requireActivity()).setTitle("لا توجد لديكم خزنة").setMessage("برجاء إضافة الخزنه الخاصة بكم.").setCancelable(false).setIcon(R.drawable.ic_baseline_error_outline_24).setNegativeButton("حسنا", (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                        }).show();
+            }
+        });
+    }
+
+    private void shifts() {
+        if (App.currentUser.getShiftSystemActivate() == 0) {
+            binding.home.shifts.setEnabled(false);
+        }
+        binding.home.shifts.setOnClickListener(view -> {
+            if (App.isNetworkAvailable(requireActivity())) {
+                if (banksDone && priceTypeDone && safeDepositDone && storesDone)
+                    if (App.safeDeposit.getData() != null) {
+                        startActivity(new Intent(requireActivity(), ShiftsActivity.class));
                     } else
                         new AlertDialog.Builder(requireActivity()).setTitle("لا توجد لديكم خزنة").setMessage("برجاء إضافة الخزنه الخاصة بكم.").setCancelable(false).setIcon(R.drawable.ic_baseline_error_outline_24).setNegativeButton("حسنا", (dialogInterface, i) -> {
                             dialogInterface.dismiss();
@@ -278,37 +311,48 @@ public class HomeFragment extends Fragment {
             }
         });
         navigationView = binding.navView;
-        Menu nav_Menu = navigationView.getMenu();
-        if (App.currentUser.getMobileStockOut() == 0) {
-            nav_Menu.findItem(R.id.searchCashingPermission).setVisible(false);
-        }
-        if (App.currentUser.getMobileStockIn() == 0) {
-            nav_Menu.findItem(R.id.searchReceivingPermission).setVisible(false);
-        }
-        if (App.currentUser.getMobileStoreTransfer() == 0) {
-            nav_Menu.findItem(R.id.searchStoreTransfer).setVisible(false);
-        }
-        if (!Objects.equals(App.currentUser.getDeviceID(), "0")) {
-            nav_Menu.findItem(R.id.nav_device_id).setTitle(App.currentUser.getDeviceID());
-        } else {
-            nav_Menu.findItem(R.id.nav_device_id_title).setVisible(false);
-        }
+        handlePrintingPrivileges();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @SuppressLint("NonConstantResourceId")
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
-                    case R.id.searchSaleInvoice:
+                    case R.id.sales:
                         if (App.isNetworkAvailable(requireActivity())) {
+                            App.invoiceType = Sales;
                             Intent intent = new Intent(requireActivity(), SearchInvoice.class);
-                            intent.putExtra("moveType", 1);
                             startActivity(intent);
-                            App.resales = 0;
+                            break;
+                        }
+                    case R.id.returnSales:
+                        if (App.isNetworkAvailable(requireActivity())) {
+                            App.invoiceType = ReturnSales;
+                            Intent intent8 = new Intent(requireActivity(), SearchInvoice.class);
+                            startActivity(intent8);
+                            break;
+                        }
+                    case R.id.purchaseOrder:
+                        if (App.isNetworkAvailable(requireActivity())) {
+                            App.invoiceType = Purchase;
+                            Intent intent = new Intent(requireActivity(), SearchInvoice.class);
+                            startActivity(intent);
+                            break;
+                        }
+                    case R.id.returnPurchased:
+                        if (App.isNetworkAvailable(requireActivity())) {
+                            App.invoiceType = ReturnPurchased;
+                            Intent intent8 = new Intent(requireActivity(), SearchInvoice.class);
+                            startActivity(intent8);
                             break;
                         }
                     case R.id.searchReceiptsInvoice:
                         if (App.isNetworkAvailable(requireActivity())) {
                             startActivity(new Intent(requireActivity(), SearchReceipts.class));
+                            break;
+                        }
+                    case R.id.searchPaymentInvoice:
+                        if (App.isNetworkAvailable(requireActivity())) {
+                            startActivity(new Intent(requireActivity(), SearchPayments.class));
                             break;
                         }
                     case R.id.searchExpensesInvoice:
@@ -363,18 +407,133 @@ public class HomeFragment extends Fragment {
                             startActivity(intent7);
                             break;
                         }
-                    case R.id.mobileResales:
+                    case R.id.mobileItemsList:
                         if (App.isNetworkAvailable(requireActivity())) {
-                            Intent intent8 = new Intent(requireActivity(), SearchInvoice.class);
-                            intent8.putExtra("moveType", 3);
+                            Intent intent8 = new Intent(requireActivity(), SearchCashing.class);
+                            intent8.putExtra("moveType", 21);
                             startActivity(intent8);
-                            App.resales = 1;
                             break;
                         }
+                    case R.id.changeTheme:
+                        showThemeSelectionDialog();
+                        break;
+                    case R.id.deviceId:
+                        Toast.makeText(requireActivity(), "Your device Id is " + App.currentUser.getDeviceID(), Toast.LENGTH_LONG).show();
+                        break;
+                    case R.id.appVersion:
+                        Toast.makeText(requireActivity(), "Application version number is " + Constants.APP_VERSION, Toast.LENGTH_LONG).show();
+                        break;
+
                 }
                 return false;
             }
         });
     }
 
+    private void handlePrintingPrivileges() {
+        Menu nav_Menu = navigationView.getMenu();
+        if (App.currentUser.getMobileStockOut() == 0) {
+            nav_Menu.findItem(R.id.searchCashingPermission).setVisible(false);
+        }
+        if (App.currentUser.getMobileStockIn() == 0) {
+            nav_Menu.findItem(R.id.searchReceivingPermission).setVisible(false);
+        }
+        if (App.currentUser.getMobileStoreTransfer() == 0) {
+            nav_Menu.findItem(R.id.searchStoreTransfer).setVisible(false);
+        }
+        if (App.currentUser.getMobileSales() == 0) {
+            nav_Menu.findItem(R.id.sales).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileReSales() == 0) {
+            nav_Menu.findItem(R.id.returnSales).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileSupply() == 0) {
+            nav_Menu.findItem(R.id.purchaseOrder).setVisible(false);
+        }
+        if (App.currentUser.getMobileReSupply() == 0) {
+            nav_Menu.findItem(R.id.returnPurchased).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileCashReceipts() == 0) {
+            nav_Menu.findItem(R.id.searchReceiptsInvoice).setVisible(false);
+        }
+
+        if (App.currentUser.getMobilePayment() == 0) {
+            nav_Menu.findItem(R.id.searchPaymentInvoice).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileExpenses() == 0) {
+            nav_Menu.findItem(R.id.searchExpensesInvoice).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileStockOut() == 0) {
+            nav_Menu.findItem(R.id.searchCashingPermission).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileStockIn() == 0) {
+            nav_Menu.findItem(R.id.searchReceivingPermission).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileStoreTransfer() == 0) {
+            nav_Menu.findItem(R.id.searchStoreTransfer).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileFirstPeriod() == 0) {
+            nav_Menu.findItem(R.id.mobileFirstPeriod).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileLosses() == 0) {
+            nav_Menu.findItem(R.id.mobileLoses).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileItemConfiguring() == 0) {
+            nav_Menu.findItem(R.id.itemCreate).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileItemQuanModify() == 0) {
+            nav_Menu.findItem(R.id.mobileInventory).setVisible(false);
+        }
+
+        if (App.currentUser.getMobileItemsList() == 0) {
+            nav_Menu.findItem(R.id.mobileItemsList).setVisible(false);
+        }
+
+        if (!Objects.equals(App.currentUser.getDeviceID(), "0")) {
+            nav_Menu.findItem(R.id.nav_device_id).setTitle(App.currentUser.getDeviceID());
+        } else {
+            nav_Menu.findItem(R.id.deviceId).setVisible(false);
+        }
+
+
+    }
+
+    private void showThemeSelectionDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        builder.setTitle("Select Theme").setItems(new CharSequence[]{"النمط الأزرق", "النمط الأصفر"}, (dialogInterface, which) -> {
+            switch (which) {
+                case 0:
+                    if (theme != R.style.AppTheme) {
+                        setAppTheme(R.style.AppTheme);
+                        requireActivity().recreate();
+                    } else dialogInterface.dismiss();
+                    break;
+                case 1:
+                    if (theme != R.style.SecondTheme) {
+                        setAppTheme(R.style.SecondTheme);
+                        requireActivity().recreate();
+                    } else dialogInterface.dismiss();
+                    break;
+            }
+        });
+        builder.create().show();
+    }
+
+    private void setAppTheme(int themeId) {
+        requireActivity().setTheme(themeId);
+        SharedPreferences prefs = requireActivity().getSharedPreferences("AppShared", MODE_PRIVATE);
+        prefs.edit().putString("theme", themeId == R.style.AppTheme ? "default" : "second").apply(); // Save the selected theme
+    }
 }
+

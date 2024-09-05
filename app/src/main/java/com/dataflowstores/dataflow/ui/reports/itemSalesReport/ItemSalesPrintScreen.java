@@ -1,5 +1,6 @@
 package com.dataflowstores.dataflow.ui.reports.itemSalesReport;
 
+import static com.dataflowstores.dataflow.App.theme;
 import static java.util.Objects.requireNonNull;
 
 import android.annotation.SuppressLint;
@@ -22,6 +23,7 @@ import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.ItemSalesReportPrintBinding;
 import com.dataflowstores.dataflow.pojo.report.itemSalesReport.ItemSalesData;
 import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 import com.dataflowstores.dataflow.ui.reports.financialReport.FinancialReportAdapter;
@@ -33,7 +35,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class ItemSalesPrintScreen extends AppCompatActivity {
+public class ItemSalesPrintScreen extends BaseActivity {
     ItemSalesReportPrintBinding binding;
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm", Locale.US);
     String branchName, shiftNum, clientName, timeFrom, timeTo, workDayStart, workDayEnd;
@@ -41,6 +43,7 @@ public class ItemSalesPrintScreen extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.item_sales_report_print);
         if (savedInstanceState != null) {

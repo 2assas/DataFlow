@@ -1,5 +1,11 @@
 package com.dataflowstores.dataflow.ui.reports.cashierMovesReport;
 
+import static com.dataflowstores.dataflow.App.theme;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Purchase;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnPurchased;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.ReturnSales;
+import static com.dataflowstores.dataflow.pojo.invoice.InvoiceType.Sales;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -21,23 +27,26 @@ import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.CashierMovesPrintingBinding;
 import com.dataflowstores.dataflow.pojo.report.cashierMoves.CashierMoveData;
 import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SearchInvoice;
 import com.dataflowstores.dataflow.ui.SearchReceipts;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.cashing.SearchCashing;
 import com.dataflowstores.dataflow.ui.expenses.SearchExpenses;
 import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
+import com.dataflowstores.dataflow.ui.payments.SearchPayments;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class CashierMovesReportPrinting extends AppCompatActivity implements CashierMovesAdapter.onCashierMoveListener {
+public class CashierMovesReportPrinting extends BaseActivity implements CashierMovesAdapter.onCashierMoveListener {
     CashierMovesPrintingBinding binding;
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm", Locale.US);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.cashier_moves_printing);
         if (savedInstanceState != null) {
@@ -58,7 +67,7 @@ public class CashierMovesReportPrinting extends AppCompatActivity implements Cas
         binding.back.setOnClickListener(v -> finish());
         //todo:: replace app.FinancialReport with intents.
 
-        App.pdfName ="تقرير حركة الورديات والخزائن";
+        App.pdfName = "تقرير حركة الورديات والخزائن";
 
         if (getIntent().getStringExtra("shiftISN") == null) {
             binding.shiftNumber.setVisibility(View.GONE);
@@ -66,9 +75,19 @@ public class CashierMovesReportPrinting extends AppCompatActivity implements Cas
             binding.shiftNumber.setText("وردية رقم: " + getIntent().getStringExtra("shiftISN"));
         }
         if (getIntent().getStringExtra("clientName") != null) {
+            binding.clientName.setText("المتعامل: " + getIntent().getStringExtra("clientName"));
+        } else {
+            binding.clientName.setVisibility(View.GONE);
+        }
+        if (getIntent().getStringExtra("clientName") != null) {
             binding.clientName.setText("العميل: " + getIntent().getStringExtra("clientName"));
         } else {
             binding.clientName.setVisibility(View.GONE);
+        }
+        if (getIntent().getStringExtra("supplierName") != null) {
+            binding.supplierName.setText("المورد: " + getIntent().getStringExtra("supplierName"));
+        } else {
+            binding.supplierName.setVisibility(View.GONE);
         }
         if (getIntent().getStringExtra("moveType") != null) {
             binding.moveType.setText("نوع الحركة: " + getIntent().getStringExtra("moveType"));
@@ -154,17 +173,37 @@ public class CashierMovesReportPrinting extends AppCompatActivity implements Cas
 
         switch (cashierMoveData.getMoveName()) {
             case "مبيعات":
+                App.invoiceType = Sales;
                 Intent intent = new Intent(this, SearchInvoice.class);
                 startActivity(putIntentExtra(intent, cashierMoveData));
-                App.resales = 0;
+                break;
+            case "مرتجع مبيعات":
+                App.invoiceType = ReturnSales;
+                Intent intent8 = new Intent(this, SearchInvoice.class);
+                startActivity(putIntentExtra(intent8, cashierMoveData));
+                break;
+            case "مشتريات":
+                Intent intent9 = new Intent(this, SearchInvoice.class);
+                App.invoiceType = Purchase;
+                startActivity(putIntentExtra(intent9, cashierMoveData));
+                break;
+            case "مرتجع مشتريات":
+                App.invoiceType = ReturnPurchased;
+                Intent intent10 = new Intent(this, SearchInvoice.class);
+                startActivity(putIntentExtra(intent10, cashierMoveData));
                 break;
             case "مقبوضات":
                 Intent intent11 = new Intent(this, SearchReceipts.class);
                 startActivity(putIntentExtra(intent11, cashierMoveData));
                 break;
+
             case "مصروفات":
                 Intent intent12 = new Intent(this, SearchExpenses.class);
                 startActivity(putIntentExtra(intent12, cashierMoveData));
+                break;
+            case "مدفوعات":
+                Intent intent13 = new Intent(this, SearchPayments.class);
+                startActivity(putIntentExtra(intent13, cashierMoveData));
                 break;
             case "اذن صرف":
             case "تعديل مخزني":
@@ -173,14 +212,11 @@ public class CashierMovesReportPrinting extends AppCompatActivity implements Cas
             case "كميات اول المدة":
             case "تحويلات مخزنية":
             case "اذن استلام":
+            case "طلب اصناف":
                 Intent intent1 = new Intent(this, SearchCashing.class);
                 startActivity(putIntentExtra(intent1, cashierMoveData));
                 break;
-            case "مرتجع مبيعات":
-                Intent intent8 = new Intent(this, SearchInvoice.class);
-                startActivity(putIntentExtra(intent8, cashierMoveData));
-                App.resales = 1;
-                break;
+
             default:
                 Toast.makeText(this, R.string.cannot_print_move, Toast.LENGTH_SHORT).show();
         }

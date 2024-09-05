@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:text="تقرير حركة الورديات والخزائن"
-            android:textColor="@color/black"
+
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -53,7 +53,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:text="الخزينة"
-                    android:textColor="@color/black"
+
                     android:textSize="15sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/safeDepositCheckbox"
@@ -66,7 +66,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:text="نوع الحركة"
-                    android:textColor="@color/black"
+
                     android:textSize="15sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/movesCheckBox"
@@ -114,7 +114,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="20dp"
                     android:text="الفرع"
-                    android:textColor="@color/black"
+
                     android:textSize="15sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -151,7 +151,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:text="الوردية"
-                    android:textColor="@color/black"
+
                     android:textSize="15sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/shiftsCheckbox"
@@ -207,7 +207,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:text="المستخدم"
-                    android:textColor="@color/black"
+
                     android:textSize="15sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/userCheckbox"
@@ -252,7 +252,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:text="العميل"
-                    android:textColor="@color/black"
+
                     android:textSize="15sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/clientCheckBox"
@@ -294,6 +294,68 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/getClient" />
 
+
+
+                <CheckBox
+                    android:id="@+id/supplierCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/clientCheckBox" />
+
+
+                <TextView
+                    android:id="@+id/supplierText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:text="المورد"
+
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/supplierCheckBox"
+                    app:layout_constraintEnd_toStartOf="@+id/supplierCheckBox"
+                    app:layout_constraintTop_toTopOf="@+id/supplierCheckBox" />
+
+                <EditText
+                    android:id="@+id/getsupplier"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/rounded_border"
+                    android:drawableStart="@drawable/baseline_search_24"
+                    android:imeOptions="actionSearch"
+                    android:lines="1"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:singleLine="true"
+                    app:layout_constraintBottom_toBottomOf="@+id/supplierCheckBox"
+                    app:layout_constraintEnd_toStartOf="@+id/supplierText"
+                    app:layout_constraintStart_toEndOf="@+id/searchsupplier"
+                    app:layout_constraintTop_toTopOf="@+id/supplierCheckBox" />
+
+
+                <Button
+                    android:id="@+id/searchsupplier"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:gravity="center"
+                    android:text="بحث"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/getsupplier"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/getsupplier" />
+
+
+
                 <CheckBox
                     android:id="@+id/intervalCheckBox"
                     android:layout_width="wrap_content"
@@ -301,7 +363,7 @@
                     android:layout_marginTop="12dp"
                     android:gravity="center"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/clientCheckBox" />
+                    app:layout_constraintTop_toBottomOf="@+id/supplierCheckBox" />
 
                 <CheckBox
                     android:id="@+id/workDateCheckbox"
@@ -434,7 +496,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:text="الفترة"
-                    android:textColor="@color/black"
+
                     android:textSize="15sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/intervalCheckBox"
@@ -448,7 +510,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:text="تاريخ يومية العمل"
-                    android:textColor="@color/black"
+
                     android:textSize="13sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/workDateCheckbox"
@@ -461,7 +523,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:text="البنك"
-                    android:textColor="@color/black"
+
                     android:textSize="15sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/bankCheckbox"

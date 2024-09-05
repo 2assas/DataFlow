@@ -1,5 +1,7 @@
 package com.dataflowstores.dataflow.ui.receipts;
 
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,16 +18,18 @@ import androidx.databinding.DataBindingUtil;
 import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.PrintReceiptBinding;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 
 import java.util.Locale;
 
-public class PrintReceipt extends AppCompatActivity {
+public class PrintReceipt extends BaseActivity {
     PrintReceiptBinding binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.print_receipt);
         if (savedInstanceState != null) {
@@ -78,7 +82,7 @@ public class PrintReceipt extends AppCompatActivity {
             binding.view19.setVisibility(View.GONE);
         }
         binding.date.setText("التاريخ: "+ App.receiptModel.getData().get(0).getCreateDate());
-        binding.receiptTotal.setText(String.format(Locale.US,"%.2f",Float.parseFloat(App.receiptModel.getData().get(0).getNetValue()))+" جنيه");
+        binding.receiptTotal.setText(String.format(Locale.US,"%.3f",Float.parseFloat(App.receiptModel.getData().get(0).getNetValue()))+" جنيه");
         binding.receiptNotes.setText("ملاحضات \n"+App.receiptModel.getData().get(0).getHeaderNotes());
         binding.paymentMethod.setText(App.receiptModel.getData().get(0).getCashTypeName());
         binding.tradeRecord2.setText("السجل التجاري"+"\n"+

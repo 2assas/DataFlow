@@ -9,11 +9,18 @@
         android:title="طباعة الفواتير">
         <menu>
             <item
-                android:id="@+id/searchSaleInvoice"
-                android:title="فاتورة مبيعات" />
+                android:id="@+id/sales"
+                android:title="فاتورة مبيعات"
+                />
             <item
-                android:id="@+id/mobileResales"
-                android:title="مرتجع فاتورة مبيعات" />
+                android:id="@+id/returnSales"
+                android:title="فاتورة مرتجع مبيعات" />
+            <item
+                android:id="@+id/purchaseOrder"
+                android:title="فاتورة مشتريات" />
+            <item
+                android:id="@+id/returnPurchased"
+                android:title="فاتورة مرتجع مشتريات" />
 
         </menu>
     </item>
@@ -28,6 +35,9 @@
             <item
                 android:id="@+id/searchExpensesInvoice"
                 android:title="مصروفات" />
+            <item
+                android:id="@+id/searchPaymentInvoice"
+                android:title="مدفوعات" />
         </menu>
     </item>
     <item
@@ -58,17 +68,27 @@
             <item
                 android:id="@+id/mobileInventory"
                 android:title="جرد الأصناف" />
+            <item
+                android:id="@+id/mobileItemsList"
+                android:title="طلب أصناف" />
+        </menu>
+    </item>
+    <item android:title="Themes">
+        <menu>
+            <item
+                android:id="@+id/changeTheme"
+                android:title="تغيير النمط" />
         </menu>
     </item>
     <item android:title="App Version">
         <menu>
             <item
-                android:id="@+id/nav_item_six"
-                android:title="23.1024" />
+                android:id="@+id/appVersion"
+                android:title="24.0829" />
         </menu>
     </item>
     <item
-        android:id="@+id/nav_device_id_title"
+        android:id="@+id/deviceId"
         android:title="Device ID">
         <menu>
             <item

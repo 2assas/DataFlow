@@ -1,5 +1,7 @@
 package com.dataflowstores.dataflow.ui;
 
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
@@ -25,7 +27,7 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
 
-public class ScanBarCode extends AppCompatActivity {
+public class ScanBarCode extends BaseActivity {
     private BarcodeDetector barcodeDetector;
     private CameraSource cameraSource;
     private static final int REQUEST_CAMERA_PERMISSION = 201;
@@ -35,6 +37,8 @@ public class ScanBarCode extends AppCompatActivity {
     private SurfaceView surfaceView;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.barcode_scanner);
         if (savedInstanceState != null) {

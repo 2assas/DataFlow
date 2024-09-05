@@ -32,8 +32,8 @@ public class PrintingLinesAdapter extends RecyclerView.Adapter<PrintingLinesAdap
     @Override
     public void onBindViewHolder(final PrintingLinesViewHolder holder, final int position) {
         holder.itemName.setText(list.get(position).getItemName());
-        holder.itemPrice.setText(String.format(Locale.US,"%.2f",Double.parseDouble( list.get(position).getPrice() )));
-        holder.itemTotal.setText(String.format(Locale.US,"%.2f",Double.parseDouble( list.get(position).getNetPrice())));
+        holder.itemPrice.setText(String.format(Locale.US,"%.3f",Double.parseDouble( list.get(position).getPrice() )));
+        holder.itemTotal.setText(String.format(Locale.US,"%.3f",Double.parseDouble( list.get(position).getNetPrice())));
         holder.itemQuantity.setText(String.format(Locale.US,"%.3f",Double.parseDouble(list.get(position).getTotalQuantity())));
     }
 

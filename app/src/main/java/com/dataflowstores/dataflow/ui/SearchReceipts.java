@@ -1,7 +1,10 @@
 package com.dataflowstores.dataflow.ui;
 
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -11,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -25,12 +29,13 @@ import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.ReceiptsVM;
 import com.dataflowstores.dataflow.databinding.SearchReceiptBinding;
+import com.dataflowstores.dataflow.pojo.receipts.ReceiptData;
 import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 
 import java.util.Locale;
 import java.util.Objects;
 
-public class SearchReceipts extends AppCompatActivity {
+public class SearchReceipts extends BaseActivity {
     SearchReceiptBinding binding;
     ReceiptsVM receiptsVM;
     String uuid;
@@ -41,6 +46,8 @@ public class SearchReceipts extends AppCompatActivity {
     @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             startActivity(new Intent(this, SplashScreen.class));
@@ -51,6 +58,7 @@ public class SearchReceipts extends AppCompatActivity {
             uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
             setupViews();
             observeData();
+
             checkPermission();
         }
     }
@@ -58,7 +66,11 @@ public class SearchReceipts extends AppCompatActivity {
 
     public void setupViews() {
         receiptsVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
-
+        binding.searchInvoices.setOnClickListener(view -> {
+            binding.searchInvoices.onActionViewExpanded(); // Expand the SearchView
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(binding.searchInvoices, InputMethodManager.SHOW_IMPLICIT);
+        });
         binding.searchInvoices.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -132,7 +144,10 @@ public class SearchReceipts extends AppCompatActivity {
                 if (App.currentUser.getMobileShowDealerCurrentBalanceInPrint() == 1 && !Objects.equals(receiptModel.getData().get(0).getDealerISN(), "0")
                         && !Objects.equals(receiptModel.getData().get(0).getDealerISN(), "0") && !Objects.equals(receiptModel.getData().get(0).getDealerISN(), "0")
                 ) {
-                    receiptsVM.getCustomerBalance(uuid, receiptModel.getData().get(0).getDealerISN(), receiptModel.getData().get(0).getDealerBranchISN(), receiptModel.getData().get(0).getDealerType(), "");
+                    ReceiptData receiptData = receiptModel.getData().get(0);
+                    receiptsVM.getCustomerBalance(uuid, receiptData.getDealerISN(),
+                            receiptData.getDealerBranchISN(), receiptData.getDealerType(),
+                            receiptData.getBranchISN(), receiptData.getMove_ISN(), receiptData.getRemainValue(), receiptData.getNetValue(), receiptData.getMoveType());
                 } else {
                     binding.progressBar.setVisibility(View.GONE);
                     binding.printButton.setVisibility(View.VISIBLE);
@@ -163,7 +178,7 @@ public class SearchReceipts extends AppCompatActivity {
         binding.invoiceTemplate.foundationName.setText(App.currentUser.getFoundationName());
 
         binding.invoiceTemplate.date.setText("التاريخ: " + App.receiptModel.getData().get(0).getCreateDate());
-        binding.invoiceTemplate.receiptTotal.setText(String.format(Locale.US, "%.2f", Float.parseFloat(App.receiptModel.getData().get(0).getNetValue())) + " جنيه");
+        binding.invoiceTemplate.receiptTotal.setText(String.format(Locale.US, "%.3f", Float.parseFloat(App.receiptModel.getData().get(0).getNetValue())) + " جنيه");
         binding.invoiceTemplate.receiptNotes.setText("ملاحضات \n" + App.receiptModel.getData().get(0).getHeaderNotes());
         binding.invoiceTemplate.paymentMethod.setText(App.receiptModel.getData().get(0).getCashTypeName());
         binding.invoiceTemplate.tradeRecord2.setText("السجل التجاري" + "\n" +

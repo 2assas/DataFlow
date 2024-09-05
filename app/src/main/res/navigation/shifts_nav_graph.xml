@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/shifts_nav_graph.xml"
+    app:startDestination="@id/shiftsMain">
+
+    <fragment
+        android:id="@+id/shiftsMain"
+        android:name="com.dataflowstores.dataflow.ui.shifts.ui.ShiftsMain"
+        android:label="ShiftsMain" >
+        <action
+            android:id="@+id/action_shiftsMain_to_openLoginNewShift"
+            app:destination="@id/openLoginNewShift" />
+        <action
+            android:id="@+id/action_shiftsMain_to_openNewShift"
+            app:destination="@id/openNewShift" />
+        <action
+            android:id="@+id/action_shiftsMain_to_enterShift"
+            app:destination="@id/enterShift" />
+        <action
+            android:id="@+id/action_shiftsMain_to_reopenShift"
+            app:destination="@id/reopenShift" />
+        <action
+            android:id="@+id/action_shiftsMain_to_closeShift"
+            app:destination="@id/closeShift" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/openNewShift"
+        android:name="com.dataflowstores.dataflow.ui.shifts.ui.openNewShift.OpenNewShift"
+        android:label="fragment_open_new_shift"
+        tools:layout="@layout/fragment_open_login_shift" >
+        <action
+            android:id="@+id/action_openNewShift_to_shiftsMain"
+            app:destination="@id/shiftsMain" />
+    </fragment>
+    <fragment
+        android:id="@+id/reopenShift"
+        android:name="com.dataflowstores.dataflow.ui.shifts.ui.reopenShift.ReopenShift"
+        android:label="ReopenShift" >
+        <action
+            android:id="@+id/action_reopenShift_to_shiftsMain"
+            app:destination="@id/shiftsMain" />
+    </fragment>
+    <fragment
+        android:id="@+id/enterShift"
+        android:name="com.dataflowstores.dataflow.ui.shifts.ui.loginToShift.LoginToShift"
+        android:label="EnterShift" >
+        <action
+            android:id="@+id/action_enterShift_to_shiftsMain"
+            app:destination="@id/shiftsMain" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/openLoginNewShift"
+        android:name="com.dataflowstores.dataflow.ui.shifts.ui.openLoginShift.OpenLoginNewShift"
+        android:label="OpenLoginShift" >
+        <action
+            android:id="@+id/action_openLoginNewShift_to_shiftsMain"
+            app:destination="@id/shiftsMain" />
+    </fragment>
+    <fragment
+        android:id="@+id/closeShift"
+        android:name="com.dataflowstores.dataflow.ui.shifts.ui.closeShift.CloseShift"
+        android:label="CloseShift" >
+        <action
+            android:id="@+id/action_closeShift_to_shiftsMain"
+            app:destination="@id/shiftsMain" />
+    </fragment>
+
+</navigation>

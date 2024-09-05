@@ -1,5 +1,6 @@
 package com.dataflowstores.dataflow.ui.reports.financialReport;
 
+import static com.dataflowstores.dataflow.App.theme;
 import static java.util.Objects.requireNonNull;
 
 import android.annotation.SuppressLint;
@@ -22,6 +23,7 @@ import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.FinancialReportPrintBinding;
 import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.SplashScreen;
 import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 
@@ -30,12 +32,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class FinancialReportPrintScreen extends AppCompatActivity {
+public class FinancialReportPrintScreen extends BaseActivity {
     FinancialReportPrintBinding binding;
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm", Locale.US);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.financial_report_print);
         if (savedInstanceState != null) {
@@ -64,10 +67,10 @@ public class FinancialReportPrintScreen extends AppCompatActivity {
             binding.shiftNumber.setText("وردية رقم: " + App.financialReportData.getShift().getShiftISN());
 
             binding.shiftStatus.setText(App.financialReportData.getShift().getShiftStatus());
-            binding.openShiftAmount.setText(String.format(Locale.US, "%.2f", Double.parseDouble(App.financialReportData.getShift().getOpenCash())));
-            binding.closeShiftAmount.setText(String.format(Locale.US, "%.2f", Double.parseDouble(App.financialReportData.getShift().getCloseCash())));
-            binding.toBePaidAmount.setText(String.format(Locale.US, "%.2f", App.financialReportData.getShift().getAssumedCash()));
-            binding.paidAmount.setText(String.format(Locale.US, "%.2f", Double.parseDouble(App.financialReportData.getShift().getHandedCash())));
+            binding.openShiftAmount.setText(String.format(Locale.US, "%.3f", Double.parseDouble(App.financialReportData.getShift().getOpenCash())));
+            binding.closeShiftAmount.setText(String.format(Locale.US, "%.3f", Double.parseDouble(App.financialReportData.getShift().getCloseCash())));
+            binding.toBePaidAmount.setText(String.format(Locale.US, "%.3f", App.financialReportData.getShift().getAssumedCash()));
+            binding.paidAmount.setText(String.format(Locale.US, "%.3f", Double.parseDouble(App.financialReportData.getShift().getHandedCash())));
             Date startTime = null;
             try {
                 startTime = sdf.parse(App.financialReportData.getShift().getShiftOpenDate());
@@ -82,12 +85,12 @@ public class FinancialReportPrintScreen extends AppCompatActivity {
             }
             binding.openShiftTime.setText(sdf.format(requireNonNull(startTime)));
             binding.closeShiftTime.setText(sdf.format(requireNonNull(endTime)));
-            binding.finalTotal.setText(String.format(Locale.US, "%.2f", App.financialReportData.getShift().getShiftTotal()));
+            binding.finalTotal.setText(String.format(Locale.US, "%.3f", App.financialReportData.getShift().getShiftTotal()));
         }
 //        if(App.financialReportData.get)
-        binding.totalRevenue.setText(String.format(Locale.US, "%.2f", App.financialReportData.getTotalRevenue()));
-        binding.totalExpenses.setText(String.format(Locale.US, "%.2f", App.financialReportData.getTotalExpenses()));
-        binding.finalBalance.setText(String.format(Locale.US, "%.2f", App.financialReportData.getFinalBalance()));
+        binding.totalRevenue.setText(String.format(Locale.US, "%.3f", App.financialReportData.getTotalRevenue()));
+        binding.totalExpenses.setText(String.format(Locale.US, "%.3f", App.financialReportData.getTotalExpenses()));
+        binding.finalBalance.setText(String.format(Locale.US, "%.3f", App.financialReportData.getFinalBalance()));
         binding.branchName.setText("فرع: " + getIntent().getStringExtra("branch"));
         if (App.financialReportData.getReport().size() > 0) {
             FinancialReportAdapter financialReportAdapter = new FinancialReportAdapter(App.financialReportData.getReport());

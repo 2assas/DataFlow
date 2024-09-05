@@ -249,7 +249,7 @@ public abstract class SwipeHelper extends ItemTouchHelper.SimpleCallback
         {
             if(dX < 0)
             {
-                List buffer = new ArrayList<>();
+                List<MyButton> buffer = new ArrayList<>();
 
                 if(!buttonBuffer.containsKey(pos))
                 {
@@ -285,5 +285,5 @@ public abstract class SwipeHelper extends ItemTouchHelper.SimpleCallback
         }
     }
 
-    public abstract void instantiateMyButton(RecyclerView.ViewHolder viewHolder, List buffer);
+    public abstract void instantiateMyButton(RecyclerView.ViewHolder viewHolder, List<MyButton> buffer);
 }

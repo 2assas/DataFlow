@@ -39,7 +39,7 @@
         android:maxLines="1"
         android:textSize="25sp"
         android:textStyle="bold"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="?attr/colorPrimaryDark"
         android:fontFamily="@font/cairo_bold"
         android:shadowColor="@color/black"
         android:text="DATA FLOW"

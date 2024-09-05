@@ -53,6 +53,26 @@ public class ReceiptData implements Serializable {
    String DealerBranchISN;
    @SerializedName("DealerISN")
    String DealerISN;
+    @SerializedName("RemainValue")
+    String RemainValue;
+    @SerializedName("MoveType")
+    String moveType;
+
+    public String getMoveType() {
+        return moveType;
+    }
+
+    public void setMoveType(String moveType) {
+        this.moveType = moveType;
+    }
+
+    public String getRemainValue() {
+        return RemainValue;
+    }
+
+    public void setRemainValue(String remainValue) {
+        RemainValue = remainValue;
+    }
 
     public String getDealerType() {
         return DealerType;

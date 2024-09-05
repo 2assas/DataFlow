@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
@@ -14,6 +15,7 @@ import android.util.Log;
 import com.dataflowstores.dataflow.pojo.financialReport.Data;
 import com.dataflowstores.dataflow.pojo.invoice.Invoice;
 import com.dataflowstores.dataflow.pojo.invoice.InvoiceResponse;
+import com.dataflowstores.dataflow.pojo.invoice.InvoiceType;
 import com.dataflowstores.dataflow.pojo.login.UserData;
 import com.dataflowstores.dataflow.pojo.product.ProductData;
 import com.dataflowstores.dataflow.pojo.receipts.ReceiptModel;
@@ -54,13 +56,28 @@ public class App extends Application {
     public static String customerBalance = "";
     public static int specialDiscount = 0;
     public static Data financialReportData = new Data();
-    public static Integer resales = -1;
+    public static InvoiceType invoiceType = null;
     public static String headerNotes = "";
     public static BranchData currentBranch;
     public static ItemSalesReport itemSalesReport;
     public static Integer selectedFoundation = 0;
     public static String pdfName = "";
+    public static int theme = R.style.AppTheme;
+    public static String uuid;
 
+
+    public static int getMoveType() {
+        switch (App.invoiceType) {
+            case ReturnSales:
+                return 3;
+            case Purchase:
+                return 2;
+            case ReturnPurchased:
+                return 4;
+            default:
+                return 1;
+        }
+    }
 
 
     public static boolean isNetworkAvailable(Context context) {
@@ -123,53 +140,10 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-//        Printooth.INSTANCE.init(this);
+        // Retrieve the selected theme from SharedPreferences and set it
+        SharedPreferences prefs = getSharedPreferences("AppShared", MODE_PRIVATE);
+        String themeId = prefs.getString("theme", "default"); // Default theme is AppTheme
+        theme = themeId.equals("default") ? R.style.AppTheme : R.style.SecondTheme;
     }
-//
-//    public static Single<Boolean> checkOnlineState() {
-//        return
-//    }
-}
 
-//
-//    AtomicBoolean result = new AtomicBoolean(true);
-//                    Single.fromCallable(() -> {
-//                            NetworkInfo NInfo = connectivityManager.getActiveNetworkInfo();
-//                            if (NInfo != null && NInfo.isConnectedOrConnecting()) {
-//                            try {
-//                            if (InetAddress.getByName("www.google.com").isReachable(600)) {
-//                            Log.e("checkConnection", "Connection exists");
-//                            // host reachable
-//                            result.set(true);
-//                            return true;
-//                            } else {
-//                            Log.e("checkConnection", "No connection");
-//                            // host not reachable
-//                            result.set(false);
-//                            return false;
-//                            }
-//                            } catch (IOException e) {
-//                            Log.e("checkConnection", "No connection Error");
-//                            result.set(false);
-//                            return false;
-//                            }
-//                            } else {
-//                            return false;
-//                            }
-//                            }).subscribeOn(Schedulers.io())
-//                            .observeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> {
-//                            if (aBoolean) {
-//                            Log.e("checkResult", "true");
-//                            result.set(true);
-//                            } else {
-//                            Log.e("checkResult", "False");
-//                            result.set(false);
-//                            }
-//                            });
-//                            try {
-//                            Thread.sleep(750);
-//                            } catch (InterruptedException e) {
-//                            throw new RuntimeException(e);
-//                            }
-//                            Log.e("checkResult", "result == "+result.get());
-//                            return result.get();
+}

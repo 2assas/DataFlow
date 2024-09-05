@@ -1,5 +1,7 @@
 package com.dataflowstores.dataflow.ui.expenses;
 
+import static com.dataflowstores.dataflow.App.theme;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,20 +16,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.dataflowstores.dataflow.App;
-import com.dataflowstores.dataflow.pojo.expenses.ExpenseData;
-import com.dataflowstores.dataflow.ui.SplashScreen;
-import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.databinding.PrintExpensesBinding;
+import com.dataflowstores.dataflow.pojo.expenses.ExpenseData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
+import com.dataflowstores.dataflow.ui.SplashScreen;
+import com.dataflowstores.dataflow.ui.invoice.PrintScreen;
 
 import java.util.Locale;
 import java.util.Objects;
 
-public class PrintExpenses extends AppCompatActivity {
+public class PrintExpenses extends BaseActivity {
     PrintExpensesBinding binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.print_expenses);
         if (savedInstanceState != null) {
@@ -69,9 +73,8 @@ public class PrintExpenses extends AppCompatActivity {
         binding.back.setOnClickListener(view -> finish());
         ExpenseData expenseData = (ExpenseData) getIntent().getSerializableExtra("expensesModel");
         binding.expTemplate.mainExp.setText("المصروف الرئيسي: " + expenseData.getExpMenuName());
-        App.pdfName= "المصروف الرئيسي: " + expenseData.getExpMenuName();
+        App.pdfName = "المصروف الرئيسي: " + expenseData.getExpMenuName() + " رقم المصروف " + expenseData.getMoveID();
 
-        //TODO::
         if (expenseData.getSubExpMenuName() != null)
             binding.expTemplate.subExp.setText("المصروف الفرعي: " + expenseData.getSubExpMenuName());
         if (expenseData.getSelectedWorkerName() != null)
@@ -83,7 +86,7 @@ public class PrintExpenses extends AppCompatActivity {
 
         binding.expTemplate.date.setText("التاريخ: " + expenseData.getCreateDate());
 //        binding.expTemplate.
-        binding.expTemplate.expensesTotal.setText(String.format(Locale.US, "%.2f", Float.parseFloat(expenseData.getNetValue())) + " جنيه");
+        binding.expTemplate.expensesTotal.setText(String.format(Locale.US, "%.3f", Float.parseFloat(expenseData.getNetValue())) + " جنيه");
         binding.expTemplate.receiptNotes.setText("ملاحضات \n" + expenseData.getHeaderNotes());
         binding.expTemplate.paymentMethod.setText(expenseData.getCashTypeName());
 //        binding.expTemplate.tradeRecord2.setText("السجل التجاري" + "\n" +

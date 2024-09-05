@@ -49,6 +49,7 @@ public class UserData implements Serializable {
     private long cashierSellPriceTypeBranchISN;
     @SerializedName("CashierSellPriceType_ISN")
     private long cashierSellPriceTypeISN;
+
     @SerializedName("PricesTypeBranchISN")
     private long pricesTypeBranchISN;
     @SerializedName("PricesTypeISN")
@@ -76,14 +77,20 @@ public class UserData implements Serializable {
 
     @SerializedName("SalesDefaultStoreBranchISN")
     private int SalesDefaultStoreBranchISN;
-    @SerializedName("SalesDefaultStoreISN")
-    private int SalesDefaultStoreISN;
-
-
     @SerializedName("ReSalesDefaultStoreBranchISN")
     private int ReSalesDefaultStoreBranchISN;
+    @SerializedName("SalesDefaultStoreISN")
+    private int SalesDefaultStoreISN;
     @SerializedName("ReSalesDefaultStoreISN")
     private int ReSalesDefaultStoreISN;
+    @SerializedName("SupplyDefaultStoreBranchISN")
+    private int SupplyDefaultStoreBranchISN;
+    @SerializedName("ReSupplyDefaultStoreBranchISN")
+    private int ReSupplyDefaultStoreBranchISN;
+    @SerializedName("SupplyDefaultStoreISN")
+    private int SupplyDefaultStoreISN;
+    @SerializedName("ReSupplyDefaultStoreISN")
+    private int ReSupplyDefaultStoreISN;
     @SerializedName("VendorID")
     private long vendorID;
 
@@ -123,6 +130,9 @@ public class UserData implements Serializable {
     @SerializedName("MobileDealersBalanceEnquiry")
     private int MobileDealersBalanceEnquiry = 1;
 
+    @SerializedName("MobileSuppliersBalanceEnquiry")
+    private int MobileSuppliersBalanceEnquiry = 1;
+
 
     @SerializedName("MobileShowDealerCurrentBalanceInPrint")
     private int MobileShowDealerCurrentBalanceInPrint = 1;
@@ -152,6 +162,8 @@ public class UserData implements Serializable {
     private int MobileExpenses = 0;
     @SerializedName("MobileItemPricesEnquiry")
     private int MobileItemPricesEnquiry = 0;
+    @SerializedName("MobileItemPricesEnquiryBuy")
+    private int MobileItemPricesEnquiryBuy = 0;
     @SerializedName("MobileMoneyReport")
     private int MobileMoneyReport = 0;
     @SerializedName("MobileInventoryReport")
@@ -190,6 +202,325 @@ public class UserData implements Serializable {
     String LogIn_VN;
     @SerializedName("LogIn_FAlternative")
     String LogIn_FAlternative;
+    @SerializedName("InvoiceCurrentBalanceTimeInInvoice")
+    String InvoiceCurrentBalanceTimeInInvoice;
+
+    @SerializedName("MobileModifyPriceInSale")
+    String MobileModifyPriceInSale;
+
+    @SerializedName("MobileModifyPriceInReSale")
+    String MobileModifyPriceInReSale;
+
+    @SerializedName("MobileModifyPriceInSupply")
+    String MobileModifyPriceInSupply;
+
+    @SerializedName("MobileModifyPriceInReSupply")
+    String MobileModifyPriceInReSupply;
+
+    @SerializedName("MobileReportsSuppliersSearch")
+    String MobileReportsSuppliersSearch;
+
+    @SerializedName("MobileItemsSupplyReport")
+    String MobileItemsSupplyReport;
+    @SerializedName("MobileSupply")
+    Integer MobileSupply;
+    @SerializedName("MobileReSupply")
+    Integer MobileReSupply;
+    @SerializedName("MobileTax")
+    Integer MobileTax;
+    @SerializedName("MobilePayment")
+    Integer MobilePayment;
+
+
+    @SerializedName("MobileSalesMaxDiscPer")
+    Integer MobileSalesMaxDiscPer;
+
+
+    @SerializedName("ShiftSystemActivate")
+    Integer ShiftSystemActivate;
+
+    @SerializedName("LogIn_ShiftBranchISN")
+    Integer LogIn_ShiftBranchISN;
+
+    @SerializedName("LogIn_Spare1")
+    Integer LogIn_Spare1;
+
+    @SerializedName("LogIn_Spare2")
+    Integer LogIn_Spare2;
+
+    @SerializedName("LogIn_Spare3")
+    Integer LogIn_Spare3;
+
+    @SerializedName("LogIn_ShiftISN")
+    Integer LogIn_ShiftISN;
+
+    @SerializedName("LogIn_Spare4")
+    Integer LogIn_Spare4;
+    @SerializedName("LogIn_Spare5")
+    Integer LogIn_Spare5;
+    @SerializedName("LogIn_Spare6")
+    Integer LogIn_Spare6;
+
+    @SerializedName("MobileSearchMilliSecondsWait")
+    Integer MobileSearchMilliSecondsWait;
+
+
+    @SerializedName("MobileSearchTypeLetterCount")
+    Integer MobileSearchTypeLetterCount;
+    @SerializedName("MobileOpenLogInNewShift")
+    Integer MobileOpenLogInNewShift;
+    @SerializedName("MobileOpenNewShift")
+    Integer MobileOpenNewShift;
+    @SerializedName("MobileLogInToShift")
+    Integer MobileLogInToShift;
+    @SerializedName("MobileCloseShift")
+    Integer MobileCloseShift;
+    @SerializedName("MobileOpenClosedShift")
+    Integer MobileOpenClosedShift;
+    @SerializedName("MobileLogOutFromShift")
+    Integer MobileLogOutFromShift;
+
+    @SerializedName("LogIn_CurrentWorkingDayDate")
+    String LogIn_CurrentWorkingDayDate;
+
+    @SerializedName("MobileDealersBalancesReport")
+    Integer MobileDealersBalancesReport;
+    @SerializedName("MobileSuppliersBalancesReport")
+    Integer MobileSuppliersBalancesReport;
+    @SerializedName("IllustrativeQuantity")
+    Integer IllustrativeQuantity;
+    @SerializedName("MobileGPSMust")
+    Integer MobileGPSMust;
+    @SerializedName("MobileItemsList")
+    Integer MobileItemsList;
+
+    public Integer getMobileItemsList() {
+        return MobileItemsList;
+    }
+    public Integer getIllustrativeQuantity() {
+        return IllustrativeQuantity;
+    }
+    public void setIllustrativeQuantity(Integer illustrativeQuantity) {
+        IllustrativeQuantity = illustrativeQuantity;
+    }
+
+    public Integer getMobileGPSMust() {
+        return MobileGPSMust;
+    }
+
+    public Integer getMobileSuppliersBalancesReport() {
+        return MobileSuppliersBalancesReport;
+    }
+
+    public Integer getMobileDealersBalancesReport() {
+        return MobileDealersBalancesReport;
+    }
+
+    public void setMobileDealersBalancesReport(Integer mobileDealersBalancesReport) {
+        MobileDealersBalancesReport = mobileDealersBalancesReport;
+    }
+
+    public String getLogIn_CurrentWorkingDayDate() {
+        return LogIn_CurrentWorkingDayDate;
+    }
+
+    public Integer getMobileOpenLogInNewShift() {
+        return MobileOpenLogInNewShift;
+    }
+
+    public Integer getMobileOpenNewShift() {
+        return MobileOpenNewShift;
+    }
+
+    public Integer getMobileLogInToShift() {
+        return MobileLogInToShift;
+    }
+
+    public Integer getMobileCloseShift() {
+        return MobileCloseShift;
+    }
+
+    public Integer getMobileOpenClosedShift() {
+        return MobileOpenClosedShift;
+    }
+
+    public Integer getMobileLogOutFromShift() {
+        return MobileLogOutFromShift;
+    }
+
+    public Integer getMobileSearchMilliSecondsWait() {
+        return MobileSearchMilliSecondsWait;
+    }
+
+    public Integer getMobileSearchTypeLetterCount() {
+        return MobileSearchTypeLetterCount;
+    }
+
+    public Integer getShiftSystemActivate() {
+        return ShiftSystemActivate;
+    }
+
+    public Integer getMobileSalesMaxDiscPer() {
+        return MobileSalesMaxDiscPer;
+    }
+
+    public Integer getLogIn_ShiftBranchISN() {
+        return LogIn_ShiftBranchISN;
+    }
+
+    public void setLogIn_ShiftISN(Integer logIn_ShiftISN) {
+        LogIn_ShiftISN = logIn_ShiftISN;
+    }
+
+    public void setLogIn_ShiftBranchISN(Integer logIn_ShiftBranchISN) {
+        LogIn_ShiftBranchISN = logIn_ShiftBranchISN;
+    }
+
+    public Integer getLogIn_Spare1() {
+        return LogIn_Spare1;
+    }
+
+    public Integer getLogIn_Spare2() {
+        return LogIn_Spare2;
+    }
+
+    public Integer getLogIn_Spare3() {
+        return LogIn_Spare3;
+    }
+
+    public Integer getLogIn_ShiftISN() {
+        return LogIn_ShiftISN;
+    }
+
+    public Integer getLogIn_Spare4() {
+        return LogIn_Spare4;
+    }
+
+    public Integer getLogIn_Spare5() {
+        return LogIn_Spare5;
+    }
+
+    public Integer getLogIn_Spare6() {
+        return LogIn_Spare6;
+    }
+
+    //    ShiftSystemActivate
+//            LogIn_ShiftBranchISN
+//    LogIn_ShiftISN
+//            LogIn_Spare1
+//    LogIn_Spare2
+//            LogIn_Spare3
+//    LogIn_Spare4
+//            LogIn_Spare5
+//    LogIn_Spare6
+    public Integer getMobilePayment() {
+        return MobilePayment;
+    }
+
+    public Integer getMobileTax() {
+        return MobileTax;
+    }
+
+    public Integer getMobileSupply() {
+        return MobileSupply;
+    }
+
+    public Integer getMobileReSupply() {
+        return MobileReSupply;
+    }
+
+    public int getSupplyDefaultStoreISN() {
+        return SupplyDefaultStoreISN;
+    }
+    public int getReSupplyDefaultStoreISN() {
+        return ReSupplyDefaultStoreISN;
+    }
+    public int getSupplyDefaultStoreBranchISN() {
+        return SupplyDefaultStoreBranchISN;
+    }
+    public void setSupplyDefaultStoreBranchISN(int supplyDefaultStoreBranchISN) {
+        SupplyDefaultStoreBranchISN = supplyDefaultStoreBranchISN;
+    }
+
+    public int getReSupplyDefaultStoreBranchISN() {
+        return ReSupplyDefaultStoreBranchISN;
+    }
+
+    public void setReSupplyDefaultStoreBranchISN(int reSupplyDefaultStoreBranchISN) {
+        ReSupplyDefaultStoreBranchISN = reSupplyDefaultStoreBranchISN;
+    }
+
+    public String getMobileItemsSupplyReport() {
+        return MobileItemsSupplyReport;
+    }
+
+    public void setMobileItemsSupplyReport(String mobileItemsSupplyReport) {
+        MobileItemsSupplyReport = mobileItemsSupplyReport;
+    }
+
+    public String getMobileReportsSuppliersSearch() {
+        return MobileReportsSuppliersSearch;
+    }
+
+    public void setMobileReportsSuppliersSearch(String mobileReportsSuppliersSearch) {
+        MobileReportsSuppliersSearch = mobileReportsSuppliersSearch;
+    }
+
+    public String getMobileModifyPriceInSale() {
+        return MobileModifyPriceInSale;
+    }
+
+    public void setMobileModifyPriceInSale(String mobileModifyPriceInSale) {
+        MobileModifyPriceInSale = mobileModifyPriceInSale;
+    }
+
+    public String getMobileModifyPriceInReSale() {
+        return MobileModifyPriceInReSale;
+    }
+
+    public void setMobileModifyPriceInReSale(String mobileModifyPriceInReSale) {
+        MobileModifyPriceInReSale = mobileModifyPriceInReSale;
+    }
+
+    public String getMobileModifyPriceInSupply() {
+        return MobileModifyPriceInSupply;
+    }
+
+    public void setMobileModifyPriceInSupply(String mobileModifyPriceInSupply) {
+        MobileModifyPriceInSupply = mobileModifyPriceInSupply;
+    }
+
+    public String getMobileModifyPriceInReSupply() {
+        return MobileModifyPriceInReSupply;
+    }
+
+    public void setMobileModifyPriceInReSupply(String mobileModifyPriceInReSupply) {
+        MobileModifyPriceInReSupply = mobileModifyPriceInReSupply;
+    }
+
+    public String getInvoiceCurrentBalanceTimeInInvoice() {
+        return InvoiceCurrentBalanceTimeInInvoice;
+    }
+
+    public void setInvoiceCurrentBalanceTimeInInvoice(String invoiceCurrentBalanceTimeInInvoice) {
+        InvoiceCurrentBalanceTimeInInvoice = invoiceCurrentBalanceTimeInInvoice;
+    }
+
+    public int getMobileSuppliersBalanceEnquiry() {
+        return MobileSuppliersBalanceEnquiry;
+    }
+
+    public void setMobileSuppliersBalanceEnquiry(int mobileSuppliersBalanceEnquiry) {
+        MobileSuppliersBalanceEnquiry = mobileSuppliersBalanceEnquiry;
+    }
+
+    public int getMobileItemPricesEnquiryBuy() {
+        return MobileItemPricesEnquiryBuy;
+    }
+
+    public void setMobileItemPricesEnquiryBuy(int mobileItemPricesEnquiryBuy) {
+        MobileItemPricesEnquiryBuy = mobileItemPricesEnquiryBuy;
+    }
 
     public String getLogIn_BISN() {
         return LogIn_BISN;

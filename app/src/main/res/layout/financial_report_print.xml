@@ -42,7 +42,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:text="FoundationName"
-                    android:textColor="@color/black"
+
                     android:textSize="15sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -59,7 +59,7 @@
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:text=" hgn التوقيت من 20209-2030203- الى 212232"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +76,7 @@
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:text=""
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:visibility="gone"
@@ -95,7 +95,7 @@
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:text="خزينة خزينة الكاشير1"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -112,7 +112,7 @@
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:text=""
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -128,7 +128,7 @@
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:text="اليومية من 2323123"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -145,7 +145,7 @@
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:text="وردية رقم 20"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -162,7 +162,7 @@
                     android:layout_marginTop="7dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -179,7 +179,7 @@
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:text="وردية رقم 20"
-                    android:textColor="@color/black"
+
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:visibility="gone"
@@ -237,11 +237,11 @@
 
                     <TextView
                         android:id="@+id/actualTotal"
-                        android:layout_width="75dp"
+                        android:layout_width="95dp"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="الفعلى"
-                        android:textColor="@color/black"
+
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/view111"
@@ -264,7 +264,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="إجمالى"
-                        android:textColor="@color/black"
+
                         android:textSize="12sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -289,7 +289,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="العدد"
-                        android:textColor="@color/black"
+
                         android:textSize="12sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -313,7 +313,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="الحساب"
-                        android:textColor="@color/black"
+
                         android:textSize="12sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -333,12 +333,12 @@
 
                     <TextView
                         android:id="@+id/serial"
-                        android:layout_width="15dp"
+                        android:layout_width="12dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="1dp"
                         android:gravity="center"
                         android:text="م"
-                        android:textColor="@color/black"
+
                         android:textSize="12sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -358,7 +358,9 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/headerContainer"
-                    tools:targetApi="lollipop" />
+                    tools:targetApi="lollipop"
+                    tools:listitem="@layout/financial_report_item"
+                    />
 
 
                 <TextView
@@ -367,7 +369,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
                     android:text="19192.423"
-                    android:textColor="@color/black"
+
                     android:textSize="17sp"
                     app:layout_constraintEnd_toStartOf="@+id/textView76"
                     app:layout_constraintStart_toStartOf="parent"
@@ -384,7 +386,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="20293"
-                    android:textColor="@color/black"
+
                     android:textSize="17sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toStartOf="@+id/textView60"
@@ -406,7 +408,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="مبلغ غللق الوردية :"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="@+id/openShiftAmount"
                         app:layout_constraintEnd_toStartOf="@+id/openShiftAmount"
@@ -418,7 +420,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="1212"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="@+id/textView72"
                         app:layout_constraintEnd_toStartOf="@+id/textView72"
@@ -432,7 +434,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="20dp"
                         android:text="مبلغ فتح الوردية :"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView63" />
@@ -442,7 +444,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="02"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="@+id/textView69"
                         app:layout_constraintEnd_toStartOf="@+id/textView69"
@@ -457,7 +459,7 @@
                         android:layout_marginEnd="20dp"
                         android:layout_marginBottom="10dp"
                         android:text="المفترض تسليمه :"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -469,7 +471,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="20dp"
                         android:text="حالة الوردية :"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -478,7 +480,7 @@
                         android:id="@+id/shiftStatus"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintEnd_toStartOf="@+id/textView63"
                         app:layout_constraintStart_toStartOf="parent"
@@ -489,7 +491,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="المبلغ المسلم :"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="@+id/toBePaidAmount"
                         app:layout_constraintEnd_toStartOf="@+id/toBePaidAmount"
@@ -501,7 +503,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="1201"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="@+id/textView66"
                         app:layout_constraintEnd_toStartOf="@+id/textView66"
@@ -513,7 +515,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="121"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="@+id/textView67"
                         app:layout_constraintEnd_toStartOf="@+id/textView67"
@@ -528,7 +530,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="10201"
-                    android:textColor="@color/black"
+
                     android:textSize="17sp"
                     app:layout_constraintEnd_toStartOf="@+id/textView58"
                     app:layout_constraintStart_toStartOf="parent"
@@ -541,7 +543,7 @@
                     android:layout_marginTop="15dp"
                     android:layout_marginEnd="20dp"
                     android:text="إجمالى الإيرادات :"
-                    android:textColor="@color/black"
+
                     android:textSize="17sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/recyclerView2" />
@@ -553,7 +555,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="20dp"
                     android:text="إجمالى المصروفات :"
-                    android:textColor="@color/black"
+
                     android:textSize="17sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView76" />
@@ -569,7 +571,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="الرصيد"
-                    android:textColor="@color/black"
+
                     android:textSize="17sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -587,7 +589,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="الحالة النهائية: -1219212.1212"
-                    android:textColor="@color/black"
+
                     android:textSize="17sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -610,7 +612,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="20dp"
                         android:text="توقيت فتح الوردية"
-                        android:textColor="@color/black"
+
                         android:textSize="17sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -622,7 +624,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="20dp"
                         android:text="توقيت غلق الوردية"
-                        android:textColor="@color/black"
+
                         android:textSize="17sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView73" />
@@ -633,7 +635,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="30/05/2021 12:55:57 م"
-                        android:textColor="@color/black"
+
                         android:textSize="17sp"
                         app:layout_constraintBottom_toBottomOf="@+id/textView73"
                         app:layout_constraintEnd_toStartOf="@+id/textView73"
@@ -645,7 +647,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="30/05/2021 12:55:57 م"
-                        android:textColor="@color/black"
+
                         android:textSize="17sp"
                         app:layout_constraintBottom_toBottomOf="@+id/textView75"
                         app:layout_constraintEnd_toStartOf="@+id/textView75"

@@ -25,7 +25,15 @@ public class CustomerData implements Serializable {
 
     @SerializedName("DealerSellPriceTypeISN")
     private String DealerSellPriceTypeISN;
+    @SerializedName("DealerInvoiceDefaultDisc")
+    private String DealerInvoiceDefaultDisc;
 
+    public String getDealerInvoiceDefaultDisc() {
+        return DealerInvoiceDefaultDisc;
+    }
+    public void setDealerInvoiceDefaultDisc(String dealerInvoiceDefaultDisc) {
+        DealerInvoiceDefaultDisc = dealerInvoiceDefaultDisc;
+    }
 
     public String getDealerSellPriceTypeBranchISN() {
         return DealerSellPriceTypeBranchISN;

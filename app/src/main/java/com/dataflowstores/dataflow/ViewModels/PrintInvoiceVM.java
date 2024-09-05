@@ -10,11 +10,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.dataflowstores.dataflow.App;
-import com.dataflowstores.dataflow.webService.ServiceGenerator;
 import com.dataflowstores.dataflow.pojo.invoice.Invoice;
 import com.dataflowstores.dataflow.pojo.users.CustomerBalance;
 import com.dataflowstores.dataflow.webService.ApiClient;
 import com.dataflowstores.dataflow.webService.Constants;
+import com.dataflowstores.dataflow.webService.ServiceGenerator;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -40,7 +40,7 @@ public class PrintInvoiceVM extends ViewModel {
 
 
     public void getPrintingData(String branchISN, String uuid, String moveID, String workerCBranchISN, String workerCISN, Context context, Integer moveType){
-        Observable<Invoice> invoiceObservable = apiClient.getPrintingData(branchISN,uuid, moveID, workerCBranchISN,workerCISN, App.currentUser.getPermission(), moveType,selectedFoundation,
+        Observable<Invoice> invoiceObservable = apiClient.getPrintingData(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),branchISN,uuid, moveID, workerCBranchISN,workerCISN, App.currentUser.getPermission(), moveType,selectedFoundation,
                 App.currentUser.getLogIn_BISN(),
                 App.currentUser.getLogIn_UID(),
                 App.currentUser.getLogIn_WBISN(),
@@ -51,7 +51,17 @@ public class PrintInvoiceVM extends ViewModel {
                 App.currentUser.getLogIn_WSName(),
                 App.currentUser.getLogIn_CS(),
                 App.currentUser.getLogIn_VN(),
-                App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                App.currentUser.getLogIn_FAlternative()
+                ,App.currentUser.getMobileSalesMaxDiscPer()
+                ,App.currentUser.getShiftSystemActivate()
+                ,App.currentUser.getLogIn_ShiftBranchISN()
+                ,App.currentUser.getLogIn_ShiftISN()
+                ,App.currentUser.getLogIn_Spare1()
+                ,App.currentUser.getLogIn_Spare2()
+                ,App.currentUser.getLogIn_Spare3()
+                ,App.currentUser.getLogIn_Spare4()
+                ,App.currentUser.getLogIn_Spare5()
+                ,App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observer<Invoice> invoiceObserver = new Observer<Invoice>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
@@ -84,8 +94,9 @@ public class PrintInvoiceVM extends ViewModel {
         invoiceObservable.subscribe(invoiceObserver);
     }
 
-    public void getCustomerBalance(String uuid, String dealerISN, String branchISN, String dealerType, String dealerName) {
-        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(uuid, dealerISN, branchISN, dealerType,selectedFoundation,
+    public void getCustomerBalance(String uuid, String dealerISN, String branchISN, String dealerType,
+                                   String moveBranchISN, String moveISN, String remainValue, String netValue, String moveType) {
+        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid, dealerISN, branchISN, dealerType, selectedFoundation,
                 App.currentUser.getLogIn_BISN(),
                 App.currentUser.getLogIn_UID(),
                 App.currentUser.getLogIn_WBISN(),
@@ -96,7 +107,19 @@ public class PrintInvoiceVM extends ViewModel {
                 App.currentUser.getLogIn_WSName(),
                 App.currentUser.getLogIn_CS(),
                 App.currentUser.getLogIn_VN(),
-                App.currentUser.getLogIn_FAlternative()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                App.currentUser.getLogIn_FAlternative()
+                , moveBranchISN, moveISN, remainValue, netValue, moveType, null, App.currentUser.getInvoiceCurrentBalanceTimeInInvoice()
+                ,App.currentUser.getMobileSalesMaxDiscPer()
+                ,App.currentUser.getShiftSystemActivate()
+                ,App.currentUser.getLogIn_ShiftBranchISN()
+                ,App.currentUser.getLogIn_ShiftISN()
+                ,App.currentUser.getLogIn_Spare1()
+                ,App.currentUser.getLogIn_Spare2()
+                ,App.currentUser.getLogIn_Spare3()
+                ,App.currentUser.getLogIn_Spare4()
+                ,App.currentUser.getLogIn_Spare5()
+                ,App.currentUser.getLogIn_Spare6()
+        ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observer<CustomerBalance> observer = new Observer<CustomerBalance>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {

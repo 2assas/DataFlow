@@ -9,8 +9,19 @@ public class StoresData implements Serializable {
     int BranchISN;
     @SerializedName("Store_ISN")
     int Store_ISN;
+
+    @SerializedName("AllowCurrentStoreMinus")
+    int AllowCurrentStoreMinus;
     @SerializedName("StoreName")
     String StoreName;
+
+    public int getAllowCurrentStoreMinus() {
+        return AllowCurrentStoreMinus;
+    }
+
+    public void setAllowCurrentStoreMinus(int allowCurrentStoreMinus) {
+        AllowCurrentStoreMinus = allowCurrentStoreMinus;
+    }
 
     public int getBranchISN() {
         return BranchISN;

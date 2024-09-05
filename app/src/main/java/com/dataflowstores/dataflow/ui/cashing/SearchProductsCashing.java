@@ -6,21 +6,26 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CursorAdapter;
 import android.widget.SearchView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
@@ -34,18 +39,25 @@ import com.dataflowstores.dataflow.ViewModels.CheckoutVM;
 import com.dataflowstores.dataflow.ViewModels.ProductVM;
 import com.dataflowstores.dataflow.ViewModels.SettingVM;
 import com.dataflowstores.dataflow.databinding.AddProductsBinding;
+import com.dataflowstores.dataflow.pojo.login.UserData;
+import com.dataflowstores.dataflow.pojo.product.ProductData;
+import com.dataflowstores.dataflow.pojo.product.SearchProductResponse;
 import com.dataflowstores.dataflow.pojo.users.CustomerData;
 import com.dataflowstores.dataflow.pojo.workStation.BranchData;
+import com.dataflowstores.dataflow.ui.BaseActivity;
 import com.dataflowstores.dataflow.ui.ScanBarCode;
 import com.dataflowstores.dataflow.ui.SplashScreen;
+import com.dataflowstores.dataflow.ui.adapters.CartItemListener;
+import com.dataflowstores.dataflow.ui.listeners.MyDialogCloseListener;
 import com.dataflowstores.dataflow.utils.SingleShotLocationProvider;
 import com.dataflowstores.dataflow.utils.SwipeHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
-public class SearchProductsCashing extends AppCompatActivity {
+public class SearchProductsCashing extends BaseActivity implements MyDialogCloseListener, CartItemListener {
     AddProductsBinding binding;
     ProductVM productVM;
     SettingVM settingVM;
@@ -58,10 +70,17 @@ public class SearchProductsCashing extends AppCompatActivity {
     Integer AllowStoreMinusConfirm = 0;
     BranchData selectedBranch;
     List<BranchData> branchesList;
+    private SimpleCursorAdapter adapter;
+    private final String[] suggestionsColumns = {"_id", "suggestion"};
+    Boolean isSerial = false;
+    List<SearchProductResponse> searchProductList = new ArrayList<>();
+    String itemCode = "";
+    boolean isLoading = false;
 
     @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             startActivity(new Intent(this, SplashScreen.class));
@@ -73,21 +92,63 @@ public class SearchProductsCashing extends AppCompatActivity {
             checkoutVM = new ViewModelProvider(this).get(CheckoutVM.class);
             uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
             moveType = getIntent().getIntExtra("moveType", 16);
+            App.isEditing = false;
             setupViews();
             settingVM.getStoresCashing(App.currentUser.getBranchISN(), uuid, moveType);
             observeStores();
-            requiredData();
+            if (App.currentUser.getMobileGPSMust() == 1) {
+                requiredData();
+            }
             searchProducts();
             recyclerSwipe();
             barCodeScan();
             observeBranch();
+            observeSearching();
+            observeSearchProduct();
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (!isLoading) {
+            checkoutVM.compositeDisposable.clear();
+            App.selectedProducts = new ArrayList<>();
+            productVM.compositeDisposable.clear();
+            finish();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        productVM.compositeDisposable.clear();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        productVM.compositeDisposable.clear();
+
+    }
+
     public void setupViews() {
-        settingVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
+        settingVM.toastErrorMutableLiveData.observe(this, s -> {
+            isLoading = false;
+            binding.progress.setVisibility(View.GONE);
+            Toast.makeText(this, s, Toast.LENGTH_LONG).show();
+        });
+        checkoutVM.toastErrorMutableLiveData.observe(this, s -> {
+            isLoading = false;
+            binding.progress.setVisibility(View.GONE);
+            Toast.makeText(this, s, Toast.LENGTH_LONG).show();
+            binding.invoice.setClickable(true);
+        });
         binding.notes.setVisibility(View.VISIBLE);
         writeSaveButton();
+        if (App.selectedProducts.size() > 0) {
+            setOrderSummary(false);
+        }
         binding.invoice.setOnClickListener(view -> {
             if (App.selectedProducts.size() > 0) {
                 if (requiredData()) {
@@ -95,10 +156,10 @@ public class SearchProductsCashing extends AppCompatActivity {
                     if (lat == 0 && _long == 0) {
                         Handler handler = new Handler();
                         handler.postDelayed(() -> {
-                            invoicePost();
+                            setOrderSummary(true);
                         }, 1000);
                     } else {
-                        invoicePost();
+                        setOrderSummary(true);
                     }
                     binding.progress.setVisibility(View.VISIBLE);
                 }
@@ -127,6 +188,35 @@ public class SearchProductsCashing extends AppCompatActivity {
         binding.addBranch.close.setOnClickListener(v -> binding.addBranch.getRoot().setVisibility(View.GONE));
     }
 
+    @SuppressLint("SetTextI18n")
+    private void setOrderSummary(boolean showDialog) {
+        int count = 0;
+        double quantity = 0;
+        binding.orderSummaryContainer.setVisibility(View.VISIBLE);
+        if (App.selectedProducts.size() > 0) {
+            for (int i = 0; i < App.selectedProducts.size(); i++) {
+                quantity += App.selectedProducts.get(i).getQuantity();
+            }
+            count = App.selectedProducts.size();
+        }
+        if (showDialog) {
+            new androidx.appcompat.app.AlertDialog.Builder(this).setMessage("لديك عدد " + "(" + count + ")" + " سطور بإجمالى كمية " + "(" + String.format(Locale.ENGLISH, "%.3f", quantity) + ")" +
+                    " هل أنت متأكد؟").setPositiveButton("تأكيد", ((dialogInterface, i) -> {
+                isLoading = true;
+                invoicePost();
+                dialogInterface.dismiss();
+            })).setNegativeButton("إلغاء", ((dialogInterface, i) -> {
+                dialogInterface.dismiss();
+                binding.progress.setVisibility(View.GONE);
+                binding.invoice.setClickable(true);
+            })).setCancelable(false).show();
+        } else {
+            binding.cartLinesCount.setText("السطور: " + count);
+            binding.cartLinesQuantity.setText("الكمية: " + String.format(Locale.ENGLISH, "%.3f", quantity));
+            binding.cartLinesTotal.setVisibility(View.GONE);
+        }
+    }
+
     public void observeBranch() {
         settingVM.branchesMutableLiveData.observe(this, branches -> {
             if (branches.getBranchData().size() > 0) {
@@ -134,8 +224,6 @@ public class SearchProductsCashing extends AppCompatActivity {
             }
         });
     }
-
-
     private void branchSpinner() {
         ArrayList<String> branchesName = new ArrayList<>();
         for (int i = 0; i < branchesList.size(); i++) {
@@ -172,27 +260,33 @@ public class SearchProductsCashing extends AppCompatActivity {
 
 
     public void searchProducts() {
+        binding.searchProducts.setOnClickListener(view -> {
+            binding.searchProducts.onActionViewExpanded(); // Expand the SearchView
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(binding.searchProducts, InputMethodManager.SHOW_IMPLICIT);
+        });
         binding.searchProducts.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 if (App.isNetworkAvailable(SearchProductsCashing.this))
-                    productVM.getProduct(s, uuid, null, moveType);
+                    productVM.getProduct(s, uuid, null, moveType, null);
                 else {
                     App.noConnectionDialog(SearchProductsCashing.this);
                 }
                 BottomSheetFragmentCashing bottomSheetFragment = new BottomSheetFragmentCashing(moveType);
                 bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
                 writeSaveButton();
-
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
                 binding.invoice.setText("بحث عن صنف");
+                productVM.setSearchQuery(s);
+
                 binding.invoice.setOnClickListener(view -> {
                     if (App.isNetworkAvailable(SearchProductsCashing.this))
-                        productVM.getProduct(s, uuid, null, moveType);
+                        productVM.getProduct(s, uuid, null, moveType, null);
                     else {
                         App.noConnectionDialog(SearchProductsCashing.this);
                     }
@@ -203,19 +297,96 @@ public class SearchProductsCashing extends AppCompatActivity {
                 return false;
             }
         });
+
+
+        adapter = new SimpleCursorAdapter(this, android.R.layout.simple_dropdown_item_1line, null, new String[]{"suggestion"}, new int[]{android.R.id.text1}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        binding.searchProducts.setSuggestionsAdapter(adapter);
+        binding.searchProducts.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return false;
+            }
+
+            @Override
+            public boolean onSuggestionClick(int position) {
+                Cursor cursor = adapter.getCursor();
+                if (cursor != null && cursor.moveToPosition(position)) {
+                    int suggestionIndex = cursor.getColumnIndex("suggestion");
+                    if (suggestionIndex != -1) {
+                        String suggestion = cursor.getString(suggestionIndex);
+                        itemCode = searchProductList.get(position).getItemCode();
+                        productVM.getProduct(suggestion, uuid, null, moveType, itemCode);
+                        binding.progress.setVisibility(View.VISIBLE);
+                    }
+                }
+                return true;
+            }
+        });
+
         binding.productsRecycler.setLayoutManager(new LinearLayoutManager(this));
-        selectedProductsAdapter = new SelectedProductsCashingAdapter(App.selectedProducts, this, moveType);
+        selectedProductsAdapter = new SelectedProductsCashingAdapter(this, moveType, this);
+        selectedProductsAdapter.submitList(App.selectedProducts);
         selectedProductsAdapter.notifyDataSetChanged();
         binding.productsRecycler.setAdapter(selectedProductsAdapter);
 
     }
 
+    private void observeSearching() {
+        productVM.getSearchResults().observe(this, searchProductResponses -> {
+            if (searchProductResponses != null) {
+                searchProductList = searchProductResponses;
+                MatrixCursor cursor = new MatrixCursor(suggestionsColumns);
+                for (int i = 0; i < searchProductResponses.size(); i++) {
+                    String[] rowData = {String.valueOf(i), searchProductResponses.get(i).getItemName()};
+                    cursor.addRow(rowData);
+                }
+                adapter.changeCursor(cursor);
+            } else {
+                MatrixCursor cursor = new MatrixCursor(suggestionsColumns);
+                adapter.changeCursor(cursor);
+            }
+        });
+    }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        App.selectedProducts = new ArrayList<>();
-        finish();
+    private void observeSearchProduct() {
+        productVM.productMutableLiveData.observe(this, product -> {
+            if (product.getData() != null) {
+                App.product = product.getData().get(0);
+                if (product.getData().get(0).getSerial() && !isSerial) {
+                    Log.e("checkSerial", "Serial 1");
+                    binding.serialDialog.getRoot().setVisibility(View.VISIBLE);
+                    binding.serialDialog.confirm.setOnClickListener(view -> {
+                        binding.serialDialog.confirm.setVisibility(View.GONE);
+                        binding.serialDialog.progress.setVisibility(View.VISIBLE);
+                        if (!binding.serialDialog.serialNumberInput.getText().toString().isEmpty())
+                            productVM.getProduct(App.product.getItemName(), uuid, binding.serialDialog.serialNumberInput.getText().toString(), moveType, itemCode);
+                        else
+                            binding.serialDialog.serialNumberInput.setError("مطلوب");
+                        isSerial = true;
+                    });
+                } else if (isSerial) {
+                    Log.e("checkSerial", "Serial 2");
+                    if (!App.product.getxBarCodeSerial().isEmpty())
+                        binding.serialDialog.serialNumberInput.setText(App.product.getxBarCodeSerial());
+                    App.serialNumber = binding.serialDialog.serialNumberInput.getText().toString();
+                    binding.serialDialog.confirm.setVisibility(View.VISIBLE);
+                    binding.serialDialog.progress.setVisibility(View.GONE);
+                    isSerial = false;
+                    Intent intent = new Intent(this, ProductScreenCashing.class);
+                    App.editingPos = 0;
+                    intent.putExtra("moveType", moveType);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Log.e("checkSerial", "Serial 3");
+                    Intent intent = new Intent(this, ProductScreenCashing.class);
+                    App.editingPos = 0;
+                    intent.putExtra("moveType", moveType);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        });
     }
 
     public void barCodeScan() {
@@ -234,6 +405,7 @@ public class SearchProductsCashing extends AppCompatActivity {
         });
 
         checkoutVM.responseDataMutableLiveData.observe(this, response -> {
+            isLoading = false;
             binding.invoice.setClickable(true);
             binding.progress.setVisibility(View.GONE);
             String errorMessage = response.getMessage();
@@ -242,26 +414,30 @@ public class SearchProductsCashing extends AppCompatActivity {
             }
             if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 2) {
                 new AlertDialog.Builder(this).
-                        setTitle("binding.invoiceTemplate.ص فالمخزن")
+                        setTitle("نص فالمخزن")
                         .setMessage(errorMessage)
                         .setCancelable(false)
                         .setPositiveButton("متابعة", (dialogInterface, i) -> {
                             AllowStoreMinusConfirm = 1;
-                            invoicePost();
+                            setOrderSummary(true);
                         }).setNegativeButton("إلغاء", (dialogInterface, i) -> {
                             dialogInterface.dismiss();
                         }).show();
-            } else if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 1) {
+            } else if (response.getStatus() == 0 && (App.currentUser.getAllowStoreMinus() == 1 || App.currentUser.getAllowStoreMinus() == 4)) {
                 String error = response.getMessage();
-                String errorTitle = "نقص فالمخزن";
                 if (response.getMessage().equals("Not saved ... please save again")) {
                     error = "لا يوجد الكمية الكافية من هذا الصنف";
                 }
-                if (response.getMessage().equals("Invoice not saved: Data redundancy.") || response.getMessage().equals("WARNING: Duplicate invoice data.")) {
-                    errorTitle = "تكرار بيانات";
-                }
-                new AlertDialog.Builder(this).
-                        setTitle(errorTitle)
+
+                new AlertDialog.Builder(this)
+                        .setMessage(error)
+                        .setCancelable(false)
+                        .setNegativeButton("إلغاء", (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                        }).show();
+            } else if (response.getStatus() == 0) {
+                String error = response.getMessage();
+                new AlertDialog.Builder(this)
                         .setMessage(error)
                         .setCancelable(false)
                         .setNegativeButton("إلغاء", (dialogInterface, i) -> {
@@ -292,7 +468,7 @@ public class SearchProductsCashing extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 String contents = data.getStringExtra("SCAN_RESULT");
                 if (App.isNetworkAvailable(SearchProductsCashing.this))
-                    productVM.getProduct(contents, uuid, null, moveType);
+                    productVM.getProduct(contents, uuid, null, moveType, null);
                 else {
                     App.noConnectionDialog(SearchProductsCashing.this);
                 }
@@ -313,8 +489,11 @@ public class SearchProductsCashing extends AppCompatActivity {
                 buffer.add(new MyButton(SearchProductsCashing.this, R.drawable.delete, Color.RED,
                         pos -> {
                             selectedProductsAdapter.callDeleteFunction(pos);
+                            setOrderSummary(false);
                         }
+
                 ));
+
                 buffer.add(new MyButton(SearchProductsCashing.this, R.drawable.ic_baseline_edit_24, Color.GRAY,
                         pos -> selectedProductsAdapter.callEditFunction(pos)
                 ));
@@ -339,6 +518,9 @@ public class SearchProductsCashing extends AppCompatActivity {
                 binding.branch.setVisibility(View.VISIBLE);
                 binding.addBranch.title.setText("فرع الصرف");
                 settingVM.getBranches(uuid);
+                break;
+            case 21:
+                binding.invoice.setText("حفظ طلب أصناف");
                 break;
             case 15:
                 binding.invoice.setText("حفظ تكوين الصنف");
@@ -426,10 +608,16 @@ public class SearchProductsCashing extends AppCompatActivity {
         ArrayList<Double> discount1 = new ArrayList<>();
         ArrayList<Long> toStoreISN = new ArrayList<>();
         ArrayList<Long> toStoreBranchISN = new ArrayList<>();
+        ArrayList<Integer> allowStoreMinus = new ArrayList<>();
+        ArrayList<String> productStoreName = new ArrayList<>();
+        ArrayList<Double> illustrativeQuantity = new ArrayList<>();
 
         for (int i = 0; i < App.selectedProducts.size(); i++) {
             itemName.add(App.selectedProducts.get(i).getItemName());
             ItemBranchISN.add((long) App.selectedProducts.get(i).getBranchISN());
+            allowStoreMinus.add(App.selectedProducts.get(i).getAllowStoreMinus());
+            illustrativeQuantity.add(App.selectedProducts.get(i).getIllustrativeQuantity());
+            productStoreName.add(App.selectedProducts.get(i).getSelectedStore().getStoreName());
             ItemISN.add((long) App.selectedProducts.get(i).getItemISN());
             if (App.selectedProducts.get(i).getSelectedPriceType() != null) {
                 PriceTypeBranchISN.add((long) App.selectedProducts.get(i).getSelectedPriceType().getBranchISN());
@@ -548,7 +736,7 @@ public class SearchProductsCashing extends AppCompatActivity {
                         ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN, SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes, numberOFItems,
                         netPrices, basicMeasureUnitQuantity, expireDateBool, colorsBool, seasonsBool, sizesBool, serialBool, group1Bool, group2Bool, serviceItem, itemTax, itemTaxValue, 0,
                         App.currentUser.getAllowStoreMinus(), itemName, discount1, AllowStoreMinusConfirm, lat, _long, "exchange_permission", moveType, moveType == 14 ? toStoreBranchISN : null, moveType == 14 ? toStoreISN : null,
-                        App.currentBranch != null ? String.valueOf(App.currentBranch.getBranchISN()) : null);
+                        App.currentBranch != null ? String.valueOf(App.currentBranch.getBranchISN()) : null, allowStoreMinus, productStoreName, illustrativeQuantity);
             } else {
                 App.noConnectionDialog(this);
             }
@@ -567,7 +755,6 @@ public class SearchProductsCashing extends AppCompatActivity {
         }
         return true;
     }
-
 
     private void requestPermission() {
         ActivityCompat.requestPermissions(this, new String[]{
@@ -604,10 +791,8 @@ public class SearchProductsCashing extends AppCompatActivity {
                     }
                 }
                 break;
-
         }
     }
-
     public void getLocation(final Context context) {
         SingleShotLocationProvider.requestCurrentLocation(context,
                 location -> {
@@ -617,4 +802,14 @@ public class SearchProductsCashing extends AppCompatActivity {
                 });
     }
 
+    @Override
+    public void handleDialogClose(DialogInterface dialog) {
+        observeSearchProduct();
+    }
+
+    @Override
+    public void onDeleteItem(ProductData productData) {
+        App.selectedProducts.remove(productData);
+        selectedProductsAdapter.submitList(App.selectedProducts);
+    }
 }
