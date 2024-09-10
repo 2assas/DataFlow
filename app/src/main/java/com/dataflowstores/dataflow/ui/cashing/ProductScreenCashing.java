@@ -114,13 +114,13 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
             binding.quantityTxt.setText("الكمية الحالية");
         if (App.product.getQuantity() != 0) {
             quantity = App.product.getQuantity();
-            binding.textView26.setText(String.format(Locale.US, "%.3f", quantity) + "");
+            binding.quantity.setText(String.format(Locale.US, "%.3f", quantity) + "");
             Log.e("checkTotalQuantity", "setQuantity " + quantity + " -12- ");
 
         } else if (!Objects.equals(App.product.getxQuanFromBarcode(), "0") && !App.isEditing) {
             quantity = Float.parseFloat(App.product.getxQuanFromBarcode());
             product.setQuantity(quantity);
-            binding.textView26.setText(String.format(Locale.US, "%.3f", quantity) + "");
+            binding.quantity.setText(String.format(Locale.US, "%.3f", quantity) + "");
             Log.e("checkTotalQuantity", "setQuantity " + quantity + " -11- ");
         } else
             App.product.setQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
@@ -341,7 +341,7 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
             binding.textView27.setVisibility(View.VISIBLE);
             binding.plusItem.setClickable(false);
             binding.minusItem.setClickable(false);
-            binding.textView26.setEnabled(false);
+            binding.quantity.setEnabled(false);
             binding.serial.setText(App.serialNumber);
             App.product.setSelectedSerial(App.serialNumber);
         }
@@ -583,7 +583,7 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
         binding.plusItem.setOnClickListener(view -> {
             quantity++;
             App.product.setQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
-            binding.textView26.setText(String.format(Locale.US, "%.3f", quantity) + "");
+            binding.quantity.setText(String.format(Locale.US, "%.3f", quantity) + "");
             App.product.setActualQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
         });
         binding.minusItem.setOnClickListener(view -> {
@@ -591,9 +591,9 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
                 if (quantity != 1) {
                     quantity--;
                 }
-                if (binding.textView26.getText().toString().isEmpty())
-                    quantity = Float.parseFloat(binding.textView26.getText().toString());
-                binding.textView26.setText(String.format(Locale.US, "%.3f", quantity) + "");
+                if (binding.quantity.getText().toString().isEmpty())
+                    quantity = Float.parseFloat(binding.quantity.getText().toString());
+                binding.quantity.setText(String.format(Locale.US, "%.3f", quantity) + "");
                 App.product.setQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
                 Log.e("checkTotalQuantity", "setQuantity " + product.getQuantity() + " -3- ");
 
@@ -604,7 +604,7 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
 
     @SuppressLint("SetTextI18n")
     public void quantityWatchers() {
-        binding.textView26.addTextChangedListener(new TextWatcher() {
+        binding.quantity.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
@@ -1057,7 +1057,7 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
             }
             quantity += totalQuantity;
             App.product.setQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
-            binding.textView26.setText(String.format(Locale.US, "%.3f", quantity) + "");
+            binding.quantity.setText(String.format(Locale.US, "%.3f", quantity) + "");
             App.product.setActualQuantity(Float.parseFloat(String.format(Locale.US, "%.3f", quantity)));
             illQuantity += count;
             if (product.getQuanSumAddWriteToNotes() == 1)

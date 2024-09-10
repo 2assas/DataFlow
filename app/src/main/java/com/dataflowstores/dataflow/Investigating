@@ -1,0 +1,14 @@
+High level design for checkout calculations:
+
+- Total lines is the initial total
+- Service Value - Service Percent ---> value should be calculated from percentage.
+- Total after Service -> total Lines + service value
+- Discount Value - Discount Percent ---> value should be calculated from percentage.
+- Total after Discount -> Total after Service - discount value
+- Tax Value - Tax Percent ---> value should be calculated from percentage.
+- Total after Tax -> Total after Discount + tax value
+
+==============
+scenarios:
+
+    1- when changes in service all dependents should change.

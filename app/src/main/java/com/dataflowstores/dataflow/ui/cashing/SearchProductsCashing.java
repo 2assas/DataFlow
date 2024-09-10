@@ -39,7 +39,6 @@ import com.dataflowstores.dataflow.ViewModels.CheckoutVM;
 import com.dataflowstores.dataflow.ViewModels.ProductVM;
 import com.dataflowstores.dataflow.ViewModels.SettingVM;
 import com.dataflowstores.dataflow.databinding.AddProductsBinding;
-import com.dataflowstores.dataflow.pojo.login.UserData;
 import com.dataflowstores.dataflow.pojo.product.ProductData;
 import com.dataflowstores.dataflow.pojo.product.SearchProductResponse;
 import com.dataflowstores.dataflow.pojo.users.CustomerData;
@@ -736,7 +735,7 @@ public class SearchProductsCashing extends BaseActivity implements MyDialogClose
                         ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN, SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes, numberOFItems,
                         netPrices, basicMeasureUnitQuantity, expireDateBool, colorsBool, seasonsBool, sizesBool, serialBool, group1Bool, group2Bool, serviceItem, itemTax, itemTaxValue, 0,
                         App.currentUser.getAllowStoreMinus(), itemName, discount1, AllowStoreMinusConfirm, lat, _long, "exchange_permission", moveType, moveType == 14 ? toStoreBranchISN : null, moveType == 14 ? toStoreISN : null,
-                        App.currentBranch != null ? String.valueOf(App.currentBranch.getBranchISN()) : null, allowStoreMinus, productStoreName, illustrativeQuantity);
+                        App.currentBranch != null ? String.valueOf(App.currentBranch.getBranchISN()) : null, allowStoreMinus, productStoreName, illustrativeQuantity, null);
             } else {
                 App.noConnectionDialog(this);
             }

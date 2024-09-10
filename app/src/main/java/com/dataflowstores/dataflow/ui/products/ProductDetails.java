@@ -708,9 +708,9 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
         });
         binding.minusItem.setOnClickListener(view -> {
             if (!App.product.getSerial()) {
-                if (quantity != 1) {
+                if (quantity > 1) {
                     quantity--;
-                }
+                } else return;
                 if (binding.itemDiscPer.getText().toString().isEmpty()) {
                     binding.price.setText(String.format(Locale.US, "%.3f", App.product.getPriceItem() * quantity) + " جنيه");
                     binding.price2.setText(String.format(Locale.US, "%.3f", App.product.getPriceItem() * quantity) + " جنيه");

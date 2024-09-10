@@ -585,7 +585,7 @@
                     android:layout_marginTop="10dp"
                     android:gravity="center"
                     android:orientation="vertical"
-                    app:layout_constraintEnd_toStartOf="@+id/textView26"
+                    app:layout_constraintEnd_toStartOf="@+id/quantity"
                     app:layout_constraintStart_toEndOf="@+id/quantityButton"
                     app:layout_constraintTop_toBottomOf="@+id/illQuantity">
 
@@ -609,7 +609,7 @@
 
 
                 <EditText
-                    android:id="@+id/textView26"
+                    android:id="@+id/quantity"
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
@@ -623,7 +623,8 @@
                     app:layout_constraintBottom_toBottomOf="@+id/plus_item"
                     app:layout_constraintEnd_toStartOf="@+id/minus_item"
                     app:layout_constraintStart_toEndOf="@+id/plus_item"
-                    app:layout_constraintTop_toTopOf="@+id/plus_item" />
+                    app:layout_constraintTop_toTopOf="@+id/plus_item"
+                    app:layout_constraintVertical_bias="0.521" />
 
                 <include
                     android:visibility="gone"
@@ -647,7 +648,7 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     app:layout_constraintEnd_toStartOf="@+id/quantityTxt"
-                    app:layout_constraintStart_toEndOf="@+id/textView26"
+                    app:layout_constraintStart_toEndOf="@+id/quantity"
                     app:layout_constraintTop_toBottomOf="@+id/illQuantity">
 
                     <ImageView

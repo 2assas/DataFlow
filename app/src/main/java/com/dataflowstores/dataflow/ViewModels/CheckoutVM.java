@@ -52,7 +52,7 @@ public class CheckoutVM extends ViewModel {
                              ArrayList<Boolean> Group1Bool, ArrayList<Boolean> Group2Bool, ArrayList<Boolean> ServiceItem, ArrayList<Double> ItemTax, ArrayList<Double> TaxValue, double TotalLinesTaxVal, int allowStoreMinus,
                              ArrayList<String> itemName, ArrayList<Double> discount1, Integer AllowStoreMinusConfirm, float latitude, float longitude, String invoiceType, Integer moveType, ArrayList<Long> StoreBranchISN2, ArrayList<Long> StoreISN2,
                              String BranchISNStockMove, ArrayList<Integer> productAllowStoreMinus,  ArrayList<String> productStoreName,
-                             ArrayList<Double> illustrativeQuantity) {
+                             ArrayList<Double> illustrativeQuantity, Double customerDiscount) {
         Log.e("checkInvoice", "Triggered request");
 
         Observable<InvoiceResponse> invoiceObsevable = apiClient.placeInvoice(new
@@ -67,7 +67,7 @@ public class CheckoutVM extends ViewModel {
                         ,App.currentUser.getLogIn_Spare4()
                         ,App.currentUser.getLogIn_Spare5()
                         ,App.currentUser.getLogIn_Spare6(),
-                        illustrativeQuantity
+                        illustrativeQuantity, customerDiscount
                 ),App.currentUser.getIllustrativeQuantity(), App.currentUser.getVendorID(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate())
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 

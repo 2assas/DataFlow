@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -59,10 +60,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class Checkout extends BaseActivity implements View.OnFocusChangeListener, LocationListener {
+public class Checkout extends BaseActivity implements LocationListener {
     private static final int REQUEST_CHECK_SETTINGS = 111;
-    protected LocationManager locationManager;
-    protected LocationListener locationListener;
     CheckoutBinding binding;
     int paymentMethod = 0;
     int saleType = 1;
@@ -73,8 +72,6 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
     BanksData banksCreditData = new BanksData();
     double totalLineTaxes = 0;
     private boolean isUpdatingFields = false; // Flag to track updates
-
-    double linesTaxes = 0;
     double productsTotal = 0;
     int numberOfItems = 0;
     DecimalFormat df = new DecimalFormat("#.##");
@@ -83,29 +80,24 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
     double totalAfterTax = 0;
     CheckoutVM checkoutVM;
     String uuid;
-    float serviceValue = 0;
-    float servicePercent = 0;
-    float discountValue = 0;
-    float discountPercent = 0;
-    float taxValue = 0;
-    float taxPercent = 0;
+    double serviceValue = 0;
+    double deliveryValue = 0;
+    double servicePercent = 0;
+    double discountValue = 0;
+    double discountPercent = 0;
+    double taxValue = 0;
+    double taxPercent = 0;
     String paymentMethodText = "";
     String selectedDate = "";
     Integer AllowStoreMinusConfirm = 0;
-    DecimalFormat form = new DecimalFormat("0.00");
-    //    TextWatcher servicePer, serviceVal, discountPer, discountVal, taxPer, taxVal, deliveryVal;
     float lat = 0;
     float _long = 0;
-    String customerBalance = "";
     boolean isLoading = false;
-    private boolean isServiceFinalized = false;
-    private boolean isDiscountFinalized = false;
-    private boolean isTaxFinalized = false;
+    private boolean isUpdatingField = false;
+    private Double customerDiscount = null;
     @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             startActivity(new Intent(this, SplashScreen.class));
@@ -115,7 +107,6 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
             checkoutVM = new ViewModelProvider(this).get(CheckoutVM.class);
             uuid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
             getProductsTotal();
-            remaining();
             safeDepositSpinner();
             userRestricts();
             customer_agent();
@@ -256,32 +247,19 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
         result.addOnCompleteListener(task -> {
             try {
                 LocationSettingsResponse response = task.getResult(ApiException.class);
-                // All location settings are satisfied. The client can initialize location
-                // requests here.+
-//             ...
             } catch (ApiException exception) {
                 switch (exception.getStatusCode()) {
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        // Location settings are not satisfied. But could be fixed by showing the
-                        // user a dialog.
                         try {
-                            // Cast to a resolvable exception.
                             ResolvableApiException resolvable = (ResolvableApiException) exception;
-                            // Show the dialog by calling startResolutionForResult(),
-                            // and check the result in onActivityResult().
                             resolvable.startResolutionForResult(
                                     this,
                                     REQUEST_CHECK_SETTINGS);
                         } catch (IntentSender.SendIntentException e) {
-                            // Ignore the error.
                         } catch (ClassCastException e) {
-                            // Ignore, should be an impossible error.
                         }
                         break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        // Location settings are not satisfied. However, we have no way to fix the
-                        // settings so we won't show the dialog.
-//                     ...
                         break;
                 }
             }
@@ -343,7 +321,6 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
                     }
                 }
                 break;
-
         }
     }
     public void userRestricts() {
@@ -396,17 +373,20 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
             binding.discountContainer.setVisibility(View.GONE);
         } else if (App.currentUser.getMobileDiscount() == 0 && Double.parseDouble(App.customer.getDealerInvoiceDefaultDisc()) > 0) {
             double defaultDiscount = Double.parseDouble(App.customer.getDealerInvoiceDefaultDisc());
-//            binding.percentDiscount.removeTextChangedListener(discountPer);
-            binding.percentDiscount.setText(String.format(Locale.US, "%.3f", defaultDiscount));
+            binding.percentDiscount.setText(String.format(Locale.US, "%.2f", defaultDiscount));
             binding.percentDiscount.setEnabled(false);
             binding.percentDiscountVal.setEnabled(false);
-            updateDiscountValues(defaultDiscount);
+            calculateDiscount(true);
+            calculateTax(true);
+            updateTotals();
+            customerDiscount = defaultDiscount;
         } else if (App.currentUser.getMobileDiscount() == 1 && Double.parseDouble(App.customer.getDealerInvoiceDefaultDisc()) > 0) {
             double defaultDiscount = Double.parseDouble(App.customer.getDealerInvoiceDefaultDisc());
-//            binding.percentDiscount.removeTextChangedListener(discountPer);
-            binding.percentDiscount.setText(String.format(Locale.US, "%.3f", defaultDiscount));
-            updateDiscountValues(defaultDiscount);
-//            binding.percentDiscount.addTextChangedListener(discountPer);
+            binding.percentDiscount.setText(String.format(Locale.US, "%.2f", defaultDiscount));
+            calculateDiscount(true);
+            calculateTax(true);
+            updateTotals();
+            customerDiscount = defaultDiscount;
         }
     }
 
@@ -517,12 +497,11 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
         binding.checkTxt.setTextColor(getResources().getColor(R.color.black));
         binding.laterContainer.setVisibility(View.VISIBLE);
         binding.remainingContainer.setVisibility(View.VISIBLE);
-        binding.remainedCash.setVisibility(View.VISIBLE);//todo: update based on Paid Amount
+        binding.remainedCash.setVisibility(View.VISIBLE);
+        binding.remaining.setVisibility(View.VISIBLE);
         binding.textView110.setVisibility(View.VISIBLE);
         binding.cheqContainer.setVisibility(View.GONE);
         binding.creditBankCon.setVisibility(View.GONE);
-
-        remaining();
         safeDepositSpinner();
     }
 
@@ -532,7 +511,7 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
         binding.laterCheck.setChecked(false);
         paymentMethod = 1;
         paymentMethodText = "Cash";
-        Log.e("check", "cashChecked");
+        binding.remaining.setText("");
         safeDepositSpinner();
         binding.agelTxt.setTextColor(getResources().getColor(R.color.black));
         binding.cashTxt.setTextColor(getResources().getColor(R.color.colorPrimary));
@@ -541,10 +520,10 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
         binding.laterContainer.setVisibility(View.VISIBLE);
         binding.remainingContainer.setVisibility(View.GONE);
         binding.remainedCash.setVisibility(View.GONE);
-        //todo: update based on Paid Amount
         binding.textView110.setVisibility(View.GONE);
         binding.cheqContainer.setVisibility(View.GONE);
         binding.creditBankCon.setVisibility(View.GONE);
+        deliveryValue = 0;
         binding.remaining.setVisibility(View.GONE);
     }
 
@@ -552,8 +531,8 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
         binding.cashCheck.setChecked(false);
         binding.creditCheck.setChecked(false);
         binding.laterCheck.setChecked(false);
-        Log.e("check", "Cheqchecked");
         paymentMethodText = "Cheque";
+        binding.remaining.setText("");
         binding.agelTxt.setTextColor(getResources().getColor(R.color.black));
         binding.cashTxt.setTextColor(getResources().getColor(R.color.black));
         binding.creditTxt.setTextColor(getResources().getColor(R.color.black));
@@ -561,7 +540,7 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
         paymentMethod = 2;
         binding.cheqContainer.setVisibility(View.VISIBLE);
         binding.remainingContainer.setVisibility(View.GONE);
-        binding.remainedCash.setVisibility(View.GONE);//todo: update based on Paid Amount
+        binding.remainedCash.setVisibility(View.GONE);
         binding.textView110.setVisibility(View.GONE);
         binding.laterContainer.setVisibility(View.GONE);
         binding.laterContainer.setVisibility(View.GONE);
@@ -569,14 +548,13 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
         binding.remaining.setVisibility(View.GONE);
         datePicker();
         bankSpinner();
-        //todo: getText from cheq Number EditText
     }
 
     public void creditCheck(View view) {
         binding.cheqCheck.setChecked(false);
         binding.cashCheck.setChecked(false);
         binding.laterCheck.setChecked(false);
-        Log.e("check", "creditchecked");
+        binding.remaining.setText("");
         paymentMethodText = "Credit";
         paymentMethod = 3;
         binding.agelTxt.setTextColor(getResources().getColor(R.color.black));
@@ -607,9 +585,8 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
         binding.textView30.setText("قيمة التوصيل");
         binding.deliveryValue.setHint("أدخل قيمة التوصيل");
         binding.serviceContainer.setVisibility(View.GONE);
-        serviceValue = 0;
-        servicePercent = 0;
         totalAfterService = productsTotal;
+        resetServiceValue();
         calculateTotals();
     }
 
@@ -619,13 +596,14 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
         binding.deliveryTxt.setTextColor(getResources().getColor(R.color.black));
         binding.externalCheck.setTextColor(getResources().getColor(R.color.colorPrimary));
         totalAfterService = productsTotal;
-        servicePercent = 0;
-        serviceValue = 0;
         binding.deliveryValue.setText("0");
         binding.sofraTxt.setTextColor(getResources().getColor(R.color.black));
         saleType = 1;
         binding.deliveryContainer.setVisibility(View.GONE);
         binding.serviceContainer.setVisibility(View.VISIBLE);
+        deliveryValue = 0;
+        binding.deliveryValue.setText("0");
+        calculateTotals();
     }
 
     public void tableCheck(View view) {
@@ -635,15 +613,15 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
         binding.externalCheck.setTextColor(getResources().getColor(R.color.black));
         binding.sofraTxt.setTextColor(getResources().getColor(R.color.colorPrimary));
         saleType = 3;
-        servicePercent = 0;
-        serviceValue = 0;
         binding.deliveryValue.setText("0");
         binding.deliveryContainer.setVisibility(View.VISIBLE);
         binding.sofraValue.setVisibility(View.VISIBLE);
         binding.deliveryValue.setVisibility(View.GONE);
         binding.serviceContainer.setVisibility(View.VISIBLE);
         binding.textView30.setText("رقم السفرة");
-        binding.deliveryValue.setHint("أدخل رقم السفرة");
+        binding.sofraValue.setHint("أدخل رقم السفرة");
+        deliveryValue = 0;
+        calculateTotals();
     }
 
     @SuppressLint("SetTextI18n")
@@ -655,9 +633,20 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
         }
         binding.totalTax2.setText(String.format(Locale.ENGLISH, "%.3f", totalLineTaxes));
         Log.e("checkCalc ", "Total: " + productsTotal + " Line Tax: " + totalLineTaxes);
-//        productsTotal += totalLineTaxes;
         binding.finalTotal.setText(String.format(Locale.US, "%.3f", productsTotal + totalLineTaxes) + " جنيه");
         binding.remainedCash.setText(String.format(Locale.US, "%.3f", productsTotal + totalLineTaxes) + " جنيه");
+    }
+
+    private void deliveryCheckListener() {
+        binding.deliverCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (!isChecked) {
+                deliveryValue = 0;
+                binding.deliveryValue.setText("");
+                resetServiceValue();
+                calculateTotals();
+            }
+
+        });
     }
 
     public void customer_agent() {
@@ -681,415 +670,34 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
     @SuppressLint("SetTextI18n")
     public void calculations() {
         binding.totalItems.setText(String.format(Locale.US, "%.3f", productsTotal) + " جنيه");
-        binding.percentService.setOnFocusChangeListener(this);
-        binding.percentServiceVal.setOnFocusChangeListener(this);
-        binding.percentDiscount.setOnFocusChangeListener(this);
-        binding.percentDiscountVal.setOnFocusChangeListener(this);
-        binding.percentTax.setOnFocusChangeListener(this);
-        binding.percentTaxVal.setOnFocusChangeListener(this);
-        binding.deliveryValue.setOnFocusChangeListener(this);
         totalAfterService = productsTotal;
         totalAfterDiscount = productsTotal;
         totalAfterTax = (float) productsTotal;
-
         setTotal(productsTotal);
-        delivery();
-        service();
-        discount();
-        tax();
+        deliveryCheckListener();
+        startTextWatcher();
     }
 
-    public void delivery() {
+    private void startTextWatcher() {
         binding.deliveryValue.addTextChangedListener(textWatcher);
-        Log.e("checkWatcher", "here 1");
-//        deliveryVal = new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//            }
-//
-//            @SuppressLint({"SetTextI18n", "DefaultLocale"})
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                if (!charSequence.toString().isEmpty() && !charSequence.toString().equals(".")) {
-//                    double value = (Double.parseDouble(binding.deliveryValue.getText().toString()) / productsTotal);
-//                    binding.percentService.setText(String.format(Locale.US, "%.3f", value * 100) + "");
-//                    totalAfterService = productsTotal + Double.parseDouble(binding.deliveryValue.getText().toString());
-//                    servicePercent = 0;
-//                    serviceValue = 0;
-//                } else {
-//                    binding.percentService.setText(0 + "");
-//                    totalAfterService = productsTotal;
-//                    servicePercent = 0;
-//                    serviceValue = 0;
-//                }
-//                totalAfterDiscount = totalAfterService;
-//                totalAfterTax = (float) totalAfterDiscount;
-//                binding.totalService.setText(String.format(Locale.US, "%.3f", (totalAfterService)) + " جنيه");
-//                binding.totalDiscount.setText(String.format(Locale.US, "%.3f", (totalAfterService)) + " جنيه");
-//                binding.totalTax.setText(String.format(Locale.US, "%.3f", (totalAfterService)) + " جنيه");
-//                binding.finalTotal.setText(String.format(Locale.US, "%.3f", (totalAfterService + totalLineTaxes)) + " جنيه");
-//                binding.remainedCash.setText(String.format(Locale.US, "%.3f", (totalAfterService + totalLineTaxes)) + " جنيه");
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {
-//            }
-//        };
-    }
-
-    public void service() {
         binding.percentService.addTextChangedListener(textWatcher);
         binding.percentServiceVal.addTextChangedListener(textWatcher);
-
-//        servicePer = new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//            }
-//
-//            @SuppressLint("SetTextI18n")
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                if (!charSequence.toString().isEmpty() && !charSequence.toString().equals(".")) {
-//                    if (Double.parseDouble(charSequence.toString()) <= 100) {
-//                        double value = (productsTotal / 100) * Double.parseDouble(binding.percentService.getText().toString());
-//                        binding.percentServiceVal.setText(String.format(Locale.US, "%.3f", value) + "");
-//                        totalAfterService = productsTotal + value;
-//                        serviceValue = (float) value;
-//                        double value1 = serviceValue / productsTotal;
-//                        servicePercent = (float) (value1 * 100);
-//                        binding.checkout.setClickable(true);
-//                    } else {
-//                        binding.percentService.setError("ERROR!");
-//                        binding.percentService.setError("");
-//                        binding.checkout.setClickable(false);
-//                    }
-//                } else {
-//                    binding.percentServiceVal.setText(0 + "");
-//                    totalAfterService = productsTotal;
-//                    serviceValue = 0;
-//                }
-//                totalAfterDiscount = totalAfterService;
-//                totalAfterTax = (float) totalAfterDiscount;
-//                binding.totalService.setText(String.format(Locale.US, "%.3f", totalAfterService) + " جنيه");
-//                binding.totalDiscount.setText(String.format(Locale.US, "%.3f", totalAfterService) + " جنيه");
-//                binding.totalTax.setText(String.format(Locale.US, "%.3f", totalAfterService) + " جنيه");
-//                binding.finalTotal.setText(String.format(Locale.US, "%.3f", totalAfterService + totalLineTaxes) + " جنيه");
-//                binding.remainedCash.setText(String.format(Locale.US, "%.3f", totalAfterService + totalLineTaxes) + " جنيه");
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {
-//            }
-//        };
-//        serviceVal = new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//            }
-//
-//            @SuppressLint("SetTextI18n")
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                if (!charSequence.toString().isEmpty() && !charSequence.toString().equals(".")) {
-//                    if (Double.parseDouble(charSequence.toString()) <= productsTotal) {
-//                        double value = (Double.parseDouble(binding.percentServiceVal.getText().toString()) / productsTotal);
-//                        double value1 = (productsTotal / 100) * value * 100;
-//                        binding.percentService.setText(String.format(Locale.US, "%.3f", value * 100) + "");
-//                        totalAfterService = productsTotal + Double.parseDouble(binding.percentServiceVal.getText().toString());
-//                        servicePercent = (float) (value * 100);
-//                        serviceValue = (float) value1;
-//                        binding.checkout.setClickable(true);
-//                    } else {
-//                        binding.percentServiceVal.setError("ERROR!");
-//                        binding.percentServiceVal.setError("");
-//                        binding.checkout.setClickable(false);
-//                    }
-//                } else {
-//                    binding.percentService.setText(0 + "");
-//                    totalAfterService = productsTotal;
-//                    servicePercent = 0;
-//                }
-//                totalAfterDiscount = totalAfterService;
-//                totalAfterTax = (float) totalAfterDiscount;
-//                binding.totalService.setText(String.format(Locale.US, "%.3f", totalAfterService) + " جنيه");
-//                binding.totalDiscount.setText(String.format(Locale.US, "%.3f", totalAfterService) + " جنيه");
-//                binding.totalTax.setText(String.format(Locale.US, "%.3f", totalAfterService) + " جنيه");
-//                binding.finalTotal.setText(String.format(Locale.US, "%.3f", totalAfterService + totalLineTaxes) + " جنيه");
-//                binding.remainedCash.setText(String.format(Locale.US, "%.3f", totalAfterService + totalLineTaxes) + " جنيه");
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {
-//            }
-//        };
-    }
-
-    public void discount() {
         binding.percentDiscount.addTextChangedListener(textWatcher);
         binding.percentDiscountVal.addTextChangedListener(textWatcher);
         if (App.customer.getDealerInvoiceDefaultDisc() != null)
             customerDiscount();
-//        discountPer = new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                if (!charSequence.toString().isEmpty() && !charSequence.toString().equals(".")) {
-//                    try {
-//                        double percentage = Double.parseDouble(charSequence.toString());
-//                        updateDiscountValues(percentage);
-//                    } catch (NumberFormatException e) {
-//                        e.printStackTrace();
-//                    }
-//                } else {
-//                    updateDiscountValues(0);
-//                }
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {
-//            }
-//        };
-//        discountVal = new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                if (!charSequence.toString().isEmpty() && !charSequence.toString().equals(".")) {
-//                    try {
-//                        double discountValue = Double.parseDouble(charSequence.toString());
-//                        if (discountValue <= totalAfterService) {
-//                            double percentage = (discountValue / totalAfterService) * 100;
-//                            binding.percentDiscount.removeTextChangedListener(discountPer);
-//                            binding.percentDiscount.setText(String.format(Locale.US, "%.3f", percentage) + "");
-//                            updateDiscountValues(percentage);
-//                            binding.percentDiscount.addTextChangedListener(discountPer);
-//                        } else {
-//                            binding.percentDiscountVal.setError("ERROR!");
-//                            binding.percentDiscountVal.setError("");
-//                            binding.checkout.setClickable(false);
-//                        }
-//                    } catch (NumberFormatException e) {
-//                        e.printStackTrace();
-//                    }
-//                } else {
-//                    updateDiscountValues(0);
-//                }
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {
-//            }
-//        };
-
-
-    }
-
-    private void updateDiscountValues(double percentage) {
-        if (percentage <= 100) {
-            double discountValue = (totalAfterService / 100) * percentage;
-            binding.percentDiscountVal.setText(String.format(Locale.US, "%.3f", discountValue));
-            totalAfterDiscount = totalAfterService - discountValue;
-            this.discountValue = (float) discountValue;
-            discountPercent = (float) percentage;
-            binding.checkout.setClickable(true);
-        } else {
-            binding.percentDiscount.setError("ERROR!");
-            binding.percentDiscount.setError("");
-            binding.checkout.setClickable(false);
-        }
-        updateTotals();
-    }
-
-    private void updateTotals() {
-        totalAfterTax = (float) totalAfterDiscount;
-        binding.totalDiscount.setText(String.format(Locale.US, "%.3f", totalAfterDiscount) + " جنيه");
-        binding.totalTax.setText(String.format(Locale.US, "%.3f", totalAfterDiscount) + " جنيه");
-        binding.finalTotal.setText(String.format(Locale.US, "%.3f", totalAfterDiscount + totalLineTaxes) + " جنيه");
-        binding.remainedCash.setText(String.format(Locale.US, "%.3f", totalAfterDiscount + totalLineTaxes) + " جنيه");
-    }
-
-    // Setting default discount percentage
-//    private void setDefaultDiscountPercentage(double defaultPercentage) {
-//        binding.percentDiscount.removeTextChangedListener(discountPer);
-//        binding.percentDiscount.setText(String.valueOf(defaultPercentage));
-//        updateDiscountValues(defaultPercentage);
-//        binding.percentDiscount.addTextChangedListener(discountPer);
-//    }
-
-
-    public void tax() {
         binding.percentTax.addTextChangedListener(textWatcher);
         binding.percentTaxVal.addTextChangedListener(textWatcher);
-//        taxPer = new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//
-//            }
-//
-//            @SuppressLint("SetTextI18n")
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                if (!charSequence.toString().isEmpty() && !charSequence.toString().equals(".")) {
-//                    if (Double.parseDouble(charSequence.toString()) <= 100) {
-//                        double value = (totalAfterDiscount / 100) * Double.parseDouble(binding.percentTax.getText().toString());
-//                        double value1 = value / totalAfterDiscount;
-//                        binding.percentTaxVal.setText(String.format(Locale.US, "%.3f", value) + "");
-//                        totalAfterTax = (float) (totalAfterDiscount + value);
-//                        taxValue = (float) value;
-//                        taxPercent = (float) (value1 * 100);
-//                        binding.checkout.setClickable(true);
-//                    } else {
-//                        binding.percentTax.setError("ERROR!");
-//                        binding.percentTax.setError("");
-//                        binding.checkout.setClickable(false);
-//                    }
-//                } else {
-//                    binding.percentTaxVal.setText(0 + "");
-//                    totalAfterTax = (float) totalAfterDiscount;
-//                    taxValue = 0;
-//                    taxPercent = 0;
-//                }
-//                binding.totalTax.setText(String.format(Locale.US, "%.3f", totalAfterTax) + " جنيه");
-//                binding.finalTotal.setText(String.format(Locale.US, "%.3f", totalAfterTax + totalLineTaxes) + " جنيه");
-//                binding.remainedCash.setText(String.format(Locale.US, "%.3f", totalAfterTax + totalLineTaxes) + " جنيه");
-//
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {
-//            }
-//        };
-//        taxVal = new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                if (!charSequence.toString().isEmpty() && !charSequence.toString().equals(".")) {
-//                    if (Double.parseDouble(charSequence.toString()) <= totalAfterDiscount) {
-//                        double value = Double.parseDouble(binding.percentTaxVal.getText().toString()) / totalAfterDiscount;
-//                        double value1 = (totalAfterDiscount / 100) * value;
-//                        binding.percentTax.setText(String.format(Locale.US, "%.3f", value * 100) + "");
-//                        totalAfterTax = (float) (totalAfterDiscount + Double.parseDouble(binding.percentTaxVal.getText().toString()));
-//                        taxValue = (float) value1;
-//                        taxPercent = (float) (value * 100);
-//                        binding.checkout.setClickable(true);
-//                    } else {
-//                        binding.percentTaxVal.setError("ERROR!");
-//                        binding.percentTaxVal.setText("");
-//                        binding.checkout.setClickable(false);
-//                    }
-//                } else {
-//                    binding.percentTax.setText(0 + "");
-//                    totalAfterTax = (float) totalAfterDiscount;
-//                    taxPercent = 0;
-//                    taxValue = 0;
-//                }
-//                binding.totalTax.setText(String.format(Locale.US, "%.3f", totalAfterTax) + " جنيه");
-//                binding.finalTotal.setText(String.format(Locale.US, "%.3f", totalAfterTax + totalLineTaxes) + " جنيه");
-//                binding.remainedCash.setText(String.format(Locale.US, "%.3f", totalAfterTax + totalLineTaxes) + " جنيه");
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {
-//            }
-//        };
+        binding.remaining.addTextChangedListener(textWatcher);
+
     }
+
 
     @SuppressLint("SetTextI18n")
     public void setTotal(double total) {
         binding.totalService.setText(String.format(Locale.US, "%.3f", total) + " جنيه");
         binding.totalDiscount.setText(String.format(Locale.US, "%.3f", total) + " جنيه");
         binding.totalTax.setText(String.format(Locale.US, "%.3f", total) + " جنيه");
-    }
-
-    @Override
-    public void onFocusChange(View view, boolean hasFocus) {
-//        if (view.equals(binding.deliveryValue)) {
-//            if (!hasFocus)
-//                binding.deliveryValue.addTextChangedListener(textWatcher);
-//            else {
-//                binding.deliveryValue.removeTextChangedListener(tetWatcher);
-//            }
-//        }
-//        if (view.equals(binding.percentService)) {
-//            if (!hasFocus) {
-//                binding.percentService.addTextChangedListener(textWatcher);
-//            } else {
-//                binding.percentService.removeTextChangedListener(textWatcher);
-//            }
-//        }
-//        if (view.equals(binding.percentServiceVal)) {
-//            if (!hasFocus) {
-//                binding.percentServiceVal.addTextChangedListener(textWatcher);
-//            } else {
-//                binding.percentServiceVal.removeTextChangedListener(textWatcher);
-//            }
-//        }
-//        if (view.equals(binding.percentDiscount)) {
-//            if (hasFocus) {
-//                binding.percentDiscount.addTextChangedListener(textWatcher);
-//            } else {
-//                binding.percentDiscount.removeTextChangedListener(textWatcher);
-//            }
-//        }
-//        if (view.equals(binding.percentDiscountVal)) {
-//            if (hasFocus) {
-//                binding.percentDiscountVal.addTextChangedListener(textWatcher);
-//            } else {
-//                binding.percentDiscountVal.removeTextChangedListener(textWatcher);
-//            }
-//        }
-//        if (view.equals(binding.percentTax)) {
-//            if (hasFocus) {
-//                binding.percentTax.addTextChangedListener(textWatcher);
-//            } else {
-//                binding.percentTax.removeTextChangedListener(textWatcher);
-//            }
-//        }
-//        if (view.equals(binding.percentTaxVal)) {
-//            if (hasFocus) {
-//                binding.percentTaxVal.addTextChangedListener(textWatcher);
-//            } else {
-//                binding.percentTaxVal.removeTextChangedListener(textWatcher);
-//            }
-//        }
-
-    }
-
-    public void remaining() {
-        binding.remaining.addTextChangedListener(textWatcher);
-//        binding.remaining.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                if (!charSequence.toString().isEmpty() && !charSequence.toString().equals("."))
-//                    //TODO:: Come here.
-//                    if (Double.parseDouble(binding.remaining.getText().toString()) < (totalAfterTax + totalLineTaxes))
-//                        binding.remainedCash.setText(String.format(Locale.US, "%.3f", (totalAfterTax + totalLineTaxes) - Double.parseDouble(binding.remaining.getText().toString())) + " جنيه");
-//                    else {
-//                        binding.remaining.setError("مبلغ غير مقبول!");
-//                        binding.remaining.setText("");
-//                    }
-//                else
-//                    binding.remainedCash.setText(String.format(Locale.US, "%.3f", totalAfterTax + totalLineTaxes) + " جنيه");
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {
-//
-//            }
-//        });
     }
 
     public void invoicePost() {
@@ -1318,8 +926,7 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
                         ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN, SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes, numberOFItems,
                         netPrices, basicMeasureUnitQuantity, expireDateBool, colorsBool, seasonsBool, sizesBool, serialBool, group1Bool, group2Bool, serviceItem, itemTax, itemTaxValue, totalLineTaxes,
                         App.currentUser.getAllowStoreMinus(), itemName, discount1, AllowStoreMinusConfirm, lat, _long, null, getMoveType(), null, null, null, allowStoreMinus, productStoreName,
-                        illustrativeQuantity);
-                Log.e("checkout", " checkinnnggg");
+                        illustrativeQuantity, customerDiscount );
             } else {
                 isLoading = false;
                 App.noConnectionDialog(this);
@@ -1367,79 +974,13 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
         _long = (float) location.getLongitude();
     }
 
-    @SuppressLint("SetTextI18n")
+    //    @SuppressLint("SetTextI18n")
     private void calculateTotals() {
-        // 1. Products Total
-        double productsTotal = 0;
-        double totalLineTaxes = 0;
-        for (ProductData it : App.selectedProducts) {
-            productsTotal += it.getNetPrice();
-            totalLineTaxes += (it.getNetPrice() / 100) * Double.parseDouble(it.getItemTax());
-        }
-        // 2. Delivery or Service Charge
-        double deliveryValue = 0.0;
-        if ((saleType == 2 || saleType == 3) && !binding.deliveryValue.getText().toString().isEmpty()) {
-            deliveryValue = Double.parseDouble(binding.deliveryValue.getText().toString());
-        }
-
-        // 3. Service
-        double serviceValue = 0.0;
-        if (!binding.deliverCheck.isChecked()) {
-            if (!binding.percentServiceVal.getText().toString().isEmpty()) {
-                serviceValue = Double.parseDouble(binding.percentServiceVal.getText().toString());
-            } else if (!binding.percentService.getText().toString().isEmpty()) {
-                serviceValue = (productsTotal / 100) * Double.parseDouble(binding.percentService.getText().toString());
-            }
-        } else {
-            serviceValue = 0.0;
-        }
-
-        // 4. Subtotal (Products Total + Delivery/Service + Service Value)
-        double subtotal = productsTotal + deliveryValue + serviceValue;
-
-        // 5. Discount
-        double discountValue = 0.0;
-        if (!binding.percentDiscountVal.getText().toString().isEmpty()) {
-            discountValue = Double.parseDouble(binding.percentDiscountVal.getText().toString());
-        } else if (!binding.percentDiscount.getText().toString().isEmpty()) {
-            discountValue = (subtotal / 100) * Double.parseDouble(binding.percentDiscount.getText().toString());
-        }
-
-
-        // 6. Total After Discount
-        subtotal -= discountValue;
-
-        // 7. Tax
-        double taxValue = 0.0;
-        if (!binding.percentTaxVal.getText().toString().isEmpty()) {
-            taxValue = Double.parseDouble(binding.percentTaxVal.getText().toString());
-        } else if (!binding.percentTax.getText().toString().isEmpty()) {
-            taxValue = (subtotal / 100) * Double.parseDouble(binding.percentTax.getText().toString());
-        }
-
-        // 8. Final Total (Total After Discount + Tax + Total Line Taxes)
-        double finalTotal = subtotal + taxValue + totalLineTaxes;
-
-        // 9. Remaining Balance (Only if paymentMethod is 0)
-        double remainingBalance = 0.0;
-        if (paymentMethod == 0 && !binding.remaining.getText().toString().isEmpty()) {
-            remainingBalance = finalTotal - Double.parseDouble(binding.remaining.getText().toString());
-        }
-
-        // Update UI elements
-        binding.totalItems.setText(String.format(Locale.US, "%.3f", productsTotal) + " جنيه");
-        binding.totalTax2.setText(String.format(Locale.ENGLISH, "%.3f", totalLineTaxes));
-        binding.finalTotal.setText(String.format(Locale.US, "%.3f", finalTotal) + " جنيه");
-        binding.remainedCash.setText(String.format(Locale.US, "%.3f", remainingBalance) + " جنيه");
-
-        if (!isUpdatingFields) {
-            isUpdatingFields = true;
-            updatePercentageFields();
-            isUpdatingFields = false;
-        }
+        if (isUpdatingField) return;
+        isUpdatingField = true;
+        updatePercentageFields();
+        isUpdatingField = false;
     }
-
-
     TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -1448,113 +989,206 @@ public class Checkout extends BaseActivity implements View.OnFocusChangeListener
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            // Not used
-            Log.e("checkText", "On Changed " + s.toString());
         }
 
         @Override
         public void afterTextChanged(Editable s) {
-            Log.e("checkText", "After Changed " + s.toString());
-            calculateTotals();
-//            isServiceFinalized = binding.percentServiceVal.hasFocus() || binding.percentService.hasFocus();
-//            isDiscountFinalized = binding.percentDiscountVal.hasFocus() || binding.percentDiscount.hasFocus();
-//            isTaxFinalized = binding.percentTaxVal.hasFocus() || binding.percentTax.hasFocus();
+            if (!s.toString().equals(".")) {
+                calculateTotals();
+            }
         }
     };
-
     @SuppressLint("SetTextI18n")
     private void updatePercentageFields() {
-        //Delivery
-        double deliveryValue = 0.0;
-        double serviceValue = 0.0;
-        double discountValue = 0.0;
-        double taxValue = 0.0;
-
-
-        if (!binding.deliveryValue.getText().toString().isEmpty() && binding.deliverCheck.isChecked()) {
-            deliveryValue = Double.parseDouble(binding.deliveryValue.getText().toString());
+        if (binding.deliverCheck.isChecked() && binding.deliveryValue.hasFocus()) {
+            if (!binding.deliveryValue.getText().toString().isEmpty()) {
+                deliveryValue = Double.parseDouble(binding.deliveryValue.getText().toString());
+            } else {
+                deliveryValue = 0;
+            }
+            calculateService(false);
+            calculateDiscount(true);
+            calculateTax(true);
         }
         // Service
         if (!binding.percentServiceVal.getText().toString().isEmpty() && binding.percentServiceVal.hasFocus()) {
-            binding.percentService.removeTextChangedListener(textWatcher);
-            serviceValue = Double.parseDouble(binding.percentServiceVal.getText().toString());
-            double servicePercentage = (serviceValue / productsTotal) * 100;
-            binding.percentService.setText(String.format(Locale.US, "%.2f", servicePercentage));
-            binding.percentService.addTextChangedListener(textWatcher); //
-            totalAfterService = productsTotal + serviceValue + deliveryValue;
-            binding.totalService.setText(String.format(Locale.US, "%.3f", totalAfterService) + " جنيه");
-            binding.totalDiscount.setText(String.format(Locale.US, "%.3f", totalAfterService) + " جنيه");
-            binding.totalTax.setText(String.format(Locale.US, "%.3f", totalAfterService) + " جنيه");
+            if (Double.parseDouble(binding.percentServiceVal.getText().toString()) <= productsTotal) {
+                calculateService(false);
+                calculateDiscount(true);
+                calculateTax(true);
+                binding.checkout.setClickable(true);
+            } else {
+                setEditTextError(binding.percentServiceVal);
+            }
         } else if (!binding.percentService.getText().toString().isEmpty() && binding.percentService.hasFocus()) {
-            binding.percentServiceVal.removeTextChangedListener(textWatcher);
-            double servicePercentage = Double.parseDouble(binding.percentService.getText().toString());
-            serviceValue = (productsTotal * servicePercentage) / 100;
-            binding.percentServiceVal.setText(String.format(Locale.US, "%.2f", serviceValue));
-            binding.percentServiceVal.addTextChangedListener(textWatcher); //
-            totalAfterService = productsTotal + serviceValue + deliveryValue;
-            binding.totalService.setText(String.format(Locale.US, "%.3f", totalAfterService) + " جنيه");
-            binding.totalDiscount.setText(String.format(Locale.US, "%.3f", totalAfterService) + " جنيه");
-            binding.totalTax.setText(String.format(Locale.US, "%.3f", totalAfterService) + " جنيه");
+            if (Double.parseDouble(binding.percentService.getText().toString()) <= 100) {
+                calculateService(true);
+                calculateDiscount(true);
+                calculateTax(true);
+                binding.checkout.setClickable(true);
+            } else {
+                setEditTextError(binding.percentService);
+            }
         } else if (binding.percentServiceVal.hasFocus() || binding.percentService.hasFocus()) {
-            binding.percentServiceVal.setText("");
-            binding.percentService.setText("");
-            totalAfterService = productsTotal + deliveryValue;
-            binding.totalService.setText(String.format(Locale.US, "%.3f", totalAfterService) + " جنيه");
-            binding.totalDiscount.setText(String.format(Locale.US, "%.3f", totalAfterService) + " جنيه");
-            binding.totalTax.setText(String.format(Locale.US, "%.3f", totalAfterService) + " جنيه");
+            resetServiceValue();
         }
         // Discount
         if (!binding.percentDiscountVal.getText().toString().isEmpty() && binding.percentDiscountVal.hasFocus()) {
-            binding.percentDiscount.removeTextChangedListener(textWatcher);
-            discountValue = Double.parseDouble(binding.percentDiscountVal.getText().toString());
-            double discountPercentage = (discountValue / productsTotal) * 100; // Use productsTotal or subtotal as needed
-            binding.percentDiscount.setText(String.format(Locale.US, "%.2f", discountPercentage));
-            binding.percentDiscount.addTextChangedListener(textWatcher); //
-            totalAfterDiscount = totalAfterService - discountValue;
-            binding.totalDiscount.setText(String.format(Locale.US, "%.3f", totalAfterDiscount) + " جنيه");
-            binding.totalTax.setText(String.format(Locale.US, "%.3f", totalAfterDiscount) + " جنيه");
+            if (Double.parseDouble(binding.percentDiscountVal.getText().toString()) <= totalAfterService) {
+                calculateDiscount(false);
+                calculateTax(true);
+            } else {
+                setEditTextError(binding.percentDiscountVal);
+            }
         } else if (!binding.percentDiscount.getText().toString().isEmpty() && binding.percentDiscount.hasFocus()) {
-            binding.percentDiscountVal.removeTextChangedListener(textWatcher); //
-            double discountPercentage = Double.parseDouble(binding.percentDiscount.getText().toString());
-            discountValue = (productsTotal * discountPercentage) / 100; // Use productsTotal or subtotal as needed
-            binding.percentDiscountVal.setText(String.format(Locale.US, "%.2f", discountValue));
-            binding.percentDiscountVal.addTextChangedListener(textWatcher); //
-            totalAfterDiscount = totalAfterService - discountValue;
-            binding.totalDiscount.setText(String.format(Locale.US, "%.3f", totalAfterDiscount) + " جنيه");
-            binding.totalTax.setText(String.format(Locale.US, "%.3f", totalAfterDiscount) + " جنيه");
+            if (Double.parseDouble(binding.percentDiscount.getText().toString()) <= 100) {
+                calculateDiscount(true);
+                calculateTax(true);
+            } else {
+                setEditTextError(binding.percentDiscount);
+            }
         } else if (binding.percentDiscountVal.hasFocus() || binding.percentDiscount.hasFocus()) {
             binding.percentDiscountVal.setText("");
             binding.percentDiscount.setText("");
-            totalAfterDiscount = totalAfterService;
+            discountValue = 0;
+            totalAfterDiscount = productsTotal + serviceValue + deliveryValue;
             binding.totalDiscount.setText(String.format(Locale.US, "%.3f", totalAfterDiscount) + " جنيه");
-            binding.totalTax.setText(String.format(Locale.US, "%.3f", totalAfterDiscount) + " جنيه");
+            calculateTax(true);
         }
 
         // Tax
         if (!binding.percentTaxVal.getText().toString().isEmpty() && binding.percentTaxVal.hasFocus()) {
-            binding.percentTax.removeTextChangedListener(textWatcher);
-            taxValue = Double.parseDouble(binding.percentTaxVal.getText().toString());
-            double taxPercentage = (taxValue / productsTotal) * 100;
-            binding.percentTax.setText(String.format(Locale.US, "%.2f", taxPercentage));
-            binding.percentTax.addTextChangedListener(textWatcher); //
-            totalAfterTax = totalAfterDiscount + taxValue;
-            binding.totalTax.setText(String.format(Locale.US, "%.3f", totalAfterTax) + " جنيه");
-
+            if (Double.parseDouble(binding.percentTaxVal.getText().toString()) <= totalAfterDiscount) {
+                calculateTax(false);
+            } else {
+                setEditTextError(binding.percentTaxVal);
+            }
         } else if (!binding.percentTax.getText().toString().isEmpty() && binding.percentTax.hasFocus()) {
-            binding.percentTaxVal.removeTextChangedListener(textWatcher);
-            double taxPercentage = Double.parseDouble(binding.percentTax.getText().toString());
-            taxValue = (productsTotal * taxPercentage) / 100;
-            binding.percentTaxVal.setText(String.format(Locale.US, "%.2f", taxValue));
-            binding.percentTaxVal.addTextChangedListener(textWatcher); //
-            totalAfterTax = totalAfterDiscount + taxValue;
-            binding.totalTax.setText(String.format(Locale.US, "%.3f", totalAfterTax) + " جنيه");
+            if (Double.parseDouble(binding.percentTax.getText().toString()) <= 100) {
+                calculateTax(true);
+            } else {
+                setEditTextError(binding.percentTax);
+            }
         } else if (binding.percentTaxVal.hasFocus() || binding.percentTax.hasFocus()) {
             binding.percentTaxVal.setText("");
             binding.percentTax.setText("");
-            totalAfterTax = totalAfterDiscount;
+            taxValue = 0;
+            totalAfterTax = productsTotal + serviceValue + deliveryValue - discountValue;
             binding.totalTax.setText(String.format(Locale.US, "%.3f", totalAfterTax) + " جنيه");
         }
+        updateTotals();
     }
+
+    @SuppressLint("SetTextI18n")
+    private void calculateService(boolean isPercentage) {
+        if (isPercentage) {
+            if (!binding.percentService.getText().toString().isEmpty()) {
+                binding.percentServiceVal.removeTextChangedListener(textWatcher);
+                double servicePercentage = Double.parseDouble(binding.percentService.getText().toString());
+                serviceValue = (productsTotal * servicePercentage) / 100;
+                servicePercent = servicePercentage;
+                binding.percentServiceVal.setText(String.format(Locale.US, "%.2f", serviceValue));
+                binding.percentServiceVal.addTextChangedListener(textWatcher);
+            }
+        } else {
+            if (!binding.percentServiceVal.getText().toString().isEmpty()) {
+                binding.percentService.removeTextChangedListener(textWatcher);
+                serviceValue = Double.parseDouble(binding.percentServiceVal.getText().toString());
+                double servicePercentage = (serviceValue / productsTotal) * 100;
+                servicePercent = servicePercentage;
+                binding.percentService.setText(String.format(Locale.US, "%.2f", servicePercentage));
+                binding.percentService.addTextChangedListener(textWatcher);
+            }
+        }
+        totalAfterService = productsTotal + serviceValue + deliveryValue;
+        binding.totalService.setText(String.format(Locale.US, "%.3f", totalAfterService) + " جنيه");
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void calculateDiscount(boolean isPercentage) {
+        double currentTotal = productsTotal + serviceValue + deliveryValue;
+        if (isPercentage) {
+            if (!binding.percentDiscount.getText().toString().isEmpty()) {
+                binding.percentDiscountVal.removeTextChangedListener(textWatcher); //
+                double discountPercentage = Double.parseDouble(binding.percentDiscount.getText().toString());
+                discountValue = (currentTotal * discountPercentage) / 100;
+                discountPercent = discountPercentage;
+                binding.percentDiscountVal.setText(String.format(Locale.US, "%.2f", discountValue));
+                binding.percentDiscountVal.addTextChangedListener(textWatcher);
+            }
+        } else {
+            if (!binding.percentDiscountVal.getText().toString().isEmpty()) {
+                binding.percentDiscount.removeTextChangedListener(textWatcher);
+                discountValue = Double.parseDouble(binding.percentDiscountVal.getText().toString());
+                double discountPercentage = (discountValue / currentTotal) * 100;
+                discountPercent = discountPercentage;
+                binding.percentDiscount.setText(String.format(Locale.US, "%.2f", discountPercentage));
+                binding.percentDiscount.addTextChangedListener(textWatcher);
+            }
+        }
+        totalAfterDiscount = currentTotal - discountValue;
+        binding.totalDiscount.setText(String.format(Locale.US, "%.3f", totalAfterDiscount) + " جنيه");
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void calculateTax(boolean isPercentage) {
+        double currentTotal = productsTotal + serviceValue + deliveryValue - discountValue;
+        if (isPercentage) {
+            if (!binding.percentTax.getText().toString().isEmpty()) {
+                binding.percentTaxVal.removeTextChangedListener(textWatcher);
+                double taxPercentage = Double.parseDouble(binding.percentTax.getText().toString());
+                taxValue = (currentTotal * taxPercentage) / 100;
+                taxPercent = taxPercentage;
+                binding.percentTaxVal.setText(String.format(Locale.US, "%.2f", taxValue));
+                binding.percentTaxVal.addTextChangedListener(textWatcher); //
+            }
+        } else {
+            if (!binding.percentTaxVal.getText().toString().isEmpty()) {
+                binding.percentTax.removeTextChangedListener(textWatcher);
+                taxValue = Double.parseDouble(binding.percentTaxVal.getText().toString());
+                double taxPercentage = (taxValue / currentTotal) * 100;
+                taxPercent = taxPercentage;
+                binding.percentTax.setText(String.format(Locale.US, "%.2f", taxPercentage));
+                binding.percentTax.addTextChangedListener(textWatcher); //
+            }
+        }
+        totalAfterTax = currentTotal + taxValue;
+        binding.totalTax.setText(String.format(Locale.US, "%.3f", totalAfterTax) + " جنيه");
+    }
+
+    private void resetServiceValue() {
+        binding.percentServiceVal.setText("");
+        binding.percentService.setText("");
+        serviceValue = 0;
+        servicePercent = 0;
+        totalAfterService = productsTotal + deliveryValue;
+        binding.totalService.setText(String.format(Locale.US, "%.3f", totalAfterService) + " جنيه");
+        calculateDiscount(true);
+        calculateTax(true);
+    }
+
+    private void updateTotals() {
+        double grandTotal = productsTotal + deliveryValue + serviceValue - discountValue + taxValue + totalLineTaxes;
+        double remainingBalance = (totalAfterTax + totalLineTaxes);
+        if (paymentMethod == 0 && !binding.remaining.getText().toString().isEmpty()) {
+            if (Double.parseDouble(binding.remaining.getText().toString()) < (totalAfterTax + totalLineTaxes)) {
+                remainingBalance = (totalAfterTax + totalLineTaxes) - Double.parseDouble(binding.remaining.getText().toString());
+            } else {
+                setEditTextError(binding.remaining);
+            }
+        }
+        binding.totalItems.setText(String.format(Locale.US, "%.3f", productsTotal) + " جنيه");
+        binding.totalTax2.setText(String.format(Locale.ENGLISH, "%.3f", totalLineTaxes));
+        binding.finalTotal.setText(String.format(Locale.US, "%.3f", grandTotal) + " جنيه");
+        binding.remainedCash.setText(String.format(Locale.US, "%.3f", remainingBalance) + " جنيه");
+    }
+
+    private void setEditTextError(EditText editText) {
+        editText.setError("رقم غير مقبول");
+        editText.setText("");
+        binding.checkout.setClickable(false);
+    }
+
 }
 
 
