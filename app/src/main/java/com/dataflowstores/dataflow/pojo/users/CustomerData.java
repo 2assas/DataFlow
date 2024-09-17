@@ -27,6 +27,30 @@ public class CustomerData implements Serializable {
     private String DealerSellPriceTypeISN;
     @SerializedName("DealerInvoiceDefaultDisc")
     private String DealerInvoiceDefaultDisc;
+    @SerializedName("AllowForwardSell")
+    private String AllowForwardSell;
+    @SerializedName("SaleMaxCredit")
+    private String SaleMaxCredit;
+    @SerializedName("SaleLastAllowedDate")
+    private String SaleLastAllowedDate;
+    @SerializedName("SaleRenewMonthCount")
+    private String SaleRenewMonthCount;
+
+    public String getAllowForwardSell() {
+        return AllowForwardSell;
+    }
+
+    public String getSaleLastAllowedDate() {
+        return SaleLastAllowedDate;
+    }
+
+    public String getSaleMaxCredit() {
+        return SaleMaxCredit;
+    }
+
+    public String getSaleRenewMonthCount() {
+        return SaleRenewMonthCount;
+    }
 
     public String getDealerInvoiceDefaultDisc() {
         return DealerInvoiceDefaultDisc;

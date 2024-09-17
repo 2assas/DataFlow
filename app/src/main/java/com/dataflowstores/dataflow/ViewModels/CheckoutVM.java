@@ -67,7 +67,11 @@ public class CheckoutVM extends ViewModel {
                         ,App.currentUser.getLogIn_Spare4()
                         ,App.currentUser.getLogIn_Spare5()
                         ,App.currentUser.getLogIn_Spare6(),
-                        illustrativeQuantity, customerDiscount
+                                    illustrativeQuantity, customerDiscount,
+                                    App.customer.getAllowForwardSell(),
+                                    App.customer.getSaleMaxCredit(),
+                                    App.customer.getSaleLastAllowedDate(),
+                                    App.customer.getSaleRenewMonthCount()
                 ),App.currentUser.getIllustrativeQuantity(), App.currentUser.getVendorID(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate())
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
