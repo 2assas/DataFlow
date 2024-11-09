@@ -101,7 +101,7 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
 
     @SuppressLint("SetTextI18n")
     public void fillViews() {
-        if (App.selectedProducts.size() > 0 && App.isEditing) {
+        if (!App.selectedProducts.isEmpty() && App.isEditing) {
             originalProduct = product.copy();
         }
         productVM.toastErrorMutableLiveData.observe(this, s -> Toast.makeText(this, s, Toast.LENGTH_LONG).show());
@@ -150,7 +150,9 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
             if (App.product.getMeasureUnits().get(i).getBasicMeasureUnit() == 1)
                 App.product.setBasicMeasureUnit(App.product.getMeasureUnits().get(i));
         }
-        if (App.currentUser.getMobileBonus() == 0) {
+
+        if (((App.customer.getDealerName() == null ? (Objects.equals(App.currentUser.getMobileBonusWithoutDealer(), "0")) : App.currentUser.getMobileBonus() == 0)
+                || (App.customer.getDealerAllowBonus() != null && Objects.equals(App.customer.getDealerAllowBonus(), "0")))) {
             binding.textView32.setVisibility(View.GONE);
             binding.minusBounus.setVisibility(View.GONE);
             binding.plusBounus.setVisibility(View.GONE);
@@ -248,7 +250,6 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
                 binding.price.setText(String.format(Locale.US, "%.3f", price * quantity) + " جنيه");
                 App.product.setNetPrice(price * quantity);
                 App.product.setPriceItem(price);
-                Log.e("checkItemPrice", price * quantity + " ");
             } else {
                 binding.price2.setText(String.format(Locale.US, "%.3f", (price * quantity) - ((price * quantity) / 100) * Double.parseDouble(
                         binding.itemDiscPer.getText().toString()
@@ -369,7 +370,6 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
             for (int i = 0; i < App.product.getGroup1List().size(); i++) {
                 group1.add(App.product.getGroup1List().get(i).getStoreGroup1Name());
             }
-            Log.e("checkSpinner", group1.size() + "");
             ArrayAdapter aa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, group1);
             aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             binding.group1Spinner.setAdapter(aa);
@@ -402,7 +402,6 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
             for (int i = 0; i < App.product.getGroup2List().size(); i++) {
                 group2.add(App.product.getGroup2List().get(i).getStoreGroup2Name());
             }
-            Log.e("checkSpinner", group2.size() + "");
             ArrayAdapter aa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, group2);
             aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             binding.group2Spinner.setAdapter(aa);
@@ -448,7 +447,6 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
             binding.bounusQuantity.setEnabled(false);
             binding.serial.setText(App.serialNumber);
             App.product.setSelectedSerial(App.serialNumber);
-//          Log.e("Serial", "SS + "+binding.serial.getText().toString());
         }
     }
 
@@ -567,7 +565,6 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
             @SuppressLint("SetTextI18n")
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.e("checkItemSelect", "clicked");
                 App.product.setBarCodePrice(false);
                 App.product.setSelectedUnit(App.product.getMeasureUnits().get(i));
                 measureUnit = App.product.getMeasureUnits().get(i);
@@ -593,11 +590,9 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
                 if (App.product.getMeasureUnits().get(i) == App.product.getSelectedUnit()) {
                     binding.measureUnitSpinner.setSelection(i);
                 }
-                Log.e("checkDefault", "selected 1");
             }
             Handler handler = new Handler();
             handler.postDelayed(() -> {
-                Log.e("checkBar", "reset");
                 App.product.setBarCodePrice(isBarcodePrice);
             }, 500);
         }
@@ -607,12 +602,10 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
                         App.product.getMeasureUnits().get(i).getMeasureUnitISN() == App.product.getxBarCodeMeasureUnitISN()) {
                     binding.measureUnitSpinner.setSelection(i);
                     App.product.setBarCodePrice(isBarcodePrice);
-                    Log.e("checkDefault", "selected 2");
                 }
             }
             Handler handler = new Handler();
             handler.postDelayed(() -> {
-                Log.e("checkBar", "reset2");
                 App.product.setBarCodePrice(isBarcodePrice);
             }, 500);
         }
@@ -689,13 +682,11 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 App.product.setSelectedPriceType(App.priceType);
-                Log.e("checkPriceType2", App.priceType.getPricesTypeName());
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
                 App.product.setSelectedPriceType(App.priceType);
-                Log.e("checkPriceType2", App.priceType.getPricesTypeName());
             }
         });
     }
@@ -880,9 +871,6 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
         binding.saveProduct.setOnClickListener(view -> {
             double itemPrice = (Double.parseDouble(binding.price.getText().toString().replace(" ", "").replace("جنيه", "")) / quantity);
             if (!String.format(Locale.ENGLISH, "%.3f", measureUnit.getPrice()).equals(String.format(Locale.ENGLISH, "%.3f", itemPrice))) {
-                Log.e("checkPrices", "unit = "
-                        + String.format(Locale.ENGLISH, "%.3f", measureUnit.getPrice()) + " - item price - "
-                        + String.format(Locale.ENGLISH, "%.3f", itemPrice));
                 new AlertDialog.Builder(this).setMessage("سعر " + "(" + measureUnit.getMeasureUnitArName() + ")" + " لنوع سعر " + "(" + priceType.getPricesTypeName() + ")" +
                                                                  " هو " + "(" + String.format(Locale.ENGLISH, "%.3f", measureUnit.getPrice()) + ")" + " وسيتم إضافته بسعر " + "(" + String.format(Locale.ENGLISH, "%.3f", itemPrice) + ")" +
                         " هل أنت متأكد؟").setPositiveButton("تأكيد", ((dialogInterface, i) -> {
@@ -922,7 +910,6 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
                     }
                     startActivity(new Intent(this, AddProducts.class));
                 } else {
-                    Log.e("checkSelected", "Selected updated");
                     App.selectedProducts.set(App.editingPos, App.product);
                     binding.saveProduct.setClickable(false);
                     if (App.product.getSelectedUnit() != null && App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
@@ -954,7 +941,6 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
                                         }
                                         startActivity(new Intent(this, AddProducts.class));
                                     } else {
-                                        Log.e("checkSelected", "Selected updated2");
                                         App.selectedProducts.set(App.editingPos, App.product);
                                         binding.saveProduct.setClickable(false);
                                         if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
@@ -993,7 +979,6 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
                             }
                             startActivity(new Intent(this, AddProducts.class));
                         } else {
-                            Log.e("checkSelected", "Selected updated3");
                             App.selectedProducts.set(App.editingPos, App.product);
                             binding.saveProduct.setClickable(false);
                             if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
@@ -1181,19 +1166,16 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
                 ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN, SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes,
                 netPrices, basicMeasureUnitQuantity, expireDateBool, colorsBool, seasonsBool, sizesBool, serialBool, group1Bool, group2Bool, serviceItem, itemTax, itemTaxValue,
                 itemName, discount1, App.currentUser.getAllowStoreMinus(), allowStoreMinusConfirm, product.getSelectedStore().getAllowCurrentStoreMinus());
-        Log.e("checkout", " checkinnnggg");
     }
 
     @Override
     public void itemClicked(ItemAvailableQuantity item) {
 
         if (App.product.getColors() && item.getStoreColorName() != null) {
-            Log.e("checkColor", "color : " + item.getColorISN() + " " + item.getStoreColorName() + " -- " + item.getColorBranchISN());
             for (int i = 0; i < App.product.getColorsList().size(); i++) {
                 if (String.valueOf(App.product.getColorsList().get(i).getStoreColorISN()).equals(item.getColorISN()) &&
                         String.valueOf(App.product.getColorsList().get(i).getBranchISN()).equals(item.getColorBranchISN())) {
                     binding.colorSpinner.setSelection(i);
-                    Log.e("checkColor", "colorExisted");
                 }
             }
         }
@@ -1298,7 +1280,6 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
                 else {
                     App.product.setNetPrice((App.product.getPriceItem() * quantity));
                 }
-                Log.e("checkNet", String.valueOf(App.product.getNetPrice()));
                 binding.itemDiscVal.setText(String.format(Locale.US, "%.3f", ((App.product.getPriceItem() * quantity) / 100) * Double.parseDouble(
                         binding.itemDiscPer.getText().toString())) + "");
             }

@@ -293,6 +293,15 @@ public class UserData implements Serializable {
     Integer MobileGPSMust;
     @SerializedName("MobileItemsList")
     Integer MobileItemsList;
+    @SerializedName("MobileBonusWithoutDealer")
+    String MobileBonusWithoutDealer;
+
+    public String getMobileBonusWithoutDealer() {
+        return MobileBonusWithoutDealer;
+    }
+    public void setMobileBonusWithoutDealer(String mobileBonusWithoutDealer) {
+        MobileBonusWithoutDealer = mobileBonusWithoutDealer;
+    }
 
     public Integer getMobileItemsList() {
         return MobileItemsList;

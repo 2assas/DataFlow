@@ -17,7 +17,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
@@ -40,7 +39,6 @@ import com.dataflowstores.dataflow.App;
 import com.dataflowstores.dataflow.R;
 import com.dataflowstores.dataflow.ViewModels.CheckoutVM;
 import com.dataflowstores.dataflow.databinding.CheckoutBinding;
-import com.dataflowstores.dataflow.pojo.product.ProductData;
 import com.dataflowstores.dataflow.pojo.settings.BanksData;
 import com.dataflowstores.dataflow.pojo.settings.SafeDepositData;
 import com.dataflowstores.dataflow.ui.invoice.PrintInvoice;
@@ -111,96 +109,126 @@ public class Checkout extends BaseActivity implements LocationListener {
             userRestricts();
             customer_agent();
             calculations();
-            checkoutVM.toastErrorMutableLiveData.observe(this, s -> {
-                isLoading = false;
-                binding.progress.setVisibility(View.GONE);
-                Toast.makeText(this, s, Toast.LENGTH_LONG).show();
-            });
+            observers();
+            init();
+        }
+    }
 
-            binding.checkout.setOnClickListener(view -> {
-                binding.progress.setVisibility(View.VISIBLE);
-                if (requiredData())
-                    if (App.currentUser.getMobileGPSMust() == 0 || lat != 0 || _long != 0) {
-                        invoicePost();
-                        binding.checkout.setClickable(false);
-                    } else {
-                        binding.checkout.setClickable(true);
-                        new androidx.appcompat.app.AlertDialog.Builder(this).
-                                setTitle("الموقع مطلوب")
-                                .setMessage("لإتمام العملية يرجى السماح لإذن أخذ الموقع الحالى للجهاز")
-                                .setPositiveButton("حسنا", (dialogInterface, i) -> {
-                                    binding.progress.setVisibility(View.GONE);
-                                    dialogInterface.dismiss();
-                                    requestPermission();
-                                    settingsRequest();
-                                }).show();
-                    }
-            });
-
-            checkoutVM.responseDataMutableLiveData.observe(this, response -> {
-                isLoading = false;
-                binding.progress.setVisibility(View.GONE);
-                String errorMessage = response.getMessage();
-                if (response.getMessage().equals("Not saved ... please save again")) {
-                    errorMessage = "لا يوجد الكمية الكافية من هذا الصنف";
-                    binding.checkout.setClickable(true);
-                }
-                if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 2 && (App.invoiceType == Sales || App.invoiceType == ReturnPurchased)) {
-                    new AlertDialog.Builder(this)
-                            .setMessage(errorMessage)
-                            .setCancelable(false)
-                            .setPositiveButton("متابعة", (dialogInterface, i) -> {
-                                AllowStoreMinusConfirm = 1;
-                                totalAfterTax -= totalLineTaxes;
-                                invoicePost();
-                            }).setNegativeButton("إلغاء", (dialogInterface, i) -> {
-                                dialogInterface.dismiss();
-
-                                startActivity(new Intent(Checkout.this, AddProducts.class));
-                                finish();
-                            }).show();
-                } else if (response.getStatus() == 0 && (App.currentUser.getAllowStoreMinus() == 1 || App.currentUser.getAllowStoreMinus() == 4)
-                        && (App.invoiceType == Sales || App.invoiceType == ReturnPurchased)) {
-                    String error = response.getMessage();
-                    if (response.getMessage().equals("Not saved ... please save again")) {
-                        error = "لا يوجد الكمية الكافية من هذا الصنف";
-                    }
-                    binding.checkout.setClickable(true);
-                    new AlertDialog.Builder(this)
-                            .setMessage(error)
-                            .setCancelable(false)
-                            .setNegativeButton("إلغاء", (dialogInterface, i) -> {
-                                dialogInterface.dismiss();
-                                startActivity(new Intent(Checkout.this, AddProducts.class));
-                                finish();
-                            }).show();
-                } else if (response.getStatus() == 0) {
-                    new AlertDialog.Builder(this)
-                            .setMessage(response.getMessage())
-                            .setCancelable(false)
-                            .setNegativeButton("إلغاء", (dialogInterface, i) -> {
-                                dialogInterface.dismiss();
-                                startActivity(new Intent(Checkout.this, AddProducts.class));
-                                finish();
-                            }).show();
+    private void init() {
+        handleOrderType();
+        binding.saveButton.setOnClickListener(view -> {
+            binding.progress.setVisibility(View.VISIBLE);
+            if (requiredData())
+                if (App.currentUser.getMobileGPSMust() == 0 || lat != 0 || _long != 0) {
+                    invoicePost();
+                    binding.saveButton.setClickable(false);
                 } else {
-                    App.invoiceResponse = response;
-                    App.selectedProducts = new ArrayList<>();
-                    binding.checkout.setClickable(true);
-                    startActivity(new Intent(this, PrintInvoice.class));
-                    finish();
+                    binding.saveButton.setClickable(true);
+                    new androidx.appcompat.app.AlertDialog.Builder(this).
+                            setTitle("الموقع مطلوب")
+                            .setMessage("لإتمام العملية يرجى السماح لإذن أخذ الموقع الحالى للجهاز")
+                            .setPositiveButton("حسنا", (dialogInterface, i) -> {
+                                binding.progress.setVisibility(View.GONE);
+                                dialogInterface.dismiss();
+                                requestPermission();
+                                settingsRequest();
+                            }).show();
                 }
-            });
-            binding.back.setOnClickListener(view -> {
-                startActivity(new Intent(Checkout.this, AddProducts.class));
-                finish();
-            });
-            if (App.currentUser.getMobileGPSMust() == 1) {
-                if (checkPermission())
-                    getLocation(this);
-                else
-                    requestPermission();
+        });
+
+        binding.back.setOnClickListener(view -> {
+            startActivity(new Intent(Checkout.this, AddProducts.class));
+            finish();
+        });
+        if (App.currentUser.getMobileGPSMust() == 1) {
+            if (checkPermission())
+                getLocation(this);
+            else
+                requestPermission();
+        }
+    }
+
+    private void observers() {
+        checkoutVM.toastErrorMutableLiveData.observe(this, s -> {
+            isLoading = false;
+            binding.progress.setVisibility(View.GONE);
+            Toast.makeText(this, s, Toast.LENGTH_LONG).show();
+        });
+
+        checkoutVM.responseDataMutableLiveData.observe(this, response -> {
+            isLoading = false;
+            binding.progress.setVisibility(View.GONE);
+            String errorMessage = response.getMessage();
+            if (response.getMessage().equals("Not saved ... please save again")) {
+                errorMessage = "لا يوجد الكمية الكافية من هذا الصنف";
+                binding.saveButton.setClickable(true);
             }
+            if (response.getStatus() == 0 && App.currentUser.getAllowStoreMinus() == 2 && (App.invoiceType == Sales || App.invoiceType == ReturnPurchased)) {
+                new AlertDialog.Builder(this)
+                        .setMessage(errorMessage)
+                        .setCancelable(false)
+                        .setPositiveButton("متابعة", (dialogInterface, i) -> {
+                            AllowStoreMinusConfirm = 1;
+                            totalAfterTax -= totalLineTaxes;
+                            invoicePost();
+                        }).setNegativeButton("إلغاء", (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+
+                            startActivity(new Intent(Checkout.this, AddProducts.class));
+                            finish();
+                        }).show();
+            } else if (response.getStatus() == 0 && (App.currentUser.getAllowStoreMinus() == 1 || App.currentUser.getAllowStoreMinus() == 4)
+                    && (App.invoiceType == Sales || App.invoiceType == ReturnPurchased)) {
+                String error = response.getMessage();
+                if (response.getMessage().equals("Not saved ... please save again")) {
+                    error = "لا يوجد الكمية الكافية من هذا الصنف";
+                }
+                binding.saveButton.setClickable(true);
+                new AlertDialog.Builder(this)
+                        .setMessage(error)
+                        .setCancelable(false)
+                        .setNegativeButton("إلغاء", (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                            startActivity(new Intent(Checkout.this, AddProducts.class));
+                            finish();
+                        }).show();
+            } else if (response.getStatus() == 0) {
+                new AlertDialog.Builder(this)
+                        .setMessage(response.getMessage())
+                        .setCancelable(false)
+                        .setNegativeButton("إلغاء", (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                            startActivity(new Intent(Checkout.this, AddProducts.class));
+                            finish();
+                        }).show();
+            } else {
+                App.invoiceResponse = response;
+                App.selectedProducts = new ArrayList<>();
+                binding.saveButton.setClickable(true);
+                startActivity(new Intent(this, PrintInvoice.class));
+                finish();
+            }
+        });
+    }
+
+    private void handleOrderType() {
+        switch (App.invoiceType) {
+            case Sales:
+                binding.title.setText("فاتورة مبيعات");
+                binding.saveButton.setText("حفظ مبيعات");
+            break;
+            case ReturnSales:
+                binding.title.setText("فاتورة مرتجع مبيعات");
+                binding.saveButton.setText("حفظ مرتجع مبيعات");
+            break;
+            case Purchase:
+                binding.title.setText("فاتورة مشتريات");
+                binding.saveButton.setText("حفظ مشتريات");
+            break;
+            case ReturnPurchased:
+                binding.title.setText("فاتورة مرتجع مشتريات");
+                binding.saveButton.setText("حفظ مرتجع مشتريات");
+            break;
         }
     }
 
@@ -713,10 +741,13 @@ public class Checkout extends BaseActivity implements LocationListener {
         long safeDepositISN = 0;
         long bankBranchISN = 0;
         long bankISN = 0;
+        double lineTax = 0;
         String tableNum = "";
         String deliveryPhone = "";
         String deliveryAddress = "";
-        double lineTax = 0;
+        String DealerMaxDisc = "";
+        String DealerAllowBonus = "";
+
 
         if (App.customer.getDealerName() != null) {
             dealerBranchISN = App.customer.getBranchISN();
@@ -724,6 +755,8 @@ public class Checkout extends BaseActivity implements LocationListener {
             dealerType = App.customer.getDealerType();
             deliveryPhone = App.customer.getDealerPhone();
             deliveryAddress = App.customer.getDealerAddress();
+            DealerMaxDisc = App.customer.getDealerMaxDisc();
+            DealerAllowBonus = App.customer.getDealerAllowBonus();
         }
         if (App.agent.getDealerName() != null) {
             salesManBranchISN = App.agent.getBranchISN();
@@ -795,6 +828,7 @@ public class Checkout extends BaseActivity implements LocationListener {
         ArrayList<Double> discount1 = new ArrayList<>();
         ArrayList<Integer> allowStoreMinus = new ArrayList<>();
         ArrayList<String> productStoreName = new ArrayList<>();
+        ArrayList<String> itemMaxDisc = new ArrayList<>();
         ArrayList<Double> illustrativeQuantity = new ArrayList<>();
 
         for (int i = 0; i < App.selectedProducts.size(); i++) {
@@ -805,6 +839,7 @@ public class Checkout extends BaseActivity implements LocationListener {
             discount1.add(App.selectedProducts.get(i).getDiscount1());
             allowStoreMinus.add(App.selectedProducts.get(i).getAllowStoreMinus());
             productStoreName.add(App.selectedProducts.get(i).getSelectedStore().getStoreName());
+            itemMaxDisc.add(App.selectedProducts.get(i).getItemMaxDisc());
             lineTax = +Double.parseDouble(App.selectedProducts.get(i).getItemTax());
             ItemBranchISN.add((long) App.selectedProducts.get(i).getBranchISN());
             ItemISN.add((long) App.selectedProducts.get(i).getItemISN());
@@ -897,9 +932,8 @@ public class Checkout extends BaseActivity implements LocationListener {
         }
         numberOFItems = App.selectedProducts.size();
         try {
-            Log.e("checkInvoice", "invoice triggered");
             if (App.isNetworkAvailable(this)) {
-                binding.checkout.setClickable(false);
+                binding.saveButton.setClickable(false);
                 totalAfterTax += totalLineTaxes;
                 isLoading = true;
                 checkoutVM.placeInvoice(
@@ -926,7 +960,7 @@ public class Checkout extends BaseActivity implements LocationListener {
                         ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN, SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes, numberOFItems,
                         netPrices, basicMeasureUnitQuantity, expireDateBool, colorsBool, seasonsBool, sizesBool, serialBool, group1Bool, group2Bool, serviceItem, itemTax, itemTaxValue, totalLineTaxes,
                         App.currentUser.getAllowStoreMinus(), itemName, discount1, AllowStoreMinusConfirm, lat, _long, null, getMoveType(), null, null, null, allowStoreMinus, productStoreName,
-                        illustrativeQuantity, customerDiscount );
+                        illustrativeQuantity, customerDiscount, itemMaxDisc, DealerAllowBonus, DealerMaxDisc, App.currentUser.getMobileBonusWithoutDealer(), String.valueOf(App.currentUser.getMobileBonus()));
             } else {
                 isLoading = false;
                 App.noConnectionDialog(this);
@@ -1016,7 +1050,7 @@ public class Checkout extends BaseActivity implements LocationListener {
                 calculateService(false);
                 calculateDiscount(true);
                 calculateTax(true);
-                binding.checkout.setClickable(true);
+                binding.saveButton.setClickable(true);
             } else {
                 setEditTextError(binding.percentServiceVal);
             }
@@ -1025,7 +1059,7 @@ public class Checkout extends BaseActivity implements LocationListener {
                 calculateService(true);
                 calculateDiscount(true);
                 calculateTax(true);
-                binding.checkout.setClickable(true);
+                binding.saveButton.setClickable(true);
             } else {
                 setEditTextError(binding.percentService);
             }
@@ -1171,11 +1205,11 @@ public class Checkout extends BaseActivity implements LocationListener {
         double grandTotal = productsTotal + deliveryValue + serviceValue - discountValue + taxValue + totalLineTaxes;
         double remainingBalance = (totalAfterTax + totalLineTaxes);
         if (paymentMethod == 0 && !binding.remaining.getText().toString().isEmpty()) {
-            if (Double.parseDouble(binding.remaining.getText().toString()) < (totalAfterTax + totalLineTaxes)) {
+//            if (Double.parseDouble(binding.remaining.getText().toString()) < (totalAfterTax + totalLineTaxes)) {
                 remainingBalance = (totalAfterTax + totalLineTaxes) - Double.parseDouble(binding.remaining.getText().toString());
-            } else {
-                setEditTextError(binding.remaining);
-            }
+//            } else {
+//                setEditTextError(binding.remaining);
+//            }
         }
         binding.totalItems.setText(String.format(Locale.US, "%.3f", productsTotal) + " جنيه");
         binding.totalTax2.setText(String.format(Locale.ENGLISH, "%.3f", totalLineTaxes));
@@ -1186,7 +1220,7 @@ public class Checkout extends BaseActivity implements LocationListener {
     private void setEditTextError(EditText editText) {
         editText.setError("رقم غير مقبول");
         editText.setText("");
-        binding.checkout.setClickable(false);
+        binding.saveButton.setClickable(false);
     }
 
 }

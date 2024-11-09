@@ -162,7 +162,12 @@ public class ProductData implements Serializable, Parcelable {
 
     @SerializedName("QuanSumAddWriteToNotes")
     Integer QuanSumAddWriteToNotes;
+    @SerializedName("ItemMaxDisc")
+    String ItemMaxDisc;
 
+    public String getItemMaxDisc() {
+        return ItemMaxDisc;
+    }
     public Integer getQuanSumAddWriteToNotes() {
         return QuanSumAddWriteToNotes;
     }

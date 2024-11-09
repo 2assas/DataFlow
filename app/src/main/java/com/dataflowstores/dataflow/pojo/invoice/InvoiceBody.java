@@ -262,6 +262,19 @@ public class InvoiceBody implements Serializable {
     String SaleLastAllowedDate;
     @SerializedName("SaleRenewMonthCount")
     String SaleRenewMonthCount;
+    @SerializedName("ItemMaxDisc")
+    ArrayList<String> ItemMaxDisc;
+    @SerializedName("DealerMaxDisc")
+    String DealerMaxDisc;
+    @SerializedName("DealerAllowBonus")
+    String DealerAllowBonus;
+
+    @SerializedName("MobileBonusWithoutDealer")
+    String mobileBonusWithoutDealer;
+    @SerializedName("MobileBonus")
+    String mobileBonus;
+
+
 
     public InvoiceBody(Long branchISN, String uuid, Integer cashType, Integer saleType, Integer dealerType, Integer dealerBranchISN, Long dealerISN,
             Long salesManBranchISN, Long salesManISN, String headerNotes, Double totalLinesValue, Double serviceValue,
@@ -292,9 +305,9 @@ public class InvoiceBody implements Serializable {
             ArrayList<String> productStoreName, Integer mobileSalesMaxDiscPer, Integer shiftSystemActivate,
             Integer logIn_ShiftBranchISN, Integer logIn_ShiftISN, Integer logIn_Spare1, Integer logIn_Spare2,
             Integer logIn_Spare3, Integer logIn_Spare4, Integer logIn_Spare5, Integer logIn_Spare6, ArrayList<Double> illustrativeQuantity,
-            Double customerDiscount, String AllowForwardSell, String SaleMaxCredit, String SaleLastAllowedDate, String SaleRenewMonthCount
+            Double customerDiscount, String AllowForwardSell, String SaleMaxCredit, String SaleLastAllowedDate, String SaleRenewMonthCount,
 
-            ) {
+            ArrayList<String> itemMaxDisc, String dealerAllowBonus, String dealerMaxDisc, String mobileBonusWithoutDealer, String mobileBonus) {
         BranchISN = branchISN;
         this.uuid = uuid;
         CashType = cashType;
@@ -420,6 +433,12 @@ public class InvoiceBody implements Serializable {
         this.SaleMaxCredit = SaleMaxCredit;
         this.SaleLastAllowedDate = SaleLastAllowedDate;
         this.SaleRenewMonthCount = SaleRenewMonthCount;
+        this.ItemMaxDisc = itemMaxDisc;
+        this.DealerAllowBonus = dealerAllowBonus;
+        this.DealerMaxDisc = dealerMaxDisc;
+        this.mobileBonusWithoutDealer = mobileBonusWithoutDealer;
+        this.mobileBonus = mobileBonus;
+
     }
 
 }

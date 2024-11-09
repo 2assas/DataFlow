@@ -432,11 +432,11 @@
                 android:id="@+id/appVersion"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="10dp"
                 android:alpha=".7"
+
                 android:gravity="center"
                 android:text="Version "
-
                 android:textSize="17dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -465,6 +465,7 @@
                 android:id="@+id/demoButton"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="20dp"
                 android:onClick="loginButton"
                 android:text="@string/demo_version"
@@ -474,7 +475,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/deviceId" />
+                app:layout_constraintTop_toBottomOf="@+id/appVersion" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

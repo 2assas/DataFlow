@@ -36,6 +36,25 @@ public class CustomerData implements Serializable {
     @SerializedName("SaleRenewMonthCount")
     private String SaleRenewMonthCount;
 
+    @SerializedName("DealerAllowBonus")
+    private String DealerAllowBonus;
+
+    @SerializedName("DealerMaxDisc")
+    private String DealerMaxDisc;
+
+
+    public String getDealerAllowBonus() {
+        return DealerAllowBonus;
+    }
+
+    public void setDealerAllowBonus(String dealerAllowBonus) {
+        DealerAllowBonus = dealerAllowBonus;
+    }
+
+    public String getDealerMaxDisc() {
+        return DealerMaxDisc;
+    }
+
     public String getAllowForwardSell() {
         return AllowForwardSell;
     }

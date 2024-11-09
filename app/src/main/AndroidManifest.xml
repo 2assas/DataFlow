@@ -50,7 +50,8 @@
         tools:targetApi="m">
         <activity
             android:name=".ui.shifts.ShiftsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -196,13 +197,23 @@
             android:exported="true"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.reports.supplierSalesReport.SupplierSalesPrintScreen" />
-        <activity android:name=".ui.payments.PaymentsScreen" />
-        <activity android:name=".ui.payments.SearchPayments" />
-        <activity android:name=".ui.payments.PrintPayment" />
-        <activity android:name=".ui.reports.DealersBalancesReport" />
-        <activity android:name=".ui.reports.dealersBalancesReport.DealersBalancesReport" />
+        <activity android:name=".ui.payments.PaymentsScreen"
+            android:exported="true"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.payments.SearchPayments"
+            android:exported="true"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.payments.PrintPayment"
+            android:exported="true"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.reports.dealersBalancesReport.DealersBalancesReport"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            />
 
-        <service android:name="net.posprinter.service.PosprinterService" />
+        <service android:name="net.posprinter.service.PosprinterService"
+            android:exported="true"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

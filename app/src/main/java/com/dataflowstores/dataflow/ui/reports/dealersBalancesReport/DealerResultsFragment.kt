@@ -110,7 +110,7 @@ class DealerResultsDialogFragment : Fragment() {
                         filteredDealers.filter { dealerData -> dealerData.currentBalance?.contains("صفر") != true }
                             .toMutableList()
                 }
-                if (filteredDealers.size in 1..14) {
+                if (filteredDealers.size in 0..14 && it.isNotEmpty()) {
                     binding.progress.visibility = View.VISIBLE
                     viewModel.loadMoreData(
                         dealerName,
@@ -178,6 +178,7 @@ class DealerResultsDialogFragment : Fragment() {
 
     }
 
+
     override fun onDetach() {
         super.onDetach()
         reachedEnd = false
@@ -185,3 +186,4 @@ class DealerResultsDialogFragment : Fragment() {
         viewModel.dispose()
     }
 }
+
