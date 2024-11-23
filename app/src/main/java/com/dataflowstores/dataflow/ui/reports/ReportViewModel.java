@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.dataflowstores.dataflow.App;
+import com.dataflowstores.dataflow.pojo.GeneralRequestBodyUtil;
 import com.dataflowstores.dataflow.pojo.financialReport.FinancialReportResponse;
 import com.dataflowstores.dataflow.pojo.financialReport.ReportBody;
 import com.dataflowstores.dataflow.pojo.report.Branches;
@@ -27,6 +28,7 @@ import com.dataflowstores.dataflow.webService.Constants;
 import com.dataflowstores.dataflow.webService.ServiceGenerator;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -50,6 +52,7 @@ public class ReportViewModel extends ViewModel {
     public SingleLiveEvent<ItemSalesResponse> itemSalesResponseMutableLiveData = new SingleLiveEvent<>();
     public SingleLiveEvent<ItemSalesResponse> supplierSalesResponseMutableLiveData = new SingleLiveEvent<>();
     public MutableLiveData<String> toastErrorMutableLiveData = new MutableLiveData<>();
+    Map<String, String> generalParams = GeneralRequestBodyUtil.toQueryParams();
 
     ApiClient apiClient = ServiceGenerator.tokenService(
             ApiClient.class, Constants.BASE_URL);
@@ -243,27 +246,12 @@ public class ReportViewModel extends ViewModel {
     }
 
     public void getSafeDeposit(long branchISN, String uuid, int moveType) {
-        Observable<SafeDeposit> getSafeDeposit = apiClient.getSafeDeposit(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),branchISN, App.currentUser.getPermission(), uuid, App.currentUser.getSafeDepositBranchISN(), App.currentUser.getSafeDepositISN(), App.currentUser.getAllBranchesWorker(), moveType,selectedFoundation,
-                App.currentUser.getLogIn_BISN(),
-                App.currentUser.getLogIn_UID(),
-                App.currentUser.getLogIn_WBISN(),
-                App.currentUser.getLogIn_WISN(),
-                App.currentUser.getLogIn_WName(),
-                App.currentUser.getLogIn_WSBISN(),
-                App.currentUser.getLogIn_WSISN(),
-                App.currentUser.getLogIn_WSName(),
-                App.currentUser.getLogIn_CS(),
-                App.currentUser.getLogIn_VN(),
-                App.currentUser.getLogIn_FAlternative()                ,App.currentUser.getMobileSalesMaxDiscPer()
-                ,App.currentUser.getShiftSystemActivate()
-                ,App.currentUser.getLogIn_ShiftBranchISN()
-                ,App.currentUser.getLogIn_ShiftISN()
-                ,App.currentUser.getLogIn_Spare1()
-                ,App.currentUser.getLogIn_Spare2()
-                ,App.currentUser.getLogIn_Spare3()
-                ,App.currentUser.getLogIn_Spare4()
-                ,App.currentUser.getLogIn_Spare5()
-                ,App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<SafeDeposit> getSafeDeposit = apiClient.getSafeDeposit(generalParams,branchISN,
+                                                                          uuid,
+                                                                          App.currentUser.getSafeDepositBranchISN(),
+                                                                          App.currentUser.getSafeDepositISN(),
+                                                                          App.currentUser.getAllBranchesWorker(),
+                                                                          moveType).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         getSafeDeposit.subscribe(safeDeposit -> {
             safeDepositMutableLiveData.setValue(safeDeposit);
         }, throwable -> {
@@ -282,27 +270,7 @@ public class ReportViewModel extends ViewModel {
     }
 
     public void getBanks(long branchISN, String uuid) {
-        Observable<Banks> getBanks = apiClient.getBanks(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),branchISN, App.currentUser.getPermission(), uuid,selectedFoundation,
-                App.currentUser.getLogIn_BISN(),
-                App.currentUser.getLogIn_UID(),
-                App.currentUser.getLogIn_WBISN(),
-                App.currentUser.getLogIn_WISN(),
-                App.currentUser.getLogIn_WName(),
-                App.currentUser.getLogIn_WSBISN(),
-                App.currentUser.getLogIn_WSISN(),
-                App.currentUser.getLogIn_WSName(),
-                App.currentUser.getLogIn_CS(),
-                App.currentUser.getLogIn_VN(),
-                App.currentUser.getLogIn_FAlternative()                ,App.currentUser.getMobileSalesMaxDiscPer()
-                ,App.currentUser.getShiftSystemActivate()
-                ,App.currentUser.getLogIn_ShiftBranchISN()
-                ,App.currentUser.getLogIn_ShiftISN()
-                ,App.currentUser.getLogIn_Spare1()
-                ,App.currentUser.getLogIn_Spare2()
-                ,App.currentUser.getLogIn_Spare3()
-                ,App.currentUser.getLogIn_Spare4()
-                ,App.currentUser.getLogIn_Spare5()
-                ,App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<Banks> getBanks = apiClient.getBanks(generalParams, uuid, branchISN).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         getBanks.subscribe(banks -> {
             banksMutableLiveData.setValue(banks);
         }, throwable -> {

@@ -48,22 +48,14 @@ public class InvoiceViewModel extends ViewModel {
     public MutableLiveData<PriceTypeData> priceTypeMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<DealerCategoriesResponse> dealerCategoriesResponseMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<DealersBalancesResponse> dealersBalancesReportMutableLiveData = new MutableLiveData<>();
+    Map<String, String> queryParams = GeneralRequestBodyUtil.toQueryParams();
 
 
     ApiClient apiClient = ServiceGenerator.tokenService(ApiClient.class, Constants.BASE_URL);
 
+    @SuppressLint("CheckResult")
     public void getCustomer(String uuid, String customerName, Long WorkerBranchISN, Long WorkerISN) {
-        Observable<Customer> customerObservable = apiClient.getCustomer(App.currentUser.getIllustrativeQuantity(),currentUser.getDeviceID(), currentUser.getLogIn_CurrentWorkingDayDate(), currentUser.getVendorID(),customerName, uuid, WorkerBranchISN, WorkerISN, selectedFoundation, currentUser.getLogIn_BISN(), currentUser.getLogIn_UID(), currentUser.getLogIn_WBISN(), currentUser.getLogIn_WISN(), currentUser.getLogIn_WName(), currentUser.getLogIn_WSBISN(), currentUser.getLogIn_WSISN(), currentUser.getLogIn_WSName(), currentUser.getLogIn_CS(), currentUser.getLogIn_VN(), currentUser.getLogIn_FAlternative()
-                , currentUser.getMobileSalesMaxDiscPer()
-                , currentUser.getShiftSystemActivate()
-                , currentUser.getLogIn_ShiftBranchISN()
-                , currentUser.getLogIn_ShiftISN()
-                , currentUser.getLogIn_Spare1()
-                , currentUser.getLogIn_Spare2()
-                , currentUser.getLogIn_Spare3()
-                , currentUser.getLogIn_Spare4()
-                , currentUser.getLogIn_Spare5()
-                , currentUser.getLogIn_Spare6()
+        Observable<Customer> customerObservable = apiClient.getCustomer(queryParams, customerName, uuid, WorkerBranchISN, WorkerISN
         ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         customerObservable.subscribe(customer -> {
             customerLiveData.setValue(customer);
@@ -83,18 +75,11 @@ public class InvoiceViewModel extends ViewModel {
     }
 
 
+    @SuppressLint("CheckResult")
     public void getSupplier(String uuid, String supplierName, Long WorkerBranchISN, Long WorkerISN) {
-        Observable<Customer> supplierObservable = apiClient.getSupplier(App.currentUser.getIllustrativeQuantity(),currentUser.getDeviceID(), currentUser.getLogIn_CurrentWorkingDayDate(), currentUser.getVendorID(), supplierName, uuid, WorkerBranchISN, WorkerISN, selectedFoundation, currentUser.getLogIn_BISN(), currentUser.getLogIn_UID(), currentUser.getLogIn_WBISN(), currentUser.getLogIn_WISN(), currentUser.getLogIn_WName(), currentUser.getLogIn_WSBISN(), currentUser.getLogIn_WSISN(), currentUser.getLogIn_WSName(), currentUser.getLogIn_CS(), currentUser.getLogIn_VN(), currentUser.getLogIn_FAlternative()
-                , currentUser.getMobileSalesMaxDiscPer()
-                , currentUser.getShiftSystemActivate()
-                , currentUser.getLogIn_ShiftBranchISN()
-                , currentUser.getLogIn_ShiftISN()
-                , currentUser.getLogIn_Spare1()
-                , currentUser.getLogIn_Spare2()
-                , currentUser.getLogIn_Spare3()
-                , currentUser.getLogIn_Spare4()
-                , currentUser.getLogIn_Spare5()
-                , currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<Customer> supplierObservable = apiClient.getSupplier(queryParams, supplierName, uuid, WorkerBranchISN, WorkerISN
+
+        ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         supplierObservable.subscribe(customer -> {
             customerLiveData.setValue(customer);
         }, throwable -> {
@@ -113,19 +98,9 @@ public class InvoiceViewModel extends ViewModel {
     }
 
 
-    public void getSalesMan(String uuid, String salesManName, Long WorkerBranchISN, Long WorkerISN) {
-        Observable<SalesMan> salesManObservable = apiClient.getSalesMan(App.currentUser.getIllustrativeQuantity(),currentUser.getDeviceID(), currentUser.getLogIn_CurrentWorkingDayDate(), currentUser.getVendorID(),salesManName, uuid, WorkerBranchISN, WorkerISN, selectedFoundation, currentUser.getLogIn_BISN(), currentUser.getLogIn_UID(), currentUser.getLogIn_WBISN(), currentUser.getLogIn_WISN(), currentUser.getLogIn_WName(), currentUser.getLogIn_WSBISN(), currentUser.getLogIn_WSISN(), currentUser.getLogIn_WSName(), currentUser.getLogIn_CS(), currentUser.getLogIn_VN(),
-                currentUser.getLogIn_FAlternative()
-                , currentUser.getMobileSalesMaxDiscPer()
-                , currentUser.getShiftSystemActivate()
-                , currentUser.getLogIn_ShiftBranchISN()
-                , currentUser.getLogIn_ShiftISN()
-                , currentUser.getLogIn_Spare1()
-                , currentUser.getLogIn_Spare2()
-                , currentUser.getLogIn_Spare3()
-                , currentUser.getLogIn_Spare4()
-                , currentUser.getLogIn_Spare5()
-                , currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    @SuppressLint("CheckResult")
+    public void getSalesMan(String uuid, String salesManName, Long workerBranchISN, Long workerISN) {
+        Observable<SalesMan> salesManObservable = apiClient.getSalesMan(queryParams, uuid, salesManName, workerBranchISN, workerISN).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         salesManObservable.subscribe(salesMan -> {
             salesManLiveData.setValue(salesMan);
         }, throwable -> {
@@ -145,24 +120,13 @@ public class InvoiceViewModel extends ViewModel {
     }
 
     public void getCustomerBalance(String uuid, String dealerISN, String branchISN, String dealerType, String selectedBranchISN) {
-        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(App.currentUser.getIllustrativeQuantity(),currentUser.getDeviceID(), currentUser.getLogIn_CurrentWorkingDayDate(), currentUser.getVendorID(),
-                uuid, dealerISN, branchISN, dealerType, selectedFoundation, currentUser.getLogIn_BISN(),
-                currentUser.getLogIn_UID(), currentUser.getLogIn_WBISN(), currentUser.getLogIn_WISN(),
-                currentUser.getLogIn_WName(), currentUser.getLogIn_WSBISN(), currentUser.getLogIn_WSISN(),
-                currentUser.getLogIn_WSName(), currentUser.getLogIn_CS(), currentUser.getLogIn_VN(),
-                currentUser.getLogIn_FAlternative(),
-                null, null, null, null, null,
-                selectedBranchISN, currentUser.getInvoiceCurrentBalanceTimeInInvoice()
-                , currentUser.getMobileSalesMaxDiscPer()
-                , currentUser.getShiftSystemActivate()
-                , currentUser.getLogIn_ShiftBranchISN()
-                , currentUser.getLogIn_ShiftISN()
-                , currentUser.getLogIn_Spare1()
-                , currentUser.getLogIn_Spare2()
-                , currentUser.getLogIn_Spare3()
-                , currentUser.getLogIn_Spare4()
-                , currentUser.getLogIn_Spare5()
-                , currentUser.getLogIn_Spare6()
+        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(queryParams,  // Pass the common parameters as a map
+                                                                                      uuid, dealerISN, branchISN, dealerType, selectedBranchISN,  // For Branch_ISN from spinner
+                                                                                      currentUser.getInvoiceCurrentBalanceTimeInInvoice(), null,  // MoveBranchISN (optional)
+                                                                                      null,  // Move_ISN (optional)
+                                                                                      null,  // RemainValue (optional)
+                                                                                      null,  // NetValue (optional)
+                                                                                      null // MoveType (optional)
         ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observer<CustomerBalance> observer = new Observer<CustomerBalance>() {
             @Override
@@ -229,8 +193,7 @@ public class InvoiceViewModel extends ViewModel {
                 currentUser.getLogIn_Spare6(),
                 currentUser.getDeviceID(),
                 currentUser.getLogIn_CurrentWorkingDayDate(),
-                selectedFoundation,
-                App.currentUser.getIllustrativeQuantity()
+                selectedFoundation, currentUser.getIllustrativeQuantity(), currentUser.getMobileC_D_B_W_W_C(), currentUser.getMobileOldShiftUse(), currentUser.getPermission(), currentUser.getMobileAllowCreateForward(), currentUser.getMobileAllowCreateForwardAmount(), currentUser.getMobileWS_AllowCreateForward(), currentUser.getMobileWS_AllowCreateForwardAmount(), currentUser.getLogIn_F_Spare1(), currentUser.getLogIn_F_Spare2(), currentUser.getLogIn_F_Spare3()
         );
     }
 
@@ -271,17 +234,9 @@ public class InvoiceViewModel extends ViewModel {
 
     @SuppressLint("CheckResult")
     public void getPriceType(String uuid) {
-        Observable<PriceType> getPriceType = apiClient.getPriceType(App.currentUser.getIllustrativeQuantity(),currentUser.getDeviceID(), currentUser.getLogIn_CurrentWorkingDayDate(), currentUser.getVendorID(), currentUser.getPermission(), uuid, currentUser.getPricesTypeBranchISN(), currentUser.getPricesTypeISN(), selectedFoundation, currentUser.getLogIn_BISN(), currentUser.getLogIn_UID(), currentUser.getLogIn_WBISN(), currentUser.getLogIn_WISN(), currentUser.getLogIn_WName(), currentUser.getLogIn_WSBISN(), currentUser.getLogIn_WSISN(), currentUser.getLogIn_WSName(), currentUser.getLogIn_CS(), currentUser.getLogIn_VN(), currentUser.getLogIn_FAlternative(), (App.invoiceType == Sales || App.invoiceType == ReturnSales) ? 2 : 1
-                , currentUser.getMobileSalesMaxDiscPer()
-                , currentUser.getShiftSystemActivate()
-                , currentUser.getLogIn_ShiftBranchISN()
-                , currentUser.getLogIn_ShiftISN()
-                , currentUser.getLogIn_Spare1()
-                , currentUser.getLogIn_Spare2()
-                , currentUser.getLogIn_Spare3()
-                , currentUser.getLogIn_Spare4()
-                , currentUser.getLogIn_Spare5()
-                , currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<PriceType> getPriceType = apiClient.getPriceType(
+                queryParams, uuid, currentUser.getPricesTypeBranchISN(), currentUser.getPricesTypeISN(), selectedFoundation, (App.invoiceType == Sales || App.invoiceType == ReturnSales) ? 2 : 1
+        ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         getPriceType.subscribe(priceType -> {
             App.allPriceType = priceType.getData();
             boolean found = false;

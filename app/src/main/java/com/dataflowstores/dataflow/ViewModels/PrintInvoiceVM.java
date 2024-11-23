@@ -1,7 +1,9 @@
 package com.dataflowstores.dataflow.ViewModels;
 
+import static com.dataflowstores.dataflow.App.currentUser;
 import static com.dataflowstores.dataflow.App.selectedFoundation;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
@@ -10,6 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.dataflowstores.dataflow.App;
+import com.dataflowstores.dataflow.pojo.GeneralRequestBodyUtil;
 import com.dataflowstores.dataflow.pojo.invoice.Invoice;
 import com.dataflowstores.dataflow.pojo.users.CustomerBalance;
 import com.dataflowstores.dataflow.webService.ApiClient;
@@ -17,6 +20,7 @@ import com.dataflowstores.dataflow.webService.Constants;
 import com.dataflowstores.dataflow.webService.ServiceGenerator;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -34,6 +38,7 @@ public class PrintInvoiceVM extends ViewModel {
     public MutableLiveData<Boolean> errorMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<CustomerBalance> customerBalanceLiveData = new MutableLiveData<>();
     public MutableLiveData<String> toastErrorMutableLiveData = new MutableLiveData<>();
+    Map<String, String> queryParams = GeneralRequestBodyUtil.toQueryParams();
 
     ApiClient apiClient = ServiceGenerator.tokenService(
             ApiClient.class, Constants.BASE_URL);
@@ -94,32 +99,23 @@ public class PrintInvoiceVM extends ViewModel {
         invoiceObservable.subscribe(invoiceObserver);
     }
 
+    @SuppressLint("CheckResult")
     public void getCustomerBalance(String uuid, String dealerISN, String branchISN, String dealerType,
                                    String moveBranchISN, String moveISN, String remainValue, String netValue, String moveType) {
-        Observable<CustomerBalance> customerObservable = apiClient.getCustomerBalance(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid, dealerISN, branchISN, dealerType, selectedFoundation,
-                App.currentUser.getLogIn_BISN(),
-                App.currentUser.getLogIn_UID(),
-                App.currentUser.getLogIn_WBISN(),
-                App.currentUser.getLogIn_WISN(),
-                App.currentUser.getLogIn_WName(),
-                App.currentUser.getLogIn_WSBISN(),
-                App.currentUser.getLogIn_WSISN(),
-                App.currentUser.getLogIn_WSName(),
-                App.currentUser.getLogIn_CS(),
-                App.currentUser.getLogIn_VN(),
-                App.currentUser.getLogIn_FAlternative()
-                , moveBranchISN, moveISN, remainValue, netValue, moveType, null, App.currentUser.getInvoiceCurrentBalanceTimeInInvoice()
-                ,App.currentUser.getMobileSalesMaxDiscPer()
-                ,App.currentUser.getShiftSystemActivate()
-                ,App.currentUser.getLogIn_ShiftBranchISN()
-                ,App.currentUser.getLogIn_ShiftISN()
-                ,App.currentUser.getLogIn_Spare1()
-                ,App.currentUser.getLogIn_Spare2()
-                ,App.currentUser.getLogIn_Spare3()
-                ,App.currentUser.getLogIn_Spare4()
-                ,App.currentUser.getLogIn_Spare5()
-                ,App.currentUser.getLogIn_Spare6()
-        ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<CustomerBalance> customerObservable =
+                apiClient.getCustomerBalance(queryParams,  // Pass the common parameters as a map
+                                             uuid,
+                                             dealerISN,
+                                             branchISN,
+                                             dealerType,
+                                             null,// For Branch_ISN from spinner
+                                             currentUser.getInvoiceCurrentBalanceTimeInInvoice(),
+                                             moveBranchISN,  // MoveBranchISN (optional)
+                                             moveISN,  // Move_ISN (optional)
+                                             remainValue,  // RemainValue (optional)
+                                             netValue,  // NetValue (optional)
+                                             moveType // MoveType (optional)
+                        ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observer<CustomerBalance> observer = new Observer<CustomerBalance>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {

@@ -233,7 +233,7 @@ public class UserData implements Serializable {
 
 
     @SerializedName("MobileSalesMaxDiscPer")
-    Integer MobileSalesMaxDiscPer;
+    String MobileSalesMaxDiscPer;
 
 
     @SerializedName("ShiftSystemActivate")
@@ -295,6 +295,60 @@ public class UserData implements Serializable {
     Integer MobileItemsList;
     @SerializedName("MobileBonusWithoutDealer")
     String MobileBonusWithoutDealer;
+    @SerializedName("MobileC_D_B_W_W_C")
+    String MobileC_D_B_W_W_C;
+    @SerializedName("MobileOldShiftUse")
+    String MobileOldShiftUse;
+    @SerializedName("MobileAllowCreateForward")
+    String MobileAllowCreateForward;
+    @SerializedName("MobileAllowCreateForwardAmount")
+    Float MobileAllowCreateForwardAmount;
+    @SerializedName("MobileWS_AllowCreateForward")
+    String MobileWS_AllowCreateForward;
+    @SerializedName("MobileWS_AllowCreateForwardAmount")
+    Float MobileWS_AllowCreateForwardAmount;
+    @SerializedName("LogIn_F_Spare1")
+    Float LogIn_F_Spare1;
+    @SerializedName("LogIn_F_Spare2")
+    Float LogIn_F_Spare2;
+    @SerializedName("LogIn_F_Spare3")
+    Float LogIn_F_Spare3;
+
+    public String getMobileC_D_B_W_W_C() {
+        return MobileC_D_B_W_W_C;
+    }
+
+    public String getMobileOldShiftUse() {
+        return MobileOldShiftUse;
+    }
+
+    public String getMobileAllowCreateForward() {
+        return MobileAllowCreateForward;
+    }
+
+    public Float getMobileAllowCreateForwardAmount() {
+        return MobileAllowCreateForwardAmount;
+    }
+
+    public String getMobileWS_AllowCreateForward() {
+        return MobileWS_AllowCreateForward;
+    }
+
+    public Float getMobileWS_AllowCreateForwardAmount() {
+        return MobileWS_AllowCreateForwardAmount;
+    }
+
+    public Float getLogIn_F_Spare1() {
+        return LogIn_F_Spare1;
+    }
+
+    public Float getLogIn_F_Spare2() {
+        return LogIn_F_Spare2;
+    }
+
+    public Float getLogIn_F_Spare3() {
+        return LogIn_F_Spare3;
+    }
 
     public String getMobileBonusWithoutDealer() {
         return MobileBonusWithoutDealer;
@@ -369,7 +423,7 @@ public class UserData implements Serializable {
         return ShiftSystemActivate;
     }
 
-    public Integer getMobileSalesMaxDiscPer() {
+    public String getMobileSalesMaxDiscPer() {
         return MobileSalesMaxDiscPer;
     }
 

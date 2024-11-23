@@ -115,6 +115,16 @@ class DealerViewModel() : ViewModel() {
             App.currentUser.logIn_CurrentWorkingDayDate,
             App.selectedFoundation,
             App.currentUser.illustrativeQuantity,
+            App.currentUser.mobileC_D_B_W_W_C,
+            App.currentUser.mobileOldShiftUse,
+            App.currentUser.permission,
+            App.currentUser.mobileAllowCreateForward,
+            App.currentUser.mobileAllowCreateForwardAmount,
+            App.currentUser.mobileWS_AllowCreateForward,
+            App.currentUser.mobileWS_AllowCreateForwardAmount,
+            App.currentUser.logIn_F_Spare1,
+            App.currentUser.logIn_F_Spare2,
+            App.currentUser.logIn_F_Spare3
         )
     }
 

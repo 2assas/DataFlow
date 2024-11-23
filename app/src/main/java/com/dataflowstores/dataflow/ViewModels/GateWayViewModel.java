@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.dataflowstores.dataflow.App;
+import com.dataflowstores.dataflow.pojo.GeneralRequestBodyUtil;
 import com.dataflowstores.dataflow.pojo.login.BranchStaffModel;
 import com.dataflowstores.dataflow.pojo.login.LoginStatus;
 import com.dataflowstores.dataflow.pojo.report.Branches;
@@ -23,6 +24,7 @@ import com.dataflowstores.dataflow.webService.ServiceGenerator;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.Map;
 import java.util.Objects;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -142,6 +144,7 @@ public class GateWayViewModel extends ViewModel {
     public void SelectBranchStaff(String uuid, int moveType) {
         ApiClient tokenService = ServiceGenerator.tokenService(
                 ApiClient.class, Constants.BASE_URL);
+        Map<String, String> queryParams = GeneralRequestBodyUtil.toQueryParams();
         Observable<Branches> getBranches = tokenService.getBranches(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid, selectedFoundation,
                 null,
                 null,
@@ -164,50 +167,22 @@ public class GateWayViewModel extends ViewModel {
                 , App.currentUser.getLogIn_Spare4()
                 , App.currentUser.getLogIn_Spare5()
                 , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-        Observable<Stores> getStores = tokenService.getStores(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),null, 1, uuid, null, null, -1, moveType, selectedFoundation,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-                , App.currentUser.getMobileSalesMaxDiscPer()
-                , App.currentUser.getShiftSystemActivate()
-                , App.currentUser.getLogIn_ShiftBranchISN()
-                , App.currentUser.getLogIn_ShiftISN()
-                , App.currentUser.getLogIn_Spare1()
-                , App.currentUser.getLogIn_Spare2()
-                , App.currentUser.getLogIn_Spare3()
-                , App.currentUser.getLogIn_Spare4()
-                , App.currentUser.getLogIn_Spare5()
-                , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-        Observable<SafeDeposit> getSafeDeposits = tokenService.getSafeDeposit(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),null, 1, uuid, null, null, -1, moveType, selectedFoundation,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-                , App.currentUser.getMobileSalesMaxDiscPer()
-                , App.currentUser.getShiftSystemActivate()
-                , App.currentUser.getLogIn_ShiftBranchISN()
-                , App.currentUser.getLogIn_ShiftISN()
-                , App.currentUser.getLogIn_Spare1()
-                , App.currentUser.getLogIn_Spare2()
-                , App.currentUser.getLogIn_Spare3()
-                , App.currentUser.getLogIn_Spare4()
-                , App.currentUser.getLogIn_Spare5()
-                , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<Stores> getStores = tokenService.getStores(
+                queryParams,
+                null, // BranchISN (null for now)
+                uuid,
+                null, // CashierStoreBranchISN
+                null, // CashierStoreISN
+                -1,   // AllBranchesWorker
+                moveType
+        ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<SafeDeposit> getSafeDeposits = tokenService.getSafeDeposit(queryParams,
+                                                                              null,  // Specific parameter
+                                                                              uuid,       // Specific parameter
+                                                                              null,       // Default SafeDepositBranchISN
+                                                                              null,       // Default SafeDepositISN
+                                                                              -1,         // Default AllBranchesWorker
+                                                                              moveType ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         Observable<BranchStaffModel> zipper = Observable.zip(getBranches, getStores, getSafeDeposits, BranchStaffModel::new);
 

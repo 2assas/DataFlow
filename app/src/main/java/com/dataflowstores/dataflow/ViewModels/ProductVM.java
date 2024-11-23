@@ -1,5 +1,6 @@
 package com.dataflowstores.dataflow.ViewModels;
 
+import static com.dataflowstores.dataflow.App.priceType;
 import static com.dataflowstores.dataflow.App.selectedFoundation;
 
 import android.annotation.SuppressLint;
@@ -10,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.dataflowstores.dataflow.App;
+import com.dataflowstores.dataflow.pojo.GeneralRequestBodyUtil;
 import com.dataflowstores.dataflow.pojo.product.Product;
 import com.dataflowstores.dataflow.pojo.product.ProductData;
 import com.dataflowstores.dataflow.pojo.product.SearchProductResponse;
@@ -25,6 +27,7 @@ import com.dataflowstores.dataflow.webService.ServiceGenerator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -49,6 +52,7 @@ public class ProductVM extends ViewModel {
     private final SearchManager searchManager = new SearchManager();
     ApiClient apiClient = ServiceGenerator.tokenService(
             ApiClient.class, Constants.BASE_URL);
+    Map<String, String> generalParams = GeneralRequestBodyUtil.toQueryParams();
 
 
     public ProductVM() {
@@ -65,7 +69,7 @@ public class ProductVM extends ViewModel {
     @SuppressLint("CheckResult")
     public void getProduct(String productName, String uuid, String serial, int moveType, String itemCode) {
         if (App.customer.getDealerName() == null) {
-            Observable<Product> productObservable = apiClient.getProduct(App.currentUser.getIllustrativeQuantity(), App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(), App.currentUser.getVendorID(), productName, uuid, App.priceType.getBranchISN(), App.priceType.getPricesType_ISN(), App.currentUser.getAllowSpecificDealersPrices(), (int) App.currentUser.getBranchISN(), moveType, serial, selectedFoundation,
+            Observable<Product> productObservable = apiClient.getProduct(App.currentUser.getIllustrativeQuantity(), App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(), App.currentUser.getVendorID(), productName, uuid, priceType.getBranchISN(), priceType.getPricesType_ISN(), App.currentUser.getAllowSpecificDealersPrices(), (int) App.currentUser.getBranchISN(), moveType, serial, selectedFoundation,
                     App.currentUser.getLogIn_BISN(),
                     App.currentUser.getLogIn_UID(),
                     App.currentUser.getLogIn_WBISN(),
@@ -108,32 +112,10 @@ public class ProductVM extends ViewModel {
             });
             compositeDisposable.add(productDisposable);
         }else{
-            Observable<Product> productObservable = apiClient.getProductCustomer(App.currentUser.getIllustrativeQuantity(), App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(), App.currentUser.getVendorID(), productName, uuid, App.priceType.getBranchISN(),
-                    App.priceType.getPricesType_ISN(), App.customer.getDealerType(), App.customer.getDealer_ISN(),
+            Observable<Product> productObservable = apiClient.getProductCustomer(
+                    generalParams, uuid, productName, priceType.getBranchISN(), priceType.getPricesType_ISN(), App.customer.getDealerType(), App.customer.getDealer_ISN(),
                     App.customer.getBranchISN(), (int) App.currentUser.getBranchISN(), App.currentUser.getAllowSpecificDealersPrices()
-                    , moveType, serial, selectedFoundation,
-                    App.currentUser.getLogIn_BISN(),
-                    App.currentUser.getLogIn_UID(),
-                    App.currentUser.getLogIn_WBISN(),
-                    App.currentUser.getLogIn_WISN(),
-                    App.currentUser.getLogIn_WName(),
-                    App.currentUser.getLogIn_WSBISN(),
-                    App.currentUser.getLogIn_WSISN(),
-                    App.currentUser.getLogIn_WSName(),
-                    App.currentUser.getLogIn_CS(),
-                    App.currentUser.getLogIn_VN(),
-                    App.currentUser.getLogIn_FAlternative()
-                    , App.currentUser.getMobileSalesMaxDiscPer()
-                    , App.currentUser.getShiftSystemActivate()
-                    , App.currentUser.getLogIn_ShiftBranchISN()
-                    , App.currentUser.getLogIn_ShiftISN()
-                    , App.currentUser.getLogIn_Spare1()
-                    , App.currentUser.getLogIn_Spare2()
-                    , App.currentUser.getLogIn_Spare3()
-                    , App.currentUser.getLogIn_Spare4()
-                    , App.currentUser.getLogIn_Spare5()
-                    , App.currentUser.getLogIn_Spare6());
-
+                    , moveType, serial);
             Disposable productDisposable =
                     productObservable.subscribeOn(Schedulers.io()).subscribeOn(AndroidSchedulers.mainThread()).subscribe(product -> {
                         Log.e("checkProduct", "post value triggered2");

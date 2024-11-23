@@ -35,7 +35,17 @@ public class GeneralParams {
                 currentUser.getDeviceID(),
                 currentUser.getLogIn_CurrentWorkingDayDate(),
                 selectedFoundation,
-                App.currentUser.getIllustrativeQuantity()
+                App.currentUser.getIllustrativeQuantity(),
+                currentUser.getMobileC_D_B_W_W_C(),
+                currentUser.getMobileOldShiftUse(),
+                currentUser.getPermission(),
+                currentUser.getMobileAllowCreateForward(),
+                currentUser.getMobileAllowCreateForwardAmount(),
+                currentUser.getMobileWS_AllowCreateForward(),
+                currentUser.getMobileWS_AllowCreateForwardAmount(),
+                currentUser.getLogIn_F_Spare1(),
+                currentUser.getLogIn_F_Spare2(),
+                currentUser.getLogIn_F_Spare3()
         );
     }
 

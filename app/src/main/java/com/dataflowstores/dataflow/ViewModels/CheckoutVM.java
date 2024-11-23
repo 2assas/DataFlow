@@ -1,5 +1,6 @@
 package com.dataflowstores.dataflow.ViewModels;
 
+import static com.dataflowstores.dataflow.App.currentUser;
 import static com.dataflowstores.dataflow.App.selectedFoundation;
 
 import android.util.Log;
@@ -74,7 +75,17 @@ public class CheckoutVM extends ViewModel {
                                     dealerAllowBonus,
                                     dealerMaxDisc,
                                     mobileBonusWithoutDealer,
-                                    mobileBonus
+                                    mobileBonus,
+                                    currentUser.getMobileC_D_B_W_W_C(),
+                                    currentUser.getMobileOldShiftUse(),
+                                    currentUser.getPermission(),
+                                    currentUser.getMobileAllowCreateForward(),
+                                    currentUser.getMobileAllowCreateForwardAmount(),
+                                    currentUser.getMobileWS_AllowCreateForward(),
+                                    currentUser.getMobileWS_AllowCreateForwardAmount(),
+                                    currentUser.getLogIn_F_Spare1(),
+                                    currentUser.getLogIn_F_Spare2(),
+                                    currentUser.getLogIn_F_Spare3()
                 ),App.currentUser.getIllustrativeQuantity(), App.currentUser.getVendorID(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate())
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 

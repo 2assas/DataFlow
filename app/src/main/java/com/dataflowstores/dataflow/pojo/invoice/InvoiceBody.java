@@ -233,7 +233,7 @@ public class InvoiceBody implements Serializable {
     ArrayList<Double> IllustrativeQuan;
 
     @SerializedName("MobileSalesMaxDiscPer")
-    Integer MobileSalesMaxDiscPer;
+    String MobileSalesMaxDiscPer;
     @SerializedName("ShiftSystemActivate")
     Integer ShiftSystemActivate;
     @SerializedName("LogIn_ShiftBranchISN")
@@ -273,6 +273,26 @@ public class InvoiceBody implements Serializable {
     String mobileBonusWithoutDealer;
     @SerializedName("MobileBonus")
     String mobileBonus;
+    @SerializedName("MobileC_D_B_W_W_C")
+    String MobileC_D_B_W_W_C;
+    @SerializedName("MobileOldShiftUse")
+    String MobileOldShiftUse;
+    @SerializedName("MobileAllowCreateForward")
+    String MobileAllowCreateForward;
+    @SerializedName("MobileAllowCreateForwardAmount")
+    Float MobileAllowCreateForwardAmount;
+    @SerializedName("MobileWS_AllowCreateForward")
+    String MobileWS_AllowCreateForward;
+    @SerializedName("MobileWS_AllowCreateForwardAmount")
+    Float MobileWS_AllowCreateForwardAmount;
+    @SerializedName("LogIn_F_Spare1")
+    Float LogIn_F_Spare1;
+    @SerializedName("LogIn_F_Spare2")
+    Float LogIn_F_Spare2;
+    @SerializedName("LogIn_F_Spare3")
+    Float LogIn_F_Spare3;
+    @SerializedName("permission")
+    Integer permission;
 
 
 
@@ -302,12 +322,12 @@ public class InvoiceBody implements Serializable {
             String branchISNStockMove, int selectedFoundation, String logIn_BISN, String logIn_UID, String logIn_WBISN,
             String logIn_WISN, String logIn_WName, String logIn_WSBISN, String logIn_WSISN, String logIn_WSName,
             String logIn_CS, String logIn_VN, String logIn_FAlternative, ArrayList<Integer> allowCurrentStoreMinus,
-            ArrayList<String> productStoreName, Integer mobileSalesMaxDiscPer, Integer shiftSystemActivate,
+            ArrayList<String> productStoreName, String mobileSalesMaxDiscPer, Integer shiftSystemActivate,
             Integer logIn_ShiftBranchISN, Integer logIn_ShiftISN, Integer logIn_Spare1, Integer logIn_Spare2,
             Integer logIn_Spare3, Integer logIn_Spare4, Integer logIn_Spare5, Integer logIn_Spare6, ArrayList<Double> illustrativeQuantity,
             Double customerDiscount, String AllowForwardSell, String SaleMaxCredit, String SaleLastAllowedDate, String SaleRenewMonthCount,
 
-            ArrayList<String> itemMaxDisc, String dealerAllowBonus, String dealerMaxDisc, String mobileBonusWithoutDealer, String mobileBonus) {
+            ArrayList<String> itemMaxDisc, String dealerAllowBonus, String dealerMaxDisc, String mobileBonusWithoutDealer, String mobileBonus, String mobileCDBWWC, String mobileOldShiftUse, int permission, String mobileAllowCreateForward, Float mobileAllowCreateForwardAmount, String mobileWSAllowCreateForward, Float mobileWSAllowCreateForwardAmount, Float logInFSpare1, Float logInFSpare2, Float logInFSpare3) {
         BranchISN = branchISN;
         this.uuid = uuid;
         CashType = cashType;
@@ -438,7 +458,16 @@ public class InvoiceBody implements Serializable {
         this.DealerMaxDisc = dealerMaxDisc;
         this.mobileBonusWithoutDealer = mobileBonusWithoutDealer;
         this.mobileBonus = mobileBonus;
-
+        this.MobileC_D_B_W_W_C = mobileCDBWWC;
+        this.MobileOldShiftUse = mobileOldShiftUse;
+        this.permission = permission;
+        this.MobileAllowCreateForward = mobileAllowCreateForward;
+        this.MobileAllowCreateForwardAmount = mobileAllowCreateForwardAmount;
+        this.MobileWS_AllowCreateForward = mobileWSAllowCreateForward;
+        this.MobileWS_AllowCreateForwardAmount = mobileWSAllowCreateForwardAmount;
+        this.LogIn_F_Spare1 = logInFSpare1;
+        this.LogIn_F_Spare2 = logInFSpare2;
+        this.LogIn_F_Spare3 = logInFSpare3;
     }
 
 }

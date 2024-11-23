@@ -15,7 +15,7 @@ data class GeneralRequestBody(
     val LogIn_CS: String,
     val LogIn_VN: String,
     val LogIn_FAlternative: String,
-    val MobileSalesMaxDiscPer: Int,
+    val MobileSalesMaxDiscPer: String,
     val ShiftSystemActivate: Int,
     val LogIn_ShiftBranchISN: Int,
     val LogIn_ShiftISN: Int,
@@ -28,7 +28,17 @@ data class GeneralRequestBody(
     val DeviceID: String,
     val LogIn_CurrentWorkingDayDate: String,
     val SelectedFoundation: Int,
-    val IllustrativeQuantity: Int
+    val IllustrativeQuantity: Int,
+    val MobileC_D_B_W_W_C: String,
+    val MobileOldShiftUse: String,
+    val permission: Int,
+    val MobileAllowCreateForward: String,
+    val MobileAllowCreateForwardAmount: Float,
+    val MobileWS_AllowCreateForward: String,
+    val MobileWS_AllowCreateForwardAmount: Float,
+    val LogIn_F_Spare1: Float,
+    val LogIn_F_Spare2: Float,
+    val LogIn_F_Spare3: Float
 )
 
 object GeneralRequestBodyUtil {
@@ -62,7 +72,17 @@ object GeneralRequestBodyUtil {
             "DeviceID" to requestBody.DeviceID,
             "LogIn_CurrentWorkingDayDate" to requestBody.LogIn_CurrentWorkingDayDate,
             "SelectedFoundation" to requestBody.SelectedFoundation.toString(),
-            "IllustrativeQuantity" to requestBody.IllustrativeQuantity.toString()
+            "IllustrativeQuantity" to requestBody.IllustrativeQuantity.toString(),
+            "MobileC_D_B_W_W_C" to requestBody.MobileC_D_B_W_W_C,
+            "MobileOldShiftUse" to requestBody.MobileOldShiftUse,
+            "permission" to requestBody.permission.toString(),
+            "MobileAllowCreateForward" to requestBody.MobileAllowCreateForward,
+            "MobileAllowCreateForwardAmount" to requestBody.MobileAllowCreateForwardAmount.toString(),
+            "MobileWS_AllowCreateForward" to requestBody.MobileWS_AllowCreateForward,
+            "MobileWS_AllowCreateForwardAmount" to requestBody.MobileWS_AllowCreateForwardAmount.toString(),
+            "LogIn_F_Spare1" to requestBody.LogIn_F_Spare1.toString(),
+            "LogIn_F_Spare2" to requestBody.LogIn_F_Spare2.toString(),
+            "LogIn_F_Spare3" to requestBody.LogIn_F_Spare3.toString()
         )
     }
 }
@@ -93,6 +113,16 @@ fun GeneralRequestBody.toQueryParams(): Map<String, String> {
         "DeviceID" to DeviceID,
         "LogIn_CurrentWorkingDayDate" to LogIn_CurrentWorkingDayDate,
         "SelectedFoundation" to SelectedFoundation.toString(),
-        "IllustrativeQuantity" to IllustrativeQuantity.toString()
+        "IllustrativeQuantity" to IllustrativeQuantity.toString(),
+        "MobileC_D_B_W_W_C" to MobileC_D_B_W_W_C,
+        "MobileOldShiftUse" to MobileOldShiftUse,
+        "permission" to permission.toString(),
+        "MobileAllowCreateForward" to MobileAllowCreateForward,
+        "MobileAllowCreateForwardAmount" to MobileAllowCreateForwardAmount.toString(),
+        "MobileWS_AllowCreateForwardAmount" to MobileWS_AllowCreateForwardAmount.toString(),
+        "MobileWS_AllowCreateForward" to MobileWS_AllowCreateForward.toString(),
+        "LogIn_F_Spare1" to LogIn_F_Spare1.toString(),
+        "LogIn_F_Spare2" to LogIn_F_Spare2.toString(),
+        "LogIn_F_Spare3" to LogIn_F_Spare3.toString()
     )
 }
