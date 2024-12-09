@@ -69,30 +69,12 @@ public class ProductVM extends ViewModel {
     @SuppressLint("CheckResult")
     public void getProduct(String productName, String uuid, String serial, int moveType, String itemCode) {
         if (App.customer.getDealerName() == null) {
-            Observable<Product> productObservable = apiClient.getProduct(App.currentUser.getIllustrativeQuantity(), App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(), App.currentUser.getVendorID(), productName, uuid, priceType.getBranchISN(), priceType.getPricesType_ISN(), App.currentUser.getAllowSpecificDealersPrices(), (int) App.currentUser.getBranchISN(), moveType, serial, selectedFoundation,
-                    App.currentUser.getLogIn_BISN(),
-                    App.currentUser.getLogIn_UID(),
-                    App.currentUser.getLogIn_WBISN(),
-                    App.currentUser.getLogIn_WISN(),
-                    App.currentUser.getLogIn_WName(),
-                    App.currentUser.getLogIn_WSBISN(),
-                    App.currentUser.getLogIn_WSISN(),
-                    App.currentUser.getLogIn_WSName(),
-                    App.currentUser.getLogIn_CS(),
-                    App.currentUser.getLogIn_VN(),
-                    App.currentUser.getLogIn_FAlternative()
-                    , App.currentUser.getMobileSalesMaxDiscPer()
-                    , App.currentUser.getShiftSystemActivate()
-                    , App.currentUser.getLogIn_ShiftBranchISN()
-                    , App.currentUser.getLogIn_ShiftISN()
-                    , App.currentUser.getLogIn_Spare1()
-                    , App.currentUser.getLogIn_Spare2()
-                    , App.currentUser.getLogIn_Spare3()
-                    , App.currentUser.getLogIn_Spare4()
-                    , App.currentUser.getLogIn_Spare5()
-                    , App.currentUser.getLogIn_Spare6()
-                    , itemCode
+            Observable<Product> productObservable = apiClient.getProduct(
+                    generalParams, productName, uuid, priceType.getBranchISN(),
+                    priceType.getPricesType_ISN(), App.currentUser.getAllowSpecificDealersPrices(),
+                    App.currentUser.getBranchISN(),moveType,serial, itemCode
             );
+
             Disposable productDisposable = productObservable.subscribeOn(Schedulers.io()).subscribeOn(AndroidSchedulers.mainThread()).subscribe(product -> {
                 Log.e("checkProduct", "post value triggered");
                 productMutableLiveData.postValue(product);
@@ -156,29 +138,25 @@ public class ProductVM extends ViewModel {
     }
 
     public void checkAvailableQuantity(String uuid, Integer storeBranchISN, Integer storeISN, Integer itemBranchISN, Integer itemISN, Integer moveType) {
-        Observable<StoreReportModel> storeReportModelObservable = apiClient.getStoresReport(App.currentUser.getIllustrativeQuantity(), App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(), App.currentUser.getVendorID(), uuid, storeBranchISN, storeISN, itemBranchISN, itemISN, 1, null, moveType, App.currentUser.getWorkerName(),
-                        App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()), selectedFoundation,
-                        App.currentUser.getLogIn_BISN(),
-                        App.currentUser.getLogIn_UID(),
-                        App.currentUser.getLogIn_WBISN(),
-                        App.currentUser.getLogIn_WISN(),
-                        App.currentUser.getLogIn_WName(),
-                        App.currentUser.getLogIn_WSBISN(),
-                        App.currentUser.getLogIn_WSISN(),
-                        App.currentUser.getLogIn_WSName(),
-                        App.currentUser.getLogIn_CS(),
-                        App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative()
-                        , App.currentUser.getMobileSalesMaxDiscPer()
-                        , App.currentUser.getShiftSystemActivate()
-                        , App.currentUser.getLogIn_ShiftBranchISN()
-                        , App.currentUser.getLogIn_ShiftISN()
-                        , App.currentUser.getLogIn_Spare1()
-                        , App.currentUser.getLogIn_Spare2()
-                        , App.currentUser.getLogIn_Spare3()
-                        , App.currentUser.getLogIn_Spare4()
-                        , App.currentUser.getLogIn_Spare5()
-                        , App.currentUser.getLogIn_Spare6())
+        Observable<StoreReportModel> storeReportModelObservable = apiClient.getStoresReport(
+                        generalParams,
+                        uuid,
+                        storeBranchISN,
+                        storeISN,
+                        itemBranchISN,
+                        itemISN,
+                        1,
+                        null,
+                        moveType,
+                        App.currentUser.getWorkerName(),
+                        App.currentUser.getUserName(),
+                        App.currentUser.getWorkStationName(),
+                        String.valueOf(App.currentUser.getWorkStationISN()),
+                        String.valueOf(App.currentUser.getWorkerBranchISN())
+                )
+
+
+
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         storeReportModelObservable.subscribe(new Observer<StoreReportModel>() {
@@ -218,29 +196,7 @@ public class ProductVM extends ViewModel {
         });
     }
     public void getItemPrice(String uuid, int itemBranchISN, int itemISN, int priceType){
-        Observable<ItemPriceResponse> storeReportModelObservable = apiClient.getItemPrice(App.currentUser.getIllustrativeQuantity(), App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(), App.currentUser.getVendorID(), uuid, itemBranchISN, itemISN, App.currentUser.getWorkerName(),
-                        App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()), selectedFoundation,
-                        App.currentUser.getLogIn_BISN(),
-                        App.currentUser.getLogIn_UID(),
-                        App.currentUser.getLogIn_WBISN(),
-                        App.currentUser.getLogIn_WISN(),
-                        App.currentUser.getLogIn_WName(),
-                        App.currentUser.getLogIn_WSBISN(),
-                        App.currentUser.getLogIn_WSISN(),
-                        App.currentUser.getLogIn_WSName(),
-                        App.currentUser.getLogIn_CS(),
-                        App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative(), priceType
-                        , App.currentUser.getMobileSalesMaxDiscPer()
-                        , App.currentUser.getShiftSystemActivate()
-                        , App.currentUser.getLogIn_ShiftBranchISN()
-                        , App.currentUser.getLogIn_ShiftISN()
-                        , App.currentUser.getLogIn_Spare1()
-                        , App.currentUser.getLogIn_Spare2()
-                        , App.currentUser.getLogIn_Spare3()
-                        , App.currentUser.getLogIn_Spare4()
-                        , App.currentUser.getLogIn_Spare5()
-                        , App.currentUser.getLogIn_Spare6())
+        Observable<ItemPriceResponse> storeReportModelObservable = apiClient.getItemPrice(generalParams, uuid, itemBranchISN, itemISN, priceType)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         storeReportModelObservable.subscribe(new Observer<ItemPriceResponse>() {

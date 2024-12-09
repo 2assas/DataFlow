@@ -1,4 +1,4 @@
-package com.dataflowstores.dataflow.pojo.invoice;
+package com.dataflowstores.dataflow.pojo;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -185,7 +185,6 @@ public class InvoiceBody implements Serializable {
     ArrayList<Long> StoreBranchISN2;
     @SerializedName("StoreISN2")
     ArrayList<Long> StoreISN2;
-
     @SerializedName("WorkerName")
     String WorkerName;
     @SerializedName("user_name")
@@ -198,7 +197,6 @@ public class InvoiceBody implements Serializable {
     String WorkStationBranchISN;
     @SerializedName("BranchISNStockMove")
     String BranchISNStockMove;
-
     @SerializedName("SelectedFoundation")
     int selectedFoundation;
     @SerializedName("LogIn_BISN")
@@ -223,15 +221,12 @@ public class InvoiceBody implements Serializable {
     String LogIn_VN;
     @SerializedName("LogIn_FAlternative")
     String LogIn_FAlternative;
-
     @SerializedName("AllowCurrentStoreMinus")
     ArrayList<Integer> AllowCurrentStoreMinus;
-
     @SerializedName("ProductStoreName")
     ArrayList<String> ProductStoreName;
     @SerializedName("IllustrativeQuan")
     ArrayList<Double> IllustrativeQuan;
-
     @SerializedName("MobileSalesMaxDiscPer")
     String MobileSalesMaxDiscPer;
     @SerializedName("ShiftSystemActivate")
@@ -268,7 +263,6 @@ public class InvoiceBody implements Serializable {
     String DealerMaxDisc;
     @SerializedName("DealerAllowBonus")
     String DealerAllowBonus;
-
     @SerializedName("MobileBonusWithoutDealer")
     String mobileBonusWithoutDealer;
     @SerializedName("MobileBonus")

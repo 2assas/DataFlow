@@ -32,9 +32,7 @@ import com.dataflowstores.dataflow.ui.reports.itemSalesReport.ItemSalesReport;
 import java.util.ArrayList;
 
 public class App extends Application {
-
-
-    public static UserData currentUser=new UserData();
+    public static UserData currentUser = new UserData();
     public static Banks banks = new Banks();
     public static ReceiptModel receiptModel = new ReceiptModel();
     public static PriceTypeData priceType = new PriceTypeData();

@@ -1,5 +1,6 @@
 package com.dataflowstores.dataflow.ui.reports;
 
+import static com.dataflowstores.dataflow.App.currentUser;
 import static com.dataflowstores.dataflow.App.selectedFoundation;
 
 import android.annotation.SuppressLint;
@@ -39,6 +40,8 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
+import retrofit2.http.Body;
+import retrofit2.http.Query;
 
 public class ReportViewModel extends ViewModel {
     public MutableLiveData<StoreReportModel> storeReportModelMutableLiveData = new MutableLiveData<>();
@@ -58,30 +61,22 @@ public class ReportViewModel extends ViewModel {
             ApiClient.class, Constants.BASE_URL);
 
     public void getStoreReport(String uuid, Integer storeBranchISN, Integer storeISN, Integer itemBranchISN, Integer itemISN, String itemName) {
-        Observable<StoreReportModel> storeReportModelObservable = apiClient.getStoresReport(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid, storeBranchISN, storeISN, itemBranchISN, itemISN, null, itemName, 0,
+        Observable<StoreReportModel> storeReportModelObservable = apiClient.getStoresReport(
+                        generalParams,
+                        uuid,
+                        storeBranchISN,
+                        storeISN,
+                        itemBranchISN,
+                        itemISN,
+                        null,
+                        itemName,
+                        0,
                         App.currentUser.getWorkerName(),
-                        App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()),selectedFoundation,
-                        App.currentUser.getLogIn_BISN(),
-                        App.currentUser.getLogIn_UID(),
-                        App.currentUser.getLogIn_WBISN(),
-                        App.currentUser.getLogIn_WISN(),
-                        App.currentUser.getLogIn_WName(),
-                        App.currentUser.getLogIn_WSBISN(),
-                        App.currentUser.getLogIn_WSISN(),
-                        App.currentUser.getLogIn_WSName(),
-                        App.currentUser.getLogIn_CS(),
-                        App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative()
-                        ,App.currentUser.getMobileSalesMaxDiscPer()
-                        ,App.currentUser.getShiftSystemActivate()
-                        ,App.currentUser.getLogIn_ShiftBranchISN()
-                        ,App.currentUser.getLogIn_ShiftISN()
-                        ,App.currentUser.getLogIn_Spare1()
-                        ,App.currentUser.getLogIn_Spare2()
-                        ,App.currentUser.getLogIn_Spare3()
-                        ,App.currentUser.getLogIn_Spare4()
-                        ,App.currentUser.getLogIn_Spare5()
-                        ,App.currentUser.getLogIn_Spare6())
+                        App.currentUser.getUserName(),
+                        App.currentUser.getWorkStationName(),
+                        String.valueOf(App.currentUser.getWorkStationISN()),
+                        String.valueOf(App.currentUser.getWorkerBranchISN())
+                )
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         storeReportModelObservable.subscribe(new Observer<StoreReportModel>() {
@@ -123,28 +118,7 @@ public class ReportViewModel extends ViewModel {
     }
 
     public void getBranches(String uuid) {
-        Observable<Branches> observable = apiClient.getBranches(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid,selectedFoundation,
-                App.currentUser.getLogIn_BISN(),
-                App.currentUser.getLogIn_UID(),
-                App.currentUser.getLogIn_WBISN(),
-                App.currentUser.getLogIn_WISN(),
-                App.currentUser.getLogIn_WName(),
-                App.currentUser.getLogIn_WSBISN(),
-                App.currentUser.getLogIn_WSISN(),
-                App.currentUser.getLogIn_WSName(),
-                App.currentUser.getLogIn_CS(),
-                App.currentUser.getLogIn_VN(),
-                App.currentUser.getLogIn_FAlternative()
-                ,App.currentUser.getMobileSalesMaxDiscPer()
-                ,App.currentUser.getShiftSystemActivate()
-                ,App.currentUser.getLogIn_ShiftBranchISN()
-                ,App.currentUser.getLogIn_ShiftISN()
-                ,App.currentUser.getLogIn_Spare1()
-                ,App.currentUser.getLogIn_Spare2()
-                ,App.currentUser.getLogIn_Spare3()
-                ,App.currentUser.getLogIn_Spare4()
-                ,App.currentUser.getLogIn_Spare5()
-                ,App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<Branches> observable = apiClient.getBranches(generalParams, uuid).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         observable.subscribe(new Observer<Branches>() {
             @Override
@@ -182,30 +156,12 @@ public class ReportViewModel extends ViewModel {
             }
         });
     }
-
     public void getWorkers(String uuid) {
-        Observable<WorkersResponse> observable = apiClient.getWorkers(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid, App.currentUser.getBranchISN(), App.currentUser.getWorkerBranchISN(), App.currentUser.getWorkerISN(), App.currentUser.getPermission(), 0,selectedFoundation,
-                App.currentUser.getLogIn_BISN(),
-                App.currentUser.getLogIn_UID(),
-                App.currentUser.getLogIn_WBISN(),
-                App.currentUser.getLogIn_WISN(),
-                App.currentUser.getLogIn_WName(),
-                App.currentUser.getLogIn_WSBISN(),
-                App.currentUser.getLogIn_WSISN(),
-                App.currentUser.getLogIn_WSName(),
-                App.currentUser.getLogIn_CS(),
-                App.currentUser.getLogIn_VN(),
-                App.currentUser.getLogIn_FAlternative()
-                ,App.currentUser.getMobileSalesMaxDiscPer()
-                ,App.currentUser.getShiftSystemActivate()
-                ,App.currentUser.getLogIn_ShiftBranchISN()
-                ,App.currentUser.getLogIn_ShiftISN()
-                ,App.currentUser.getLogIn_Spare1()
-                ,App.currentUser.getLogIn_Spare2()
-                ,App.currentUser.getLogIn_Spare3()
-                ,App.currentUser.getLogIn_Spare4()
-                ,App.currentUser.getLogIn_Spare5()
-                ,App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<WorkersResponse> observable = apiClient.getWorkers(generalParams, uuid, App.currentUser.getBranchISN(),
+                                                                      App.currentUser.getWorkerBranchISN(),
+                                                                      App.currentUser.getWorkerISN(),
+                                                                      0
+        ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         observable.subscribe(new Observer<WorkersResponse>() {
             @Override
@@ -269,6 +225,7 @@ public class ReportViewModel extends ViewModel {
         });
     }
 
+    @SuppressLint("CheckResult")
     public void getBanks(long branchISN, String uuid) {
         Observable<Banks> getBanks = apiClient.getBanks(generalParams, uuid, branchISN).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         getBanks.subscribe(banks -> {
@@ -289,28 +246,9 @@ public class ReportViewModel extends ViewModel {
     }
 
     public void getFinancialReport(ReportBody reportBody, String uuid, long storeBranchISN, long storeISN, long workerBranch, String workerCISN, String workerCBranchISN) {
-        Observable<FinancialReportResponse> observable = apiClient.getFinancialReport(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),reportBody, uuid, storeBranchISN, storeISN, workerBranch, App.currentUser.getWorkerName(),
-                        App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()), workerCISN, workerCBranchISN,selectedFoundation,
-                        App.currentUser.getLogIn_BISN(),
-                        App.currentUser.getLogIn_UID(),
-                        App.currentUser.getLogIn_WBISN(),
-                        App.currentUser.getLogIn_WISN(),
-                        App.currentUser.getLogIn_WName(),
-                        App.currentUser.getLogIn_WSBISN(),
-                        App.currentUser.getLogIn_WSISN(),
-                        App.currentUser.getLogIn_WSName(),
-                        App.currentUser.getLogIn_CS(),
-                        App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative()                ,App.currentUser.getMobileSalesMaxDiscPer()
-                        ,App.currentUser.getShiftSystemActivate()
-                        ,App.currentUser.getLogIn_ShiftBranchISN()
-                        ,App.currentUser.getLogIn_ShiftISN()
-                        ,App.currentUser.getLogIn_Spare1()
-                        ,App.currentUser.getLogIn_Spare2()
-                        ,App.currentUser.getLogIn_Spare3()
-                        ,App.currentUser.getLogIn_Spare4()
-                        ,App.currentUser.getLogIn_Spare5()
-                        ,App.currentUser.getLogIn_Spare6())
+        Observable<FinancialReportResponse> observable = apiClient.getFinancialReport(generalParams, reportBody, uuid, storeBranchISN, storeISN, workerBranch, App.currentUser.getWorkerName(),
+                                                                                      App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()), workerCISN, workerCBranchISN
+                )
                 .subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread());
 
         observable.subscribe(new Observer<FinancialReportResponse>() {
@@ -419,28 +357,7 @@ public class ReportViewModel extends ViewModel {
 
     @SuppressLint("CheckResult")
     public void getMoveTypes(String uuid) {
-        apiClient.getMoveTypes(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid,selectedFoundation,
-                        App.currentUser.getLogIn_BISN(),
-                        App.currentUser.getLogIn_UID(),
-                        App.currentUser.getLogIn_WBISN(),
-                        App.currentUser.getLogIn_WISN(),
-                        App.currentUser.getLogIn_WName(),
-                        App.currentUser.getLogIn_WSBISN(),
-                        App.currentUser.getLogIn_WSISN(),
-                        App.currentUser.getLogIn_WSName(),
-                        App.currentUser.getLogIn_CS(),
-                        App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative()
-                        ,App.currentUser.getMobileSalesMaxDiscPer()
-                        ,App.currentUser.getShiftSystemActivate()
-                        ,App.currentUser.getLogIn_ShiftBranchISN()
-                        ,App.currentUser.getLogIn_ShiftISN()
-                        ,App.currentUser.getLogIn_Spare1()
-                        ,App.currentUser.getLogIn_Spare2()
-                        ,App.currentUser.getLogIn_Spare3()
-                        ,App.currentUser.getLogIn_Spare4()
-                        ,App.currentUser.getLogIn_Spare5()
-                        ,App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        apiClient.getMoveTypes(generalParams, uuid).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(moveTypesResponse -> {
                     moveTypesResponseMutableLiveData.postValue(moveTypesResponse);
                 }, throwable -> {
@@ -461,7 +378,18 @@ public class ReportViewModel extends ViewModel {
     public void getItemSalesReport(String uuid, long branchISN, String fromWorkday, String toWorkday, String shiftISN,
                                    long workerBranchISN, String workerISN, String from, String to, Long vendorId, String workerCISN, String workerCBranchISN, Integer dealerType, Long dealerBranchISN, Long dealer_ISN) {
 
-        Observable<ItemSalesResponse> observable = apiClient.getItemSalesReport(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid, branchISN, fromWorkday, toWorkday,
+        Observable<ItemSalesResponse> observable = apiClient.getItemSalesReport(
+                        currentUser.getMobileC_D_B_W_W_C(),
+                        currentUser.getMobileOldShiftUse(),
+                        currentUser.getPermission(),
+                        currentUser.getMobileAllowCreateForward(),
+                        currentUser.getMobileAllowCreateForwardAmount(),
+                        currentUser.getMobileWS_AllowCreateForward(),
+                        currentUser.getMobileWS_AllowCreateForwardAmount(),
+                        currentUser.getLogIn_F_Spare1(),
+                        currentUser.getLogIn_F_Spare2(),
+                        currentUser.getLogIn_F_Spare3(),
+                        App.currentUser.getIllustrativeQuantity(), App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(), App.currentUser.getVendorID(), uuid, branchISN, fromWorkday, toWorkday,
                         shiftISN, workerBranchISN, workerISN, from, to, vendorId, workerCISN, workerCBranchISN, App.currentUser.getWorkerName(),
                         App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()), dealerType, dealerBranchISN, dealer_ISN,selectedFoundation,
                         App.currentUser.getLogIn_BISN(),
@@ -528,7 +456,18 @@ public class ReportViewModel extends ViewModel {
     public void getSupplierSalesReport(String uuid, long branchISN, String fromWorkday, String toWorkday, String shiftISN,
                                    long workerBranchISN, String workerISN, String from, String to, Long vendorId, String workerCISN, String workerCBranchISN, Integer dealerType, Long dealerBranchISN, Long dealer_ISN) {
 
-        Observable<ItemSalesResponse> observable = apiClient.getSupplierSalesReport(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid, branchISN, fromWorkday, toWorkday,
+        Observable<ItemSalesResponse> observable = apiClient.getSupplierSalesReport(
+                        currentUser.getMobileC_D_B_W_W_C(),
+                        currentUser.getMobileOldShiftUse(),
+                        currentUser.getPermission(),
+                        currentUser.getMobileAllowCreateForward(),
+                        currentUser.getMobileAllowCreateForwardAmount(),
+                        currentUser.getMobileWS_AllowCreateForward(),
+                        currentUser.getMobileWS_AllowCreateForwardAmount(),
+                        currentUser.getLogIn_F_Spare1(),
+                        currentUser.getLogIn_F_Spare2(),
+                        currentUser.getLogIn_F_Spare3(),
+                        App.currentUser.getIllustrativeQuantity(), App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(), App.currentUser.getVendorID(), uuid, branchISN, fromWorkday, toWorkday,
                         shiftISN, workerBranchISN, workerISN, from, to, vendorId, workerCISN, workerCBranchISN, App.currentUser.getWorkerName(),
                         App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()), dealerType, dealerBranchISN, dealer_ISN,selectedFoundation,
                         App.currentUser.getLogIn_BISN(),

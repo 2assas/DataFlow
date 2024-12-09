@@ -199,17 +199,7 @@ public class InvoiceViewModel extends ViewModel {
 
     @SuppressLint("CheckResult")
     public void getBranches(String uuid) {
-        apiClient.getBranches(App.currentUser.getIllustrativeQuantity(),currentUser.getDeviceID(), currentUser.getLogIn_CurrentWorkingDayDate(), currentUser.getVendorID(),uuid, selectedFoundation, currentUser.getLogIn_BISN(), currentUser.getLogIn_UID(), currentUser.getLogIn_WBISN(), currentUser.getLogIn_WISN(), currentUser.getLogIn_WName(), currentUser.getLogIn_WSBISN(), currentUser.getLogIn_WSISN(), currentUser.getLogIn_WSName(), currentUser.getLogIn_CS(), currentUser.getLogIn_VN(), currentUser.getLogIn_FAlternative()
-                , currentUser.getMobileSalesMaxDiscPer()
-                , currentUser.getShiftSystemActivate()
-                , currentUser.getLogIn_ShiftBranchISN()
-                , currentUser.getLogIn_ShiftISN()
-                , currentUser.getLogIn_Spare1()
-                , currentUser.getLogIn_Spare2()
-                , currentUser.getLogIn_Spare3()
-                , currentUser.getLogIn_Spare4()
-                , currentUser.getLogIn_Spare5()
-                , currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(branches -> {
+        apiClient.getBranches(queryParams, uuid).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(branches -> {
             branchesMutableLiveData.postValue(branches);
 
         }, throwable -> {
@@ -235,7 +225,7 @@ public class InvoiceViewModel extends ViewModel {
     @SuppressLint("CheckResult")
     public void getPriceType(String uuid) {
         Observable<PriceType> getPriceType = apiClient.getPriceType(
-                queryParams, uuid, currentUser.getPricesTypeBranchISN(), currentUser.getPricesTypeISN(), selectedFoundation, (App.invoiceType == Sales || App.invoiceType == ReturnSales) ? 2 : 1
+                queryParams, uuid, currentUser.getPricesTypeBranchISN(), currentUser.getPricesTypeISN(), (App.invoiceType == Sales || App.invoiceType == ReturnSales) ? 2 : 1
         ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         getPriceType.subscribe(priceType -> {
             App.allPriceType = priceType.getData();

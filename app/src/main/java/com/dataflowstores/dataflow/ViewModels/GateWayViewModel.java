@@ -145,28 +145,7 @@ public class GateWayViewModel extends ViewModel {
         ApiClient tokenService = ServiceGenerator.tokenService(
                 ApiClient.class, Constants.BASE_URL);
         Map<String, String> queryParams = GeneralRequestBodyUtil.toQueryParams();
-        Observable<Branches> getBranches = tokenService.getBranches(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid, selectedFoundation,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-                , App.currentUser.getMobileSalesMaxDiscPer()
-                , App.currentUser.getShiftSystemActivate()
-                , App.currentUser.getLogIn_ShiftBranchISN()
-                , App.currentUser.getLogIn_ShiftISN()
-                , App.currentUser.getLogIn_Spare1()
-                , App.currentUser.getLogIn_Spare2()
-                , App.currentUser.getLogIn_Spare3()
-                , App.currentUser.getLogIn_Spare4()
-                , App.currentUser.getLogIn_Spare5()
-                , App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<Branches> getBranches = tokenService.getBranches(queryParams, uuid).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observable<Stores> getStores = tokenService.getStores(
                 queryParams,
                 null, // BranchISN (null for now)
@@ -207,6 +186,8 @@ public class GateWayViewModel extends ViewModel {
                     ResponseBody errorBody = Objects.requireNonNull(((HttpException) throwable).response()).errorBody();
                     try {
                         toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
+                        Log.e("checkError", Objects.requireNonNull(errorBody).string());
+
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -214,6 +195,8 @@ public class GateWayViewModel extends ViewModel {
                 } else {
                     //handle other exceptions
                     toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+                    Log.e("checkError", Objects.requireNonNull(throwable.getMessage()));
+
                 }
             }
 

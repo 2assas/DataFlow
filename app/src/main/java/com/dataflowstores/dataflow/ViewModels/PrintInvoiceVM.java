@@ -45,28 +45,7 @@ public class PrintInvoiceVM extends ViewModel {
 
 
     public void getPrintingData(String branchISN, String uuid, String moveID, String workerCBranchISN, String workerCISN, Context context, Integer moveType){
-        Observable<Invoice> invoiceObservable = apiClient.getPrintingData(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),branchISN,uuid, moveID, workerCBranchISN,workerCISN, App.currentUser.getPermission(), moveType,selectedFoundation,
-                App.currentUser.getLogIn_BISN(),
-                App.currentUser.getLogIn_UID(),
-                App.currentUser.getLogIn_WBISN(),
-                App.currentUser.getLogIn_WISN(),
-                App.currentUser.getLogIn_WName(),
-                App.currentUser.getLogIn_WSBISN(),
-                App.currentUser.getLogIn_WSISN(),
-                App.currentUser.getLogIn_WSName(),
-                App.currentUser.getLogIn_CS(),
-                App.currentUser.getLogIn_VN(),
-                App.currentUser.getLogIn_FAlternative()
-                ,App.currentUser.getMobileSalesMaxDiscPer()
-                ,App.currentUser.getShiftSystemActivate()
-                ,App.currentUser.getLogIn_ShiftBranchISN()
-                ,App.currentUser.getLogIn_ShiftISN()
-                ,App.currentUser.getLogIn_Spare1()
-                ,App.currentUser.getLogIn_Spare2()
-                ,App.currentUser.getLogIn_Spare3()
-                ,App.currentUser.getLogIn_Spare4()
-                ,App.currentUser.getLogIn_Spare5()
-                ,App.currentUser.getLogIn_Spare6()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        Observable<Invoice> invoiceObservable = apiClient.getPrintingData(queryParams, branchISN, uuid, moveID, workerCBranchISN, workerCISN, moveType).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observer<Invoice> invoiceObserver = new Observer<Invoice>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {

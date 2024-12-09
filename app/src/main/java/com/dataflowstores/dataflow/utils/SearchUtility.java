@@ -43,7 +43,7 @@ public class SearchUtility {
     @SuppressLint("CheckResult")
     private static void performSearch(ApiClient apiClient, String query, String uuid, Integer selectedFoundation, MutableLiveData<List<SearchProductResponse>> searchResults) {
         Map<String, String> queryParams = GeneralRequestBodyUtil.toQueryParams();
-        apiClient.searchProduct(queryParams ,App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),query, uuid, selectedFoundation)
+        apiClient.searchProduct(queryParams, query, uuid, selectedFoundation)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
                 .subscribe(searchProductResponse -> {

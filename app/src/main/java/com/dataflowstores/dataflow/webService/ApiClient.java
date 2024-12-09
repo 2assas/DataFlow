@@ -1,5 +1,6 @@
 package com.dataflowstores.dataflow.webService;
 
+import com.dataflowstores.dataflow.pojo.CheckItemBody;
 import com.dataflowstores.dataflow.pojo.GeneralRequestBody;
 import com.dataflowstores.dataflow.pojo.GeneralResponse;
 import com.dataflowstores.dataflow.pojo.expenses.ExpensesResponse;
@@ -9,7 +10,7 @@ import com.dataflowstores.dataflow.pojo.expenses.WorkerResponse;
 import com.dataflowstores.dataflow.pojo.financialReport.FinancialReportResponse;
 import com.dataflowstores.dataflow.pojo.financialReport.ReportBody;
 import com.dataflowstores.dataflow.pojo.invoice.Invoice;
-import com.dataflowstores.dataflow.pojo.invoice.InvoiceBody;
+import com.dataflowstores.dataflow.pojo.InvoiceBody;
 import com.dataflowstores.dataflow.pojo.invoice.InvoiceResponse;
 import com.dataflowstores.dataflow.pojo.login.LoginStatus;
 import com.dataflowstores.dataflow.pojo.product.Product;
@@ -37,7 +38,6 @@ import com.dataflowstores.dataflow.pojo.workStation.Branch;
 import com.dataflowstores.dataflow.pojo.workStation.Workstation;
 import com.dataflowstores.dataflow.pojo.workStation.WorkstationList;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import io.reactivex.rxjava3.core.Observable;
@@ -69,8 +69,7 @@ public interface ApiClient {
 
     @GET("dealer/getCustomer")
     Observable<Customer> getCustomer
-            (
-                    @QueryMap Map<String, String> generalParams,
+            (@QueryMap Map<String, String> generalParams,
                     @Query("customer_name") String customerName,
                     @Query("uiid") String uuid,
                     @Query("WorkerBranchISN") Long workerBranchISN,
@@ -140,7 +139,7 @@ public interface ApiClient {
             @Query("uiid") String uuid,
             @Query("PricesTypeBranchISN") Long PricesTypeBranchISN,
             @Query("PricesTypeISN") Long PricesTypeISN,
-            @Query("SelectedFoundation") int selectedFoundation,
+
             @Query("PriceType") Integer PriceType
     );
 
@@ -167,87 +166,49 @@ public interface ApiClient {
             @Query("Serial") String serial
     );
     @GET("product/getProductName")
-    Observable<GeneralResponse<SearchProductResponse>> searchProduct(@QueryMap Map<String, String> generalParams, @Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("product_name") String query, @Query("uiid") String uuid, @Query("SelectedFoundation") Integer SelectedFoundation);
+    Observable<GeneralResponse<SearchProductResponse>> searchProduct(@QueryMap Map<String, String> generalParams, @Query("product_name") String query, @Query("uiid") String uuid, @Query("SelectedFoundation") Integer SelectedFoundation);
 
     @GET("product/getProductTest")
-    Observable<Product> getProduct(@Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("product_name") String productName, @Query("uiid") String uuid, @Query("PricesTypeBranchISN") long pricesTypeBranchISN, @Query("PricesTypeISN") long pricesTypeISN, @Query("AllowSpecificDealersPrices") int AllowSpecificDealersPrices, @Query("CurrentBranchISN") int CurrentBranchISN, @Query("MoveType") int moveType, @Query("Serial") String serial, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6, @Query("ItemCode") String itemCode);
+    Observable<Product> getProduct(@QueryMap Map<String, String> generalParams, @Query("product_name") String productName, @Query("uiid") String uuid, @Query("PricesTypeBranchISN") long pricesTypeBranchISN, @Query("PricesTypeISN") long pricesTypeISN, @Query("AllowSpecificDealersPrices") int AllowSpecificDealersPrices, @Query("CurrentBranchISN") long CurrentBranchISN, @Query("MoveType") int moveType, @Query("Serial") String serial, @Query("ItemCode") String itemCode);
 
     @POST("invoices/store2")
     Observable<InvoiceResponse> placeInvoice(@Body InvoiceBody invoiceBody, @Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("VendorID") Long VendorID, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate);
 
     @POST("invoices/check_item_quantity")
     @FormUrlEncoded
-    Observable<InvoiceResponse> checkItem(@Field("IllustrativeQuantity") Integer IllustrativeQuantity, @Field("DeviceID") String DeviceID, @Field("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Field("VendorID") Long VendorID, @Field("uiid") String uuid, @Field("ItemBranchISN[]") ArrayList<Long> ItemBranchISN, @Field("ItemISN[]") ArrayList<Long> ItemISN, @Field("PriceTypeBranchISN[]") ArrayList<Long> PriceTypeBranchISN, @Field("PriceTypeISN[]") ArrayList<Long> PriceTypeISN, @Field("StoreBranchISN[]") ArrayList<Long> StoreBranchISN, @Field("StoreISN[]") ArrayList<Long> StoreISN, @Field("BasicQuantity[]") ArrayList<Float> BasicQuantity, @Field("BonusQuantity[]") ArrayList<Float> BonusQuantity, @Field("TotalQuantity[]") ArrayList<Float> TotalQuantity,
-            @Field("Price[]") ArrayList<Double> Price,
-            @Field("MeasureUnitBranchISN[]") ArrayList<Long> MeasureUnitBranchISN,
-            @Field("MeasureUnitISN[]") ArrayList<Long> MeasureUnitISN,
-            @Field("BasicMeasureUnitBranchISN[]") ArrayList<Long> BasicMeasureUnitBranchISN,
-            @Field("BasicMeasureUnitISN[]") ArrayList<Long> BasicMeasureUnitISN,
-            @Field("ItemSerial[]") ArrayList<String> ItemSerial,
-            @Field("itemExpireDate[]") ArrayList<String> ExpireDateItem,
-            @Field("ColorBranchISN[]") ArrayList<Long> ColorBranchISN,
-            @Field("ColorISN[]") ArrayList<Long> ColorISN,
-            @Field("SizeBranchISN[]") ArrayList<Long> SizeBranchISN,
-            @Field("SizeISN[]") ArrayList<Long> SizeISN,
-            @Field("SeasonBranchISN[]") ArrayList<Long> SeasonBranchISN,
-            @Field("SeasonISN[]") ArrayList<Long> SeasonISN,
-            @Field("Group1BranchISN[]") ArrayList<Long> Group1BranchISN,
-            @Field("Group1ISN[]") ArrayList<Long> Group1ISN,
-            @Field("Group2BranchISN[]") ArrayList<Long> Group2BranchISN,
-            @Field("Group2ISN[]") ArrayList<Long> Group2ISN, @Field("LineNotes[]") ArrayList<String> LineNotes, @Field("NetPrice[]") ArrayList<Double> NetPrice,
-            @Field("BasicMeasureUnitQuantity[]") ArrayList<Double> BasicMeasureUnitQuantity, @Field("ExpireDate[]") ArrayList<Boolean> ExpireDate,
-            @Field("Colors[]") ArrayList<Boolean> Colors, @Field("Seasons[]") ArrayList<Boolean> Seasons, @Field("Sizes[]") ArrayList<Boolean> Sizes,
-            @Field("Serial[]") ArrayList<Boolean> Serial, @Field("Group1[]") ArrayList<Boolean> Group1, @Field("Group2[]") ArrayList<Boolean> Group2,
-            @Field("ServiceItem[]") ArrayList<Boolean> ServiceItem, @Field("ItemTax[]") ArrayList<Double> ItemTax, @Field("TaxValue[]") ArrayList<Double> TaxValue,
-            @Field("ItemName[]") ArrayList<String> itemName, @Field("Discount1[]") ArrayList<Double> discount1, @Field("AllowStoreMinus") Integer allowStoreMinus,
-            @Field("AllowStoreMinusConfirm") Integer AllowStoreMinusConfirm, @Field("WorkerName") String WorkerName, @Field("user_name") String user_name,
-            @Field("WorkStationName") String WorkStationName, @Field("WorkStation_ISN") String WorkStation_ISN, @Field("WorkStationBranchISN") String WorkStationBranchISN,
-            @Field("SelectedFoundation") int selectedFoundation
-            , @Field("LogIn_BISN") String LogIn_BISN
-            , @Field("LogIn_UID") String LogIn_UID, @Field("LogIn_WBISN") String LogIn_WBISN, @Field("LogIn_WISN") String LogIn_WISN,
-            @Field("LogIn_WName") String LogIn_WName, @Field("LogIn_WSBISN") String LogIn_WSBISN, @Field("LogIn_WSISN") String LogIn_WSISN,
-            @Field("LogIn_WSName") String LogIn_WSName, @Field("LogIn_CS") String LogIn_CS, @Field("LogIn_VN") String LogIn_VN,
-            @Field("LogIn_FAlternative") String LogIn_FAlternative, @Field("AllowCurrentStoreMinus") Integer AllowCurrentStoreMinus,
-            @Field("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Field("ShiftSystemActivate") Integer ShiftSystemActivate,
-            @Field("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Field("LogIn_ShiftISN") Integer LogIn_ShiftISN,
-            @Field("LogIn_Spare1") Integer LogIn_Spare1, @Field("LogIn_Spare2") Integer LogIn_Spare2, @Field("LogIn_Spare3") Integer LogIn_Spare3,
-            @Field("LogIn_Spare4") Integer LogIn_Spare4, @Field("LogIn_Spare5") Integer LogIn_Spare5, @Field("LogIn_Spare6") Integer LogIn_Spare6);
+    Observable<InvoiceResponse> checkItem(@Body CheckItemBody requestBody);
 
     @GET("invoices/query")
-    Observable<Invoice> getPrintingData(@Query("IllustrativeQuantity") Integer IllustrativeQuantity,
-            @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate,
-            @Query("VendorID") Long VendorID, @Query("BranchISN") String branchISN, @Query("uiid") String uuid, @Query("Move_ID") String Move_ID,
-            @Query("WorkerCBranchISN") String WorkerCBranchISN, @Query("WorkerCISN") String WorkerCISN, @Query("permission") Integer permission,
-            @Query("MoveType") Integer MoveType, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN,
-            @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN,
-            @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN,
-            @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN,
-            @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer,
-            @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN,
-            @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2,
-            @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5,
-            @Query("LogIn_Spare6") Integer LogIn_Spare6);
+    Observable<Invoice> getPrintingData(
+            Map<String, String> queryParams, @Query("BranchISN") String branchISN, @Query("uiid") String uuid, @Query("Move_ID") String Move_ID,
+            @Query("WorkerCBranchISN") String WorkerCBranchISN, @Query("WorkerCISN") String WorkerCISN,
+            @Query("MoveType") Integer MoveType
+    );
 
     @GET("reports/warehouse_report")
-    Observable<StoreReportModel> getStoresReport(@Query("IllustrativeQuantity") Integer IllustrativeQuantity,
-            @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID,
+    Observable<StoreReportModel> getStoresReport(
+            @QueryMap Map<String, String> generalParams,
             @Query("uiid") String uuid, @Query("StoreBranchISN") Integer storeBranchISN, @Query("StoreISN") Integer storeISN,
             @Query("ItemBranchISN") Integer ItemBranchISN, @Query("ItemISN") Integer ItemISN, @Query("AvailableOnly") Integer AvailableOnly,
             @Query("ItemName") String itemName, @Query("MoveType") int moveType, @Query("WorkerName") String WorkerName, @Query("user_name") String user_name,
-            @Query("WorkStationName") String WorkStationName, @Query("WorkStation_ISN") String WorkStation_ISN, @Query("WorkStationBranchISN") String WorkStationBranchISN,
-            @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID,
-            @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName,
-            @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName,
-            @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative,
-            @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN,
-            @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2,
-            @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5,
-            @Query("LogIn_Spare6") Integer LogIn_Spare6);
+            @Query("WorkStationName") String WorkStationName, @Query("WorkStation_ISN") String WorkStation_ISN, @Query("WorkStationBranchISN") String WorkStationBranchISN
+    );
 
     // TODO:: complete error handling..
     @POST("invoices/cash_receipt")
     @FormUrlEncoded
-    Observable<ReceiptResponse> createReceipt(@Field("IllustrativeQuantity") Integer IllustrativeQuantity, @Field("DeviceID") String DeviceID,
+    Observable<ReceiptResponse> createReceipt(
+            @Field("MobileC_D_B_W_W_C") String MobileC_D_B_W_W_C,
+            @Field("MobileOldShiftUse") String MobileOldShiftUse,
+            @Field("permission") int permission,
+            @Field("MobileAllowCreateForward") String MobileAllowCreateForward,
+            @Field("MobileAllowCreateForwardAmount") Float MobileAllowCreateForwardAmount,
+            @Field("MobileWS_AllowCreateForward") String MobileWS_AllowCreateForward,
+            @Field("MobileWS_AllowCreateForwardAmount") Float MobileWS_AllowCreateForwardAmount,
+            @Field("LogIn_F_Spare1") Float LogIn_F_Spare1,
+            @Field("LogIn_F_Spare2") Float LogIn_F_Spare2,
+            @Field("LogIn_F_Spare3") Float LogIn_F_Spare3,
+            @Field("IllustrativeQuantity") Integer IllustrativeQuantity, @Field("DeviceID") String DeviceID,
             @Field("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Field("VendorID") Long VendorID, @Field("BranchISN") long BranchISN, @Field("uiid") String uuid, @Field("CashType") int CashType, @Field("SaleType") int SaleType, @Field("DealerType") int DealerType, @Field("DealerBranchISN") int DealerBranchISN, @Field("DealerISN") long DealerISN, @Field("SalesManBranchISN") long SalesManBranchISN, @Field("SalesManISN") long SalesManISN, @Field("HeaderNotes") String HeaderNotes,
             @Field("TotalLinesValue") double TotalLinesValue,
             @Field("ServiceValue") double ServiceValue,
@@ -267,7 +228,17 @@ public interface ApiClient {
 
     @POST("invoices/Payment")
     @FormUrlEncoded
-    Observable<ReceiptResponse> createPayment(@Field("IllustrativeQuantity") Integer IllustrativeQuantity, @Field("DeviceID") String DeviceID, @Field("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Field("VendorID") Long VendorID, @Field("BranchISN") long BranchISN, @Field("uiid") String uuid, @Field("CashType") int CashType, @Field("SaleType") int SaleType, @Field("DealerType") int DealerType, @Field("DealerBranchISN") int DealerBranchISN, @Field("DealerISN") long DealerISN, @Field("SalesManBranchISN") long SalesManBranchISN, @Field("SalesManISN") long SalesManISN, @Field("HeaderNotes") String HeaderNotes,
+    Observable<ReceiptResponse> createPayment(
+            @Field("MobileC_D_B_W_W_C") String MobileC_D_B_W_W_C,
+            @Field("MobileOldShiftUse") String MobileOldShiftUse,
+            @Field("permission") int permission,
+            @Field("MobileAllowCreateForward") String MobileAllowCreateForward,
+            @Field("MobileAllowCreateForwardAmount") Float MobileAllowCreateForwardAmount,
+            @Field("MobileWS_AllowCreateForward") String MobileWS_AllowCreateForward,
+            @Field("MobileWS_AllowCreateForwardAmount") Float MobileWS_AllowCreateForwardAmount,
+            @Field("LogIn_F_Spare1") Float LogIn_F_Spare1,
+            @Field("LogIn_F_Spare2") Float LogIn_F_Spare2,
+            @Field("LogIn_F_Spare3") Float LogIn_F_Spare3,@Field("IllustrativeQuantity") Integer IllustrativeQuantity, @Field("DeviceID") String DeviceID, @Field("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Field("VendorID") Long VendorID, @Field("BranchISN") long BranchISN, @Field("uiid") String uuid, @Field("CashType") int CashType, @Field("SaleType") int SaleType, @Field("DealerType") int DealerType, @Field("DealerBranchISN") int DealerBranchISN, @Field("DealerISN") long DealerISN, @Field("SalesManBranchISN") long SalesManBranchISN, @Field("SalesManISN") long SalesManISN, @Field("HeaderNotes") String HeaderNotes,
             @Field("TotalLinesValue") double TotalLinesValue,
             @Field("ServiceValue") double ServiceValue,
             @Field("ServicePer") double ServicePer, @Field("DeliveryValue") double DeliveryValue, @Field("TotalValueAfterServices") double TotalValueAfterServices, @Field("BasicDiscountVal") double BasicDiscountVal, @Field("BasicDiscountPer") double BasicDiscountPer, @Field("TotalValueAfterDisc") double TotalValueAfterDisc, @Field("BasicTaxVal") double BasicTaxVal, @Field("BasicTaxPer") double BasicTaxPer, @Field("TotalValueAfterTax") double TotalValueAfterTax, @Field("NetValue") double NetValue, @Field("PaidValue") double PaidValue, @Field("RemainValue") double RemainValue, @Field("SafeDepositeBranchISN") long SafeDepositeBranchISN, @Field("SafeDepositeISN") long SafeDepositeISN, @Field("BankBranchISN") long BankBranchISN, @Field("BankISN") long BankISN, @Field("TableNumber") String TableNumber, @Field("DeliveryPhone") String DeliveryPhone, @Field("DeliveryAddress") String DeliveryAddress, @Field("WorkerCBranchISN") long WorkerCBranchISN, @Field("WorkerCISN") long WorkerCISN, @Field("CheckNumber") String CheckNumber, @Field("CheckDueDate") String CheckDueDate,//HERE
@@ -276,6 +247,16 @@ public interface ApiClient {
     @POST("invoices/Create_New_Expenses")
     @FormUrlEncoded
     Observable<ReceiptResponse> createExpense(
+            @Field("MobileC_D_B_W_W_C") String MobileC_D_B_W_W_C,
+            @Field("MobileOldShiftUse") String MobileOldShiftUse,
+            @Field("permission") int permission,
+            @Field("MobileAllowCreateForward") String MobileAllowCreateForward,
+            @Field("MobileAllowCreateForwardAmount") Float MobileAllowCreateForwardAmount,
+            @Field("MobileWS_AllowCreateForward") String MobileWS_AllowCreateForward,
+            @Field("MobileWS_AllowCreateForwardAmount") Float MobileWS_AllowCreateForwardAmount,
+            @Field("LogIn_F_Spare1") Float LogIn_F_Spare1,
+            @Field("LogIn_F_Spare2") Float LogIn_F_Spare2,
+            @Field("LogIn_F_Spare3") Float LogIn_F_Spare3,
             @Field("mustChooseWorker") String mustChooseWorker,
             @Field("IllustrativeQuantity") Integer IllustrativeQuantity, @Field("DeviceID") String DeviceID, @Field("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Field("VendorID") Long VendorID, @Field("BranchISN") long BranchISN, @Field("uiid") String uuid, @Field("CashType") int CashType, @Field("SaleType") int SaleType, @Field("HeaderNotes") String HeaderNotes, @Field("TotalLinesValue") double TotalLinesValue, @Field("ServiceValue") double ServiceValue, @Field("ServicePer") double ServicePer, @Field("DeliveryValue") double DeliveryValue, @Field("TotalValueAfterServices") double TotalValueAfterServices,
             @Field("BasicDiscountVal") double BasicDiscountVal,
@@ -294,56 +275,83 @@ public interface ApiClient {
             @Field("TableNumber") String TableNumber,
             @Field("DeliveryPhone") String DeliveryPhone,
             @Field("DeliveryAddress") String DeliveryAddress,
-            @Field("WorkerCBranchISN") long WorkerCBranchISN, @Field("WorkerCISN") long WorkerCISN, @Field("CheckNumber") String CheckNumber, @Field("CheckDueDate") String CheckDueDate,//HERE
+            @Field("WorkerCBranchISN") long WorkerCBranchISN, @Field("WorkerCISN") long WorkerCISN, @Field("CheckNumber") String CheckNumber, @Field("CheckDueDate") String CheckDueDate,
             @Field("CheckBankBranchISN") long CheckBankBranchISN, @Field("CheckBankISN") long CheckBankISN, @Field("CreateSource") int createSource, @Field("Latitude") float latitude, @Field("Longitude") float longitude, @Field("ShiftISN") Long ShiftISN, @Field("MainExpMenuISN") Long MainExpMenuISN, @Field("MainExpMenuBranchISN") Long MainExpMenuBranchISN, @Field("MainExpMenuName") String MainExpMenuName, @Field("SubExpMenuISN") Long SubExpMenuISN, @Field("SubExpMenuBranchISN") Long SubExpMenuBranchISN, @Field("SubExpMenuName") String SubExpMenuName, @Field("SelectedWorkerBranchISN") Long SelectedWorkerBranchISN, @Field("SelectedWorkerISN") Long SelectedWorkerISN, @Field("WorkerName") String WorkerName, @Field("user_name") String user_name, @Field("WorkStationName") String WorkStationName, @Field("WorkStation_ISN") String WorkStation_ISN, @Field("WorkStationBranchISN") String WorkStationBranchISN, @Query("SelectedFoundation") int selectedFoundation
             , @Field("LogIn_BISN") String LogIn_BISN, @Field("LogIn_UID") String LogIn_UID, @Field("LogIn_WBISN") String LogIn_WBISN, @Field("LogIn_WISN") String LogIn_WISN, @Field("LogIn_WName") String LogIn_WName, @Field("LogIn_WSBISN") String LogIn_WSBISN, @Field("LogIn_WSISN") String LogIn_WSISN, @Field("LogIn_WSName") String LogIn_WSName, @Field("LogIn_CS") String LogIn_CS, @Field("LogIn_VN") String LogIn_VN, @Field("LogIn_FAlternative") String LogIn_FAlternative, @Field("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Field("ShiftSystemActivate") Integer ShiftSystemActivate, @Field("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Field("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Field("LogIn_Spare1") Integer LogIn_Spare1, @Field("LogIn_Spare2") Integer LogIn_Spare2, @Field("LogIn_Spare3") Integer LogIn_Spare3, @Field("LogIn_Spare4") Integer LogIn_Spare4, @Field("LogIn_Spare5") Integer LogIn_Spare5, @Field("LogIn_Spare6") Integer LogIn_Spare6);
 
     @GET("invoices/print_cash_receipt")
-    Observable<ReceiptModel> getReceipt(@Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("BranchISN") long BranchISN, @Query("uiid") String uiid, @Query("Move_ID") String Move_ID, @Query("WorkerCBranchISN") long WorkerCBranchISN, @Query("WorkerCISN") long WorkerCISN, @Query("permission") int permission, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6);
+    Observable<ReceiptModel> getReceipt(@QueryMap Map<String, String> generalParams, @Query("BranchISN") long BranchISN, @Query("uiid") String uiid, @Query("Move_ID") String Move_ID, @Query("WorkerCBranchISN") long WorkerCBranchISN, @Query("WorkerCISN") long WorkerCISN, @Query("permission") int permission);
 
     @GET("invoices/print_Payment")
-    Observable<ReceiptModel> getPayment(@Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("BranchISN") long BranchISN, @Query("uiid") String uiid, @Query("Move_ID") String Move_ID, @Query("WorkerCBranchISN") long WorkerCBranchISN, @Query("WorkerCISN") long WorkerCISN, @Query("permission") int permission, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6);
+    Observable<ReceiptModel> getPayment(@QueryMap Map<String, String> generalParams, @Query("BranchISN") long BranchISN, @Query("uiid") String uiid, @Query("Move_ID") String Move_ID, @Query("WorkerCBranchISN") long WorkerCBranchISN, @Query("WorkerCISN") long WorkerCISN, @Query("permission") int permission);
 
 
     @GET("branches")
-    Observable<Branches> getBranches(@Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("uiid") String uuid, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6);
+    Observable<Branches> getBranches(@QueryMap Map<String, String> generalParams, @Query("uiid") String uuid);
 
     @GET("workers")
-    Observable<WorkersResponse> getWorkers(@Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("uiid") String uuid, @Query("BranchISN") long branchISN, @Query("WorkerCBranchISN") long workerBranchISN, @Query("WorkerCISN") long workerISN, @Query("permission") int permission, @Query("MoveType") int moveType, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6);
+    Observable<WorkersResponse> getWorkers(@QueryMap Map<String, String> generalParams, @Query("uiid") String uuid, @Query("BranchISN") long branchISN, @Query("WorkerCBranchISN") long workerBranchISN, @Query("WorkerCISN") long workerISN, @Query("MoveType") int moveType);
 
     @POST("reports/money_report")
-    Observable<FinancialReportResponse> getFinancialReport(@Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Body ReportBody reportBody, @Query("uiid") String uuid, @Query("StoreBranchISN") long storeBranchISN, @Query("StoreISN") long storeISN, @Query("WorkerBranchISN") long workerBranchISN, @Query("WorkerName") String WorkerName, @Query("user_name") String user_name, @Query("WorkStationName") String WorkStationName, @Query("WorkStation_ISN") String WorkStation_ISN, @Query("WorkStationBranchISN") String WorkStationBranchISN, @Query("WorkerCISN") String WorkerCISN, @Query("WorkerCBranchISN") String WorkerCBranchISN, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6);
+    Observable<FinancialReportResponse> getFinancialReport(@QueryMap Map<String, String> generalParams, @Body ReportBody reportBody, @Query("uiid") String uuid, @Query("StoreBranchISN") long storeBranchISN, @Query("StoreISN") long storeISN, @Query("WorkerBranchISN") long workerBranchISN, @Query("WorkerName") String WorkerName, @Query("user_name") String user_name, @Query("WorkStationName") String WorkStationName, @Query("WorkStation_ISN") String WorkStation_ISN, @Query("WorkStationBranchISN") String WorkStationBranchISN, @Query("WorkerCISN") String WorkerCISN, @Query("WorkerCBranchISN") String WorkerCBranchISN);
 
     @POST("reports/CashierMoves_Report")
-    Observable<CashierMovesReportResponse> getCashierMovesReport(@Body ReportBody reportBody, @Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("uiid") String uuid, @Query("StoreBranchISN") long storeBranchISN, @Query("StoreISN") long storeISN, @Query("WorkerBranchISN") long workerBranchISN, @Query("WorkerName") String WorkerName, @Query("user_name") String user_name, @Query("WorkStationName") String WorkStationName, @Query("WorkStation_ISN") String WorkStation_ISN, @Query("WorkStationBranchISN") String WorkStationBranchISN, @Query("MoveType") Integer MoveType, @Query("DealerType") Integer DealerType, @Query("DealerBranchISN") Integer DealerBranchISN, @Query("Dealer_ISN") Long Dealer_ISN, @Query("WorkerCISN") String WorkerCISN, @Query("WorkerCBranchISN") Long WorkerCBranchISN, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("SupplierType") Integer SupplierType, @Query("SupplierBranchISN") Integer SupplierBranchISN, @Query("Supplier_ISN") Long Supplier_ISN, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6
-
-    );
+    Observable<CashierMovesReportResponse> getCashierMovesReport(@Body ReportBody reportBody, @Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("uiid") String uuid, @Query("StoreBranchISN") long storeBranchISN, @Query("StoreISN") long storeISN, @Query("WorkerBranchISN") long workerBranchISN, @Query("WorkerName") String WorkerName, @Query("user_name") String user_name, @Query("WorkStationName") String WorkStationName, @Query("WorkStation_ISN") String WorkStation_ISN, @Query("WorkStationBranchISN") String WorkStationBranchISN, @Query("MoveType") Integer MoveType, @Query("DealerType") Integer DealerType, @Query("DealerBranchISN") Integer DealerBranchISN, @Query("Dealer_ISN") Long Dealer_ISN, @Query("WorkerCISN") String WorkerCISN, @Query("WorkerCBranchISN") Long WorkerCBranchISN, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("SupplierType") Integer SupplierType, @Query("SupplierBranchISN") Integer SupplierBranchISN, @Query("Supplier_ISN") Long Supplier_ISN, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6);
 
     @GET("reports/AllMoves_Types")
-    Observable<MoveTypesResponse> getMoveTypes(@Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("uiid") String uuid, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6);
+    Observable<MoveTypesResponse> getMoveTypes(Map<String, String> generalParams, @Query("uiid") String uuid);
 
     @GET("reports/itemssales_report")
-    Observable<ItemSalesResponse> getItemSalesReport(@Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("uiid") String uuid, @Query("Branch_ISN") Long storeBranchISN, @Query("from_workday") String from_workday, @Query("to_workday") String to_workday, @Query("Shift_ISN") String Shift_ISN, @Query("WorkerBranchISN") Long workerBranchISN, @Query("Worker_ISN") String Worker_ISN, @Query("from") String from, @Query("to") String to, @Query("VendorID") Long vendorId, @Query("WorkerCISN") String WorkerCISN, @Query("WorkerCBranchISN") String WorkerCBranchISN, @Query("WorkerName") String WorkerName, @Query("user_name") String user_name, @Query("WorkStationName") String WorkStationName, @Query("WorkStation_ISN") String WorkStation_ISN, @Query("WorkStationBranchISN") String WorkStationBranchISN, @Query("DealerType") Integer DealerType, @Query("DealerBranchISN") Long DealerBranchISN, @Query("Dealer_ISN") Long Dealer_ISN, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6);
+    Observable<ItemSalesResponse> getItemSalesReport(
+            @Query("MobileC_D_B_W_W_C") String MobileC_D_B_W_W_C,
+            @Query("MobileOldShiftUse") String MobileOldShiftUse,
+            @Query("permission") int permission,
+            @Query("MobileAllowCreateForward") String MobileAllowCreateForward,
+            @Query("MobileAllowCreateForwardAmount") Float MobileAllowCreateForwardAmount,
+            @Query("MobileWS_AllowCreateForward") String MobileWS_AllowCreateForward,
+            @Query("MobileWS_AllowCreateForwardAmount") Float MobileWS_AllowCreateForwardAmount,
+            @Query("LogIn_F_Spare1") Float LogIn_F_Spare1,
+            @Query("LogIn_F_Spare2") Float LogIn_F_Spare2,
+            @Query("LogIn_F_Spare3") Float LogIn_F_Spare3,
+            @Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("uiid") String uuid, @Query("Branch_ISN") Long storeBranchISN, @Query("from_workday") String from_workday, @Query("to_workday") String to_workday, @Query("Shift_ISN") String Shift_ISN, @Query("WorkerBranchISN") Long workerBranchISN, @Query("Worker_ISN") String Worker_ISN, @Query("from") String from, @Query("to") String to, @Query("VendorID") Long vendorId, @Query("WorkerCISN") String WorkerCISN, @Query("WorkerCBranchISN") String WorkerCBranchISN, @Query("WorkerName") String WorkerName, @Query("user_name") String user_name, @Query("WorkStationName") String WorkStationName, @Query("WorkStation_ISN") String WorkStation_ISN, @Query("WorkStationBranchISN") String WorkStationBranchISN, @Query("DealerType") Integer DealerType, @Query("DealerBranchISN") Long DealerBranchISN, @Query("Dealer_ISN") Long Dealer_ISN, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6);
 
     @GET("reports/itemssupply_report")
-    Observable<ItemSalesResponse> getSupplierSalesReport(@Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("uiid") String uuid, @Query("Branch_ISN") Long storeBranchISN, @Query("from_workday") String from_workday, @Query("to_workday") String to_workday, @Query("Shift_ISN") String Shift_ISN, @Query("WorkerBranchISN") Long workerBranchISN, @Query("Worker_ISN") String Worker_ISN, @Query("from") String from, @Query("to") String to, @Query("VendorID") Long vendorId, @Query("WorkerCISN") String WorkerCISN, @Query("WorkerCBranchISN") String WorkerCBranchISN, @Query("WorkerName") String WorkerName, @Query("user_name") String user_name, @Query("WorkStationName") String WorkStationName, @Query("WorkStation_ISN") String WorkStation_ISN, @Query("WorkStationBranchISN") String WorkStationBranchISN, @Query("DealerType") Integer DealerType, @Query("DealerBranchISN") Long DealerBranchISN, @Query("Dealer_ISN") Long Dealer_ISN, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6);
+    Observable<ItemSalesResponse> getSupplierSalesReport(
+            @Query("MobileC_D_B_W_W_C") String MobileC_D_B_W_W_C,
+            @Query("MobileOldShiftUse") String MobileOldShiftUse,
+            @Query("permission") int permission,
+            @Query("MobileAllowCreateForward") String MobileAllowCreateForward,
+            @Query("MobileAllowCreateForwardAmount") Float MobileAllowCreateForwardAmount,
+            @Query("MobileWS_AllowCreateForward") String MobileWS_AllowCreateForward,
+            @Query("MobileWS_AllowCreateForwardAmount") Float MobileWS_AllowCreateForwardAmount,
+            @Query("LogIn_F_Spare1") Float LogIn_F_Spare1,
+            @Query("LogIn_F_Spare2") Float LogIn_F_Spare2,
+            @Query("LogIn_F_Spare3") Float LogIn_F_Spare3,
+
+            @Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("uiid") String uuid, @Query("Branch_ISN") Long storeBranchISN, @Query("from_workday") String from_workday, @Query("to_workday") String to_workday, @Query("Shift_ISN") String Shift_ISN, @Query("WorkerBranchISN") Long workerBranchISN, @Query("Worker_ISN") String Worker_ISN, @Query("from") String from, @Query("to") String to, @Query("VendorID") Long vendorId, @Query("WorkerCISN") String WorkerCISN, @Query("WorkerCBranchISN") String WorkerCBranchISN, @Query("WorkerName") String WorkerName, @Query("user_name") String user_name, @Query("WorkStationName") String WorkStationName, @Query("WorkStation_ISN") String WorkStation_ISN, @Query("WorkStationBranchISN") String WorkStationBranchISN, @Query("DealerType") Integer DealerType, @Query("DealerBranchISN") Long DealerBranchISN, @Query("Dealer_ISN") Long Dealer_ISN, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6);
 
     //
     @GET("invoices/Get_Main_Expenses")
-    Observable<MainExpResponse> getMainExpenses(@Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("uiid") String uiid, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6);
+    Observable<MainExpResponse> getMainExpenses(Map<String, String> generalParams, @Query("uiid") String uiid);
 
     @GET("workers")
-    Observable<WorkerResponse> getExpWorkers(@Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("uiid") String uiid, @Query("BranchISN") long branchISN, @Query("WorkerCBranchISN") long workerBranchISN, @Query("WorkerCISN") long workerISN, @Query("permission") int permission, @Query("MoveType") int moveType, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6);
+    Observable<WorkerResponse> getExpWorkers(Map<String, String> queryParams, @Query("uiid") String uiid, @Query("BranchISN") long branchISN, @Query("WorkerCBranchISN") long workerBranchISN, @Query("WorkerCISN") long workerISN, @Query("MoveType") int moveType);
 
     @GET("invoices/Get_Sub_Expenses")
-    Observable<SubExpResponse> getSubExpenses(@Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("uiid") String uiid, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6);
+    Observable<SubExpResponse> getSubExpenses(Map<String, String> queryParams, @Query("uiid") String uiid);
 
 
     @GET("invoices/print_Expenses")
-    Observable<ExpensesResponse> getExpenses(@Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("BranchISN") long BranchISN, @Query("uiid") String uiid, @Query("Move_ID") String Move_ID, @Query("WorkerCBranchISN") long WorkerCBranchISN, @Query("WorkerCISN") long WorkerCISN, @Query("permission") int permission, @Query("moveType") int moveType, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6);
+    Observable<ExpensesResponse> getExpenses(Map<String, String> queryParams, @Query("BranchISN") long BranchISN, @Query("uiid") String uiid, @Query("Move_ID") String Move_ID, @Query("WorkerCBranchISN") long WorkerCBranchISN, @Query("WorkerCISN") long WorkerCISN, @Query("moveType") int moveType);
 
     @GET("invoices/Get_Item_Prices")
-    Observable<ItemPriceResponse> getItemPrice(@Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("uiid") String uiid, @Query("ItemBranchISN") int itemBranchISN, @Query("ItemISN") int itemISN, @Query("WorkerName") String WorkerName, @Query("user_name") String user_name, @Query("WorkStationName") String WorkStationName, @Query("WorkStation_ISN") String WorkStation_ISN, @Query("WorkStationBranchISN") String WorkStationBranchISN, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("PriceType") Integer PriceType, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6);
+    Observable<ItemPriceResponse> getItemPrice(
+            @QueryMap Map<String, String> generalParams,
+            @Query("uiid") String uiid,
+            @Query("ItemBranchISN") int ItemBranchISN,
+            @Query("PriceType") Integer priceType,
+            @Query("ItemISN") int itemISN
+    );
 
 
     @POST("invoices/OpenLogInNewShift")

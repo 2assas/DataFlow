@@ -49,7 +49,18 @@ public class ReceiptsVM extends ViewModel {
                               long BankISN, String TableNumber, String DeliveryPhone, String DeliveryAddress, long WorkerCBranchISN, long WorkerCISN, String CheckNumber,
             String CheckDueDate,long CheckBankBranchISN, long CheckBankISN, int createSource, float latitude, float longitude){
 
-        Observable<ReceiptResponse> receiptResponseObservable = apiClient.createReceipt(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),BranchISN,uuid,CashType,SaleType,DealerType, DealerBranchISN,DealerISN,SalesManBranchISN,SalesManISN,
+        Observable<ReceiptResponse> receiptResponseObservable = apiClient.createReceipt(
+                currentUser.getMobileC_D_B_W_W_C(),
+                currentUser.getMobileOldShiftUse(),
+                currentUser.getPermission(),
+                currentUser.getMobileAllowCreateForward(),
+                currentUser.getMobileAllowCreateForwardAmount(),
+                currentUser.getMobileWS_AllowCreateForward(),
+                currentUser.getMobileWS_AllowCreateForwardAmount(),
+                currentUser.getLogIn_F_Spare1(),
+                currentUser.getLogIn_F_Spare2(),
+                currentUser.getLogIn_F_Spare3(),
+                App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),BranchISN,uuid,CashType,SaleType,DealerType, DealerBranchISN,DealerISN,SalesManBranchISN,SalesManISN,
                 HeaderNotes, TotalLinesValue, ServiceValue, ServicePer, DeliveryValue, TotalValueAfterServices, BasicDiscountVal, BasicDiscountPer, TotalValueAfterDisc,
                 BasicTaxVal, BasicTaxPer, TotalValueAfterTax,NetValue,PaidValue,RemainValue, SafeDepositeBranchISN, SafeDepositeISN, BankBranchISN, BankISN, TableNumber,DeliveryPhone,DeliveryAddress,WorkerCBranchISN,
                 WorkerCISN, CheckNumber,CheckDueDate,CheckBankBranchISN,CheckBankISN, createSource, latitude, longitude, App.currentUser.getWorkerName(),
@@ -115,28 +126,9 @@ public class ReceiptsVM extends ViewModel {
     }
     public void getReceipt(long branchISN, String uuid, String moveId, long workerCBranchISN, long workerCISN, int permission){
 
-        Observable<ReceiptModel> receiptModelObservable = apiClient.getReceipt(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),branchISN, uuid, moveId, workerCBranchISN,workerCISN,permission,selectedFoundation,
-                        App.currentUser.getLogIn_BISN(),
-                        App.currentUser.getLogIn_UID(),
-                        App.currentUser.getLogIn_WBISN(),
-                        App.currentUser.getLogIn_WISN(),
-                        App.currentUser.getLogIn_WName(),
-                        App.currentUser.getLogIn_WSBISN(),
-                        App.currentUser.getLogIn_WSISN(),
-                        App.currentUser.getLogIn_WSName(),
-                        App.currentUser.getLogIn_CS(),
-                        App.currentUser.getLogIn_VN(),
-                        App.currentUser.getLogIn_FAlternative()
-                        , App.currentUser.getMobileSalesMaxDiscPer()
-                        , App.currentUser.getShiftSystemActivate()
-                        , App.currentUser.getLogIn_ShiftBranchISN()
-                        , App.currentUser.getLogIn_ShiftISN()
-                        , App.currentUser.getLogIn_Spare1()
-                        , App.currentUser.getLogIn_Spare2()
-                        , App.currentUser.getLogIn_Spare3()
-                        , App.currentUser.getLogIn_Spare4()
-                        , App.currentUser.getLogIn_Spare5()
-                        , App.currentUser.getLogIn_Spare6())
+        Observable<ReceiptModel> receiptModelObservable = apiClient.getReceipt(queryParams,
+
+                                                                                branchISN, uuid, moveId, workerCBranchISN, workerCISN, permission)
                 .subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread());
         receiptModelObservable.subscribe(new Observer<ReceiptModel>() {
             @Override

@@ -9,7 +9,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.dataflowstores.dataflow.App;
-import com.dataflowstores.dataflow.pojo.invoice.InvoiceBody;
+import com.dataflowstores.dataflow.pojo.CheckItemBody;
+import com.dataflowstores.dataflow.pojo.InvoiceBody;
 import com.dataflowstores.dataflow.pojo.invoice.InvoiceResponse;
 import com.dataflowstores.dataflow.pojo.users.CustomerBalance;
 import com.dataflowstores.dataflow.utils.SingleLiveEvent;
@@ -123,19 +124,84 @@ public class CheckoutVM extends ViewModel {
                           ArrayList<Boolean> ExpireDateBool, ArrayList<Boolean> ColorsBool, ArrayList<Boolean> SeasonsBool, ArrayList<Boolean> SizesBool, ArrayList<Boolean> SerialBool,
                           ArrayList<Boolean> Group1Bool, ArrayList<Boolean> Group2Bool, ArrayList<Boolean> ServiceItem, ArrayList<Double> ItemTax, ArrayList<Double> TaxValue,
                           ArrayList<String> itemName, ArrayList<Double> discount1, int allowStoreMinus, Integer AllowStoreMinusConfirm, Integer allowCurrentStoreMinus) {
+        CheckItemBody requestBody = new CheckItemBody();
+        requestBody.setIllustrativeQuantity(App.currentUser.getIllustrativeQuantity());
+        requestBody.setDeviceID(App.currentUser.getDeviceID());
+        requestBody.setLogIn_CurrentWorkingDayDate(App.currentUser.getLogIn_CurrentWorkingDayDate());
+        requestBody.setVendorID(App.currentUser.getVendorID());
+        requestBody.setUiid(uuid);
+        requestBody.setItemBranchISN(ItemBranchISN);
+        requestBody.setItemISN(ItemISN);
+        requestBody.setPriceTypeBranchISN(PriceTypeBranchISN);
+        requestBody.setPriceTypeISN(PriceTypeISN);
+        requestBody.setStoreBranchISN(StoreBranchISN);
+        requestBody.setStoreISN(StoreISN);
+        requestBody.setBasicQuantity(BasicQuantity);
+        requestBody.setBonusQuantity(BonusQuantity);
+        requestBody.setTotalQuantity(TotalQuantity);
+        requestBody.setPrice(Price);
+        requestBody.setMeasureUnitBranchISN(MeasureUnitBranchISN);
+        requestBody.setMeasureUnitISN(MeasureUnitISN);
+        requestBody.setBasicMeasureUnitBranchISN(BasicMeasureUnitBranchISN);
+        requestBody.setBasicMeasureUnitISN(BasicMeasureUnitISN);
+        requestBody.setItemSerial(ItemSerial);
+        requestBody.setItemExpireDate(ExpireDate);
+        requestBody.setColorBranchISN(ColorBranchISN);
+        requestBody.setColorISN(ColorISN);
+        requestBody.setSizeBranchISN(SizeBranchISN);
+        requestBody.setSizeISN(SizeISN);
+        requestBody.setSeasonBranchISN(SeasonBranchISN);
+        requestBody.setSeasonISN(SeasonISN);
+        requestBody.setGroup1BranchISN(Group1BranchISN);
+        requestBody.setGroup1ISN(Group1ISN);
+        requestBody.setGroup2BranchISN(Group2BranchISN);
+        requestBody.setGroup2ISN(Group2ISN);
+        requestBody.setLineNotes(LineNotes);
+        requestBody.setNetPrice(NetPrice);
+        requestBody.setBasicMeasureUnitQuantity(BasicMeasureUnitQuantity);
+        requestBody.setExpireDate(ExpireDateBool);
+        requestBody.setColors(ColorsBool);
+        requestBody.setSeasons(SeasonsBool);
+        requestBody.setSizes(SizesBool);
+        requestBody.setSerial(SerialBool);
+        requestBody.setGroup1(Group1Bool);
+        requestBody.setGroup2(Group2Bool);
+        requestBody.setServiceItem(ServiceItem);
+        requestBody.setItemTax(ItemTax);
+        requestBody.setTaxValue(TaxValue);
+        requestBody.setItemName(itemName);
+        requestBody.setDiscount1(discount1);
+        requestBody.setAllowStoreMinus(allowStoreMinus);
+        requestBody.setAllowStoreMinusConfirm(AllowStoreMinusConfirm);
+        requestBody.setWorkerName(App.currentUser.getWorkerName());
+        requestBody.setUser_name(App.currentUser.getUserName());
+        requestBody.setWorkStationName(App.currentUser.getWorkStationName());
+        requestBody.setWorkStation_ISN(String.valueOf(App.currentUser.getWorkStationISN()));
+        requestBody.setWorkStationBranchISN(String.valueOf(App.currentUser.getWorkerBranchISN()));
+        requestBody.setSelectedFoundation(selectedFoundation);
+        requestBody.setLogIn_BISN(App.currentUser.getLogIn_BISN());
+        requestBody.setLogIn_UID(App.currentUser.getLogIn_UID());
+        requestBody.setLogIn_WBISN(App.currentUser.getLogIn_WBISN());
+        requestBody.setLogIn_WISN(App.currentUser.getLogIn_WISN());
+        requestBody.setLogIn_WSISN(App.currentUser.getLogIn_WSISN());
+        requestBody.setLogIn_WSName(App.currentUser.getLogIn_WSName());
+        requestBody.setLogIn_CS(App.currentUser.getLogIn_CS());
+        requestBody.setLogIn_VN(App.currentUser.getLogIn_VN());
+        requestBody.setLogIn_FAlternative(App.currentUser.getLogIn_FAlternative());
+        requestBody.setAllowCurrentStoreMinus(allowCurrentStoreMinus);
+        requestBody.setMobileSalesMaxDiscPer(App.currentUser.getMobileSalesMaxDiscPer());
+        requestBody.setShiftSystemActivate(App.currentUser.getShiftSystemActivate());
+        requestBody.setLogIn_ShiftBranchISN(App.currentUser.getLogIn_ShiftBranchISN());
+        requestBody.setLogIn_ShiftISN(App.currentUser.getLogIn_ShiftISN());
+        requestBody.setLogIn_Spare1(App.currentUser.getLogIn_Spare1());
+        requestBody.setLogIn_Spare2(App.currentUser.getLogIn_Spare2());
+        requestBody.setLogIn_Spare3(App.currentUser.getLogIn_Spare3());
+        requestBody.setLogIn_Spare4(App.currentUser.getLogIn_Spare4());
+        requestBody.setLogIn_Spare5(App.currentUser.getLogIn_Spare5());
+        requestBody.setLogIn_Spare6(App.currentUser.getLogIn_Spare6());
 
-        Observable<InvoiceResponse> checkItem = apiClient.checkItem(App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(),uuid, ItemBranchISN, ItemISN, PriceTypeBranchISN, PriceTypeISN, StoreBranchISN, StoreISN, BasicQuantity, BonusQuantity, TotalQuantity, Price, MeasureUnitBranchISN, MeasureUnitISN, BasicMeasureUnitBranchISN, BasicMeasureUnitISN, ItemSerial, ExpireDate, ColorBranchISN, ColorISN, SizeBranchISN, SizeISN, SeasonBranchISN, SeasonISN, Group1BranchISN, Group1ISN, Group2BranchISN, Group2ISN, LineNotes, NetPrice, BasicMeasureUnitQuantity, ExpireDateBool, ColorsBool, SeasonsBool, SizesBool, SerialBool, Group1Bool, Group2Bool, ServiceItem, ItemTax, TaxValue, itemName, discount1, allowStoreMinus, AllowStoreMinusConfirm, App.currentUser.getWorkerName(), App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()), selectedFoundation, App.currentUser.getLogIn_BISN(), App.currentUser.getLogIn_UID(), App.currentUser.getLogIn_WBISN(), App.currentUser.getLogIn_WISN(), App.currentUser.getLogIn_WName(), App.currentUser.getLogIn_WSBISN(), App.currentUser.getLogIn_WSISN(), App.currentUser.getLogIn_WSName(), App.currentUser.getLogIn_CS(), App.currentUser.getLogIn_VN(), App.currentUser.getLogIn_FAlternative(),allowCurrentStoreMinus
-                        ,App.currentUser.getMobileSalesMaxDiscPer()
-                        ,App.currentUser.getShiftSystemActivate()
-                        ,App.currentUser.getLogIn_ShiftBranchISN()
-                        ,App.currentUser.getLogIn_ShiftISN()
-                        ,App.currentUser.getLogIn_Spare1()
-                        ,App.currentUser.getLogIn_Spare2()
-                        ,App.currentUser.getLogIn_Spare3()
-                        ,App.currentUser.getLogIn_Spare4()
-                        ,App.currentUser.getLogIn_Spare5()
-                        ,App.currentUser.getLogIn_Spare6()
-                )
+
+        Observable<InvoiceResponse> checkItem = apiClient.checkItem(requestBody)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Disposable checkItemDisposable =   checkItem.subscribe(invoiceResponse -> {
             checkItemMutableLiveData.setValue(invoiceResponse);

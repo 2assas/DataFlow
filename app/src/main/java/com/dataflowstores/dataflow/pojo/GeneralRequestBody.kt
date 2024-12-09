@@ -1,49 +1,53 @@
 package com.dataflowstores.dataflow.pojo
 
 import com.dataflowstores.dataflow.utils.GeneralParams
+import java.util.function.Function
+import java.util.stream.Collectors
+
+
 
 data class GeneralRequestBody(
-    val VendorID: Long,
-    val LogIn_BISN: String,
-    val LogIn_UID: String,
-    val LogIn_WBISN: String,
-    val LogIn_WISN: String,
-    val LogIn_WName: String,
-    val LogIn_WSBISN: String,
-    val LogIn_WSISN: String,
-    val LogIn_WSName: String,
-    val LogIn_CS: String,
-    val LogIn_VN: String,
-    val LogIn_FAlternative: String,
-    val MobileSalesMaxDiscPer: String,
-    val ShiftSystemActivate: Int,
-    val LogIn_ShiftBranchISN: Int,
-    val LogIn_ShiftISN: Int,
-    val LogIn_Spare1: Int,
-    val LogIn_Spare2: Int,
-    val LogIn_Spare3: Int,
-    val LogIn_Spare4: Int,
-    val LogIn_Spare5: Int,
-    val LogIn_Spare6: Int,
-    val DeviceID: String,
-    val LogIn_CurrentWorkingDayDate: String,
-    val SelectedFoundation: Int,
-    val IllustrativeQuantity: Int,
-    val MobileC_D_B_W_W_C: String,
-    val MobileOldShiftUse: String,
-    val permission: Int,
-    val MobileAllowCreateForward: String,
-    val MobileAllowCreateForwardAmount: Float,
-    val MobileWS_AllowCreateForward: String,
-    val MobileWS_AllowCreateForwardAmount: Float,
-    val LogIn_F_Spare1: Float,
-    val LogIn_F_Spare2: Float,
-    val LogIn_F_Spare3: Float
+    val VendorID: Long? = null,
+    val LogIn_BISN: String? = null,
+    val LogIn_UID: String? = null,
+    val LogIn_WBISN: String? = null,
+    val LogIn_WISN: String? = null,
+    val LogIn_WName: String? = null,
+    val LogIn_WSBISN: String? = null,
+    val LogIn_WSISN: String? = null,
+    val LogIn_WSName: String? = null,
+    val LogIn_CS: String? = null,
+    val LogIn_VN: String? = null,
+    val LogIn_FAlternative: String? = null,
+    val MobileSalesMaxDiscPer: String? = null,
+    val ShiftSystemActivate: Int? = null,
+    val LogIn_ShiftBranchISN: Int? = null,
+    val LogIn_ShiftISN: Int? = null,
+    val LogIn_Spare1: Int? = null,
+    val LogIn_Spare2: Int? = null,
+    val LogIn_Spare3: Int? = null,
+    val LogIn_Spare4: Int? = null,
+    val LogIn_Spare5: Int? = null,
+    val LogIn_Spare6: Int? = null,
+    val DeviceID: String? = null,
+    val LogIn_CurrentWorkingDayDate: String? = null,
+    val SelectedFoundation: Int? = null,
+    val IllustrativeQuantity: Int? = null,
+    val MobileC_D_B_W_W_C: String? = null,
+    val MobileOldShiftUse: String? = null,
+    val permission: Int? = null,
+    val MobileAllowCreateForward: String? = null,
+    val MobileAllowCreateForwardAmount: Float? = null,
+    val MobileWS_AllowCreateForward: String? = null,
+    val MobileWS_AllowCreateForwardAmount: Float? = null,
+    val LogIn_F_Spare1: Float? = null,
+    val LogIn_F_Spare2: Float? = null,
+    val LogIn_F_Spare3: Float? = null
 )
 
 object GeneralRequestBodyUtil {
     @JvmStatic
-    fun toQueryParams(): Map<String, String> {
+    fun toQueryParams(): Map<String, String?> {
         val generalParams = GeneralParams()
         val requestBody = generalParams.generalRequestBody()
         return mapOf(
@@ -83,10 +87,11 @@ object GeneralRequestBodyUtil {
             "LogIn_F_Spare1" to requestBody.LogIn_F_Spare1.toString(),
             "LogIn_F_Spare2" to requestBody.LogIn_F_Spare2.toString(),
             "LogIn_F_Spare3" to requestBody.LogIn_F_Spare3.toString()
-        )
+        ).filterValues { it != null  && it != "null"} // Remove entries with null values
+            .mapValues { it.value!! }
     }
 }
-fun GeneralRequestBody.toQueryParams(): Map<String, String> {
+fun GeneralRequestBody.toQueryParams(): Map<String, String?> {
     return mapOf(
         "VendorID" to VendorID.toString(),
         "LogIn_BISN" to LogIn_BISN,
@@ -100,7 +105,7 @@ fun GeneralRequestBody.toQueryParams(): Map<String, String> {
         "LogIn_CS" to LogIn_CS,
         "LogIn_VN" to LogIn_VN,
         "LogIn_FAlternative" to LogIn_FAlternative,
-        "MobileSalesMaxDiscPer" to MobileSalesMaxDiscPer.toString(),
+        "MobileSalesMaxDiscPer" to MobileSalesMaxDiscPer,
         "ShiftSystemActivate" to ShiftSystemActivate.toString(),
         "LogIn_ShiftBranchISN" to LogIn_ShiftBranchISN.toString(),
         "LogIn_ShiftISN" to LogIn_ShiftISN.toString(),
@@ -124,5 +129,6 @@ fun GeneralRequestBody.toQueryParams(): Map<String, String> {
         "LogIn_F_Spare1" to LogIn_F_Spare1.toString(),
         "LogIn_F_Spare2" to LogIn_F_Spare2.toString(),
         "LogIn_F_Spare3" to LogIn_F_Spare3.toString()
-    )
+    ).filterValues { it != null  && it != "null"} // Remove entries with null values
+        .mapValues { it.value!! }
 }
