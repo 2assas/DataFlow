@@ -127,6 +127,7 @@ public class PrintInvoice extends BaseActivity implements Runnable {
             try {
                 printInvoiceVM.getPrintingData(String.valueOf(App.currentUser.getBranchISN()), uuid, String.valueOf(App.invoiceResponse.getData().getMove_ID()), String.valueOf(App.currentUser.getWorkerBranchISN()), String.valueOf(App.currentUser.getWorkerISN()), this, getMoveType());
             } catch (Exception e) {
+                Log.e("checkErrorPrinting", "error= "+e.getMessage());
                 Toast.makeText(this, "حدث خطأ فى البيانات .. لم يتم تسجيل الفاتورة", Toast.LENGTH_LONG).show();
             }
             ;

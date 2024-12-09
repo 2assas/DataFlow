@@ -38,7 +38,7 @@ public class GeneralParams {
                 App.currentUser.getIllustrativeQuantity(),
                 currentUser.getMobileC_D_B_W_W_C(),
                 currentUser.getMobileOldShiftUse(),
-                currentUser.getPermission(),
+                currentUser.getPermission() == -1 ? null : currentUser.getPermission(),
                 currentUser.getMobileAllowCreateForward(),
                 currentUser.getMobileAllowCreateForwardAmount(),
                 currentUser.getMobileWS_AllowCreateForward(),

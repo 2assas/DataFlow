@@ -114,15 +114,21 @@ public class PrintInvoiceVM extends ViewModel {
                 } else if (throwable instanceof HttpException) {
                     ResponseBody errorBody = Objects.requireNonNull(((HttpException) throwable).response()).errorBody();
                     try {
+                        Log.e("checkError", Objects.requireNonNull(errorBody).string());
                         toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
                     } catch (IOException e) {
+                        Log.e("checkError", Objects.requireNonNull(e.getMessage()));
                         throw new RuntimeException(e);
+
                     }
                     //handle HTTP error response code
                 } else {
                     //handle other exceptions
                     toastErrorMutableLiveData.postValue(Objects.requireNonNull(throwable.getMessage()));
+                    Log.e("checkError", Objects.requireNonNull(throwable.getMessage()));
+
                 }
+
                 }
 
             @Override

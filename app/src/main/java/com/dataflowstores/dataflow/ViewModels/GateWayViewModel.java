@@ -81,7 +81,7 @@ public class GateWayViewModel extends ViewModel {
                 //handle network error
                 toastErrorMutableLiveData.postValue("No Internet Connection!");
             } else if (throwable instanceof HttpException) {
-                ResponseBody errorBody = Objects.requireNonNull(((HttpException) throwable).response()).errorBody();
+                @SuppressLint("CheckResult") ResponseBody errorBody = Objects.requireNonNull(((HttpException) throwable).response()).errorBody();
                 toastErrorMutableLiveData.postValue(Objects.requireNonNull(errorBody).string());
                 //handle HTTP error response code
             } else {
@@ -91,6 +91,7 @@ public class GateWayViewModel extends ViewModel {
         });
     }
 
+    @SuppressLint("CheckResult")
     public void insertWorkstation(String uuid, long branchId, String workStationName) {
         Observable<Workstation> insertWorkstation = apiClient.insertWorkstation(uuid, branchId, workStationName, 2, selectedFoundation).subscribeOn(
                 Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
@@ -111,6 +112,7 @@ public class GateWayViewModel extends ViewModel {
         });
     }
 
+    @SuppressLint("CheckResult")
     public void insertBranch(int branchNumber, String branchName, String uuid) {
 
         Observable<Branch> insertBranch = apiClient.insertBranch(branchNumber, branchName, uuid, 2, selectedFoundation).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
@@ -131,20 +133,13 @@ public class GateWayViewModel extends ViewModel {
         });
     }
 
-    public boolean isInternetAvailable() {
-        try {
-            InetAddress ipAddr = InetAddress.getByName("google.com");
-            //You can replace it with your name
-            return !ipAddr.equals("");
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     public void SelectBranchStaff(String uuid, int moveType) {
         ApiClient tokenService = ServiceGenerator.tokenService(
                 ApiClient.class, Constants.BASE_URL);
+        Log.e("checkQueryParams", "query params = " + "init");
+
         Map<String, String> queryParams = GeneralRequestBodyUtil.toQueryParams();
+        Objects.requireNonNull(queryParams).put("permission", "1");
         Observable<Branches> getBranches = tokenService.getBranches(queryParams, uuid).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
         Observable<Stores> getStores = tokenService.getStores(
                 queryParams,
@@ -189,6 +184,7 @@ public class GateWayViewModel extends ViewModel {
                         Log.e("checkError", Objects.requireNonNull(errorBody).string());
 
                     } catch (IOException e) {
+                        Log.e("checkError", Objects.requireNonNull(e.getMessage()));
                         throw new RuntimeException(e);
                     }
                     //handle HTTP error response code

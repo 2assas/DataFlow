@@ -9,7 +9,7 @@ public class UserData implements Serializable {
     @SerializedName("token")
     private String token;
     @SerializedName("permission")
-    private int permission;
+    private int permission = -1;
     @SerializedName("BranchISN")
     private long branchISN;
     @SerializedName("branchName")

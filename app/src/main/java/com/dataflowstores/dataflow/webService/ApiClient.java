@@ -139,7 +139,6 @@ public interface ApiClient {
             @Query("uiid") String uuid,
             @Query("PricesTypeBranchISN") Long PricesTypeBranchISN,
             @Query("PricesTypeISN") Long PricesTypeISN,
-
             @Query("PriceType") Integer PriceType
     );
 
@@ -180,7 +179,7 @@ public interface ApiClient {
 
     @GET("invoices/query")
     Observable<Invoice> getPrintingData(
-            Map<String, String> queryParams, @Query("BranchISN") String branchISN, @Query("uiid") String uuid, @Query("Move_ID") String Move_ID,
+            @QueryMap Map<String, String> queryParams, @Query("BranchISN") String branchISN, @Query("uiid") String uuid, @Query("Move_ID") String Move_ID,
             @Query("WorkerCBranchISN") String WorkerCBranchISN, @Query("WorkerCISN") String WorkerCISN,
             @Query("MoveType") Integer MoveType
     );
@@ -299,7 +298,7 @@ public interface ApiClient {
     Observable<CashierMovesReportResponse> getCashierMovesReport(@Body ReportBody reportBody, @Query("IllustrativeQuantity") Integer IllustrativeQuantity, @Query("DeviceID") String DeviceID, @Query("LogIn_CurrentWorkingDayDate") String LogIn_CurrentWorkingDayDate, @Query("VendorID") Long VendorID, @Query("uiid") String uuid, @Query("StoreBranchISN") long storeBranchISN, @Query("StoreISN") long storeISN, @Query("WorkerBranchISN") long workerBranchISN, @Query("WorkerName") String WorkerName, @Query("user_name") String user_name, @Query("WorkStationName") String WorkStationName, @Query("WorkStation_ISN") String WorkStation_ISN, @Query("WorkStationBranchISN") String WorkStationBranchISN, @Query("MoveType") Integer MoveType, @Query("DealerType") Integer DealerType, @Query("DealerBranchISN") Integer DealerBranchISN, @Query("Dealer_ISN") Long Dealer_ISN, @Query("WorkerCISN") String WorkerCISN, @Query("WorkerCBranchISN") Long WorkerCBranchISN, @Query("SelectedFoundation") int selectedFoundation, @Query("LogIn_BISN") String LogIn_BISN, @Query("LogIn_UID") String LogIn_UID, @Query("LogIn_WBISN") String LogIn_WBISN, @Query("LogIn_WISN") String LogIn_WISN, @Query("LogIn_WName") String LogIn_WName, @Query("LogIn_WSBISN") String LogIn_WSBISN, @Query("LogIn_WSISN") String LogIn_WSISN, @Query("LogIn_WSName") String LogIn_WSName, @Query("LogIn_CS") String LogIn_CS, @Query("LogIn_VN") String LogIn_VN, @Query("LogIn_FAlternative") String LogIn_FAlternative, @Query("SupplierType") Integer SupplierType, @Query("SupplierBranchISN") Integer SupplierBranchISN, @Query("Supplier_ISN") Long Supplier_ISN, @Query("MobileSalesMaxDiscPer") String MobileSalesMaxDiscPer, @Query("ShiftSystemActivate") Integer ShiftSystemActivate, @Query("LogIn_ShiftBranchISN") Integer LogIn_ShiftBranchISN, @Query("LogIn_ShiftISN") Integer LogIn_ShiftISN, @Query("LogIn_Spare1") Integer LogIn_Spare1, @Query("LogIn_Spare2") Integer LogIn_Spare2, @Query("LogIn_Spare3") Integer LogIn_Spare3, @Query("LogIn_Spare4") Integer LogIn_Spare4, @Query("LogIn_Spare5") Integer LogIn_Spare5, @Query("LogIn_Spare6") Integer LogIn_Spare6);
 
     @GET("reports/AllMoves_Types")
-    Observable<MoveTypesResponse> getMoveTypes(Map<String, String> generalParams, @Query("uiid") String uuid);
+    Observable<MoveTypesResponse> getMoveTypes(@QueryMap Map<String, String> generalParams, @Query("uiid") String uuid);
 
     @GET("reports/itemssales_report")
     Observable<ItemSalesResponse> getItemSalesReport(
@@ -332,17 +331,17 @@ public interface ApiClient {
 
     //
     @GET("invoices/Get_Main_Expenses")
-    Observable<MainExpResponse> getMainExpenses(Map<String, String> generalParams, @Query("uiid") String uiid);
+    Observable<MainExpResponse> getMainExpenses( @QueryMap Map<String, String> generalParams, @Query("uiid") String uiid);
 
     @GET("workers")
-    Observable<WorkerResponse> getExpWorkers(Map<String, String> queryParams, @Query("uiid") String uiid, @Query("BranchISN") long branchISN, @Query("WorkerCBranchISN") long workerBranchISN, @Query("WorkerCISN") long workerISN, @Query("MoveType") int moveType);
+    Observable<WorkerResponse> getExpWorkers( @QueryMap Map<String, String> queryParams, @Query("uiid") String uiid, @Query("BranchISN") long branchISN, @Query("WorkerCBranchISN") long workerBranchISN, @Query("WorkerCISN") long workerISN, @Query("MoveType") int moveType);
 
     @GET("invoices/Get_Sub_Expenses")
-    Observable<SubExpResponse> getSubExpenses(Map<String, String> queryParams, @Query("uiid") String uiid);
+    Observable<SubExpResponse> getSubExpenses( @QueryMap Map<String, String> queryParams, @Query("uiid") String uiid);
 
 
     @GET("invoices/print_Expenses")
-    Observable<ExpensesResponse> getExpenses(Map<String, String> queryParams, @Query("BranchISN") long BranchISN, @Query("uiid") String uiid, @Query("Move_ID") String Move_ID, @Query("WorkerCBranchISN") long WorkerCBranchISN, @Query("WorkerCISN") long WorkerCISN, @Query("moveType") int moveType);
+    Observable<ExpensesResponse> getExpenses(@QueryMap Map<String, String> queryParams, @Query("BranchISN") long BranchISN, @Query("uiid") String uiid, @Query("Move_ID") String Move_ID, @Query("WorkerCBranchISN") long WorkerCBranchISN, @Query("WorkerCISN") long WorkerCISN, @Query("moveType") int moveType);
 
     @GET("invoices/Get_Item_Prices")
     Observable<ItemPriceResponse> getItemPrice(

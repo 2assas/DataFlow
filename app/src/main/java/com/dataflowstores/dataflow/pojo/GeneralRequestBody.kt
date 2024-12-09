@@ -1,5 +1,6 @@
 package com.dataflowstores.dataflow.pojo
 
+import android.util.Log
 import com.dataflowstores.dataflow.utils.GeneralParams
 import java.util.function.Function
 import java.util.stream.Collectors
@@ -47,7 +48,8 @@ data class GeneralRequestBody(
 
 object GeneralRequestBodyUtil {
     @JvmStatic
-    fun toQueryParams(): Map<String, String?> {
+    fun toQueryParams(): Map<String, String?>? {
+        try {
         val generalParams = GeneralParams()
         val requestBody = generalParams.generalRequestBody()
         return mapOf(
@@ -89,6 +91,10 @@ object GeneralRequestBodyUtil {
             "LogIn_F_Spare3" to requestBody.LogIn_F_Spare3.toString()
         ).filterValues { it != null  && it != "null"} // Remove entries with null values
             .mapValues { it.value!! }
+        } catch (e: Exception) {
+            Log.e("checkQueryParamsError", "error = ${e.message}")
+        }
+        return null
     }
 }
 fun GeneralRequestBody.toQueryParams(): Map<String, String?> {
