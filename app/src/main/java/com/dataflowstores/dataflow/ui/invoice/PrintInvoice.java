@@ -206,6 +206,8 @@ public class PrintInvoice extends BaseActivity implements Runnable {
         binding.dealerName.setText("المستخدم: " + App.printInvoice.getMoveHeader().getWorkerName());
         binding.tradeRecord.setText("السجل التجاري" + "\n" + App.printInvoice.getMoveHeader().getTradeRecoredNo());
         binding.taxCardNo.setText("رقم التسجيل" + "\n" + App.printInvoice.getMoveHeader().getTaxeCardNo());
+        binding.totalLines.setText("عدد السطور: " + App.printInvoice.getMoveHeader().getLinesCount());
+        binding.totalQuantity.setText("اجمالي الكمية: " + App.printInvoice.getMoveHeader().getINVTotalQuan());
         if (App.customerBalance != null && !App.customerBalance.isEmpty()) {
             binding.clientBalance.setText(App.customerBalance);
             binding.clientBalance.setVisibility(View.VISIBLE);
@@ -232,11 +234,6 @@ public class PrintInvoice extends BaseActivity implements Runnable {
             else
                 binding.tableNumber.setVisibility(View.GONE);
         }
-//        ArrayList<MoveLines> testList= new ArrayList<>();
-//        for(int i=0; i<50; i++)
-//            testList.addAll(App.printInvoice.getMoveLines());
-//
-//        App.printInvoice.setMoveLines(testList);
 
         binding.recyclerView.setAdapter(new PrintingLinesAdapter(App.printInvoice.getMoveLines()));
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));

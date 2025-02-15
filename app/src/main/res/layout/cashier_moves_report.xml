@@ -281,15 +281,16 @@
 
                 <Button
                     android:id="@+id/searchClient"
-                    android:layout_width="60dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:gravity="center"
                     android:text="بحث"
                     android:textAlignment="center"
                     android:textColor="@color/white"
-                    android:textSize="15sp"
+                    android:textSize="12sp"
                     android:textStyle="bold"
+                    style="@style/Widget.AppCompat.Button.Small"
                     app:layout_constraintBottom_toBottomOf="@+id/getClient"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/getClient" />
@@ -341,14 +342,15 @@
 
                 <Button
                     android:id="@+id/searchsupplier"
-                    android:layout_width="60dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:gravity="center"
                     android:text="بحث"
                     android:textAlignment="center"
                     android:textColor="@color/white"
-                    android:textSize="15sp"
+                    android:textSize="12sp"
+                    style="@style/Widget.AppCompat.Button.Small"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/getsupplier"
                     app:layout_constraintStart_toStartOf="parent"

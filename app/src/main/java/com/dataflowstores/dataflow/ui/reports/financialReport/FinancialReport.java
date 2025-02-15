@@ -218,6 +218,8 @@ public class FinancialReport extends BaseActivity {
                 reportBody = new ReportBody();
                 reportBody.setBranchISN(selectedBranch.getBranchISN());
                 reportBody.setWorker_ISN(String.valueOf(App.currentUser.getWorkerISN()));
+                reportBody.setLogIn_SafeDepositISN(String.valueOf(App.currentUser.getSafeDepositISN()));
+                reportBody.setLogIn_SafeDepositBranchISN(String.valueOf(App.currentUser.getSafeDepositBranchISN()));
 
                 if (binding.safeDepositCheckbox.isChecked()) {
                     reportBody.setSafeDeposit_ISN(String.valueOf(selectedSafeDeposit.getSafeDeposit_ISN()));
@@ -355,6 +357,8 @@ public class FinancialReport extends BaseActivity {
         reportBody.setToWorkday(workDayEnd);
 
         reportBody.setWorker_ISN(String.valueOf(App.currentUser.getWorkerISN()));
+        reportBody.setLogIn_SafeDepositISN(String.valueOf(App.currentUser.getSafeDepositISN()));
+        reportBody.setLogIn_SafeDepositBranchISN(String.valueOf(App.currentUser.getSafeDepositBranchISN()));
         binding.cashCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 cash = 1;

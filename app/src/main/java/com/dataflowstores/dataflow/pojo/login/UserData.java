@@ -467,15 +467,6 @@ public class UserData implements Serializable {
         return LogIn_Spare6;
     }
 
-    //    ShiftSystemActivate
-//            LogIn_ShiftBranchISN
-//    LogIn_ShiftISN
-//            LogIn_Spare1
-//    LogIn_Spare2
-//            LogIn_Spare3
-//    LogIn_Spare4
-//            LogIn_Spare5
-//    LogIn_Spare6
     public Integer getMobilePayment() {
         return MobilePayment;
     }

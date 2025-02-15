@@ -62,6 +62,9 @@ public class App extends Application {
     public static String pdfName = "";
     public static int theme = R.style.AppTheme;
     public static String uuid;
+    public static int lastSelectedStore = -1;
+    public static int lastSelectedFromStoreCaching = -1;
+    public static int lastSelectedToStoreCaching = -1;
 
 
     public static int getMoveType() {

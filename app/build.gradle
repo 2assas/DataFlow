@@ -10,8 +10,8 @@ android {
         minSdk= 19
         targetSdk = 34
         compileSdk = 34
-        versionCode 62
-        versionName "24.1109"
+        versionCode 66
+        versionName "24.1229"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'

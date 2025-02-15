@@ -196,7 +196,7 @@ public class ProductVM extends ViewModel {
         });
     }
     public void getItemPrice(String uuid, int itemBranchISN, int itemISN, int priceType){
-        Observable<ItemPriceResponse> storeReportModelObservable = apiClient.getItemPrice(generalParams, uuid, itemBranchISN, itemISN, priceType)
+        Observable<ItemPriceResponse> storeReportModelObservable = apiClient.getItemPrice(generalParams, uuid, itemBranchISN, priceType, itemISN)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
         storeReportModelObservable.subscribe(new Observer<ItemPriceResponse>() {

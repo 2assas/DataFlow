@@ -134,6 +134,8 @@ public class CashingPrinting extends BaseActivity implements Runnable {
         binding.branchName.setText(App.currentUser.getBranchName());
         binding.invoiceDate.setText("التاريخ: " + App.printInvoice.getMoveHeader().getCreateDate().replace(".000", ""));
         binding.dealerName.setText("الموظف: " + App.printInvoice.getMoveHeader().getWorkerName());
+        binding.totalLines.setText("عدد السطور: " + App.printInvoice.getMoveHeader().getLinesCount());
+        binding.totalQuantity.setText("اجمالي الكمية: " + App.printInvoice.getMoveHeader().getINVTotalQuan());
         switch (moveType) {
             case 16: {
                 binding.cashingNumber.setText("إذن صرف رقم " + App.printInvoice.getMoveHeader().getMove_ID());

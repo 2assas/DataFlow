@@ -154,11 +154,22 @@ public class MoveHeader implements Serializable {
     String DealerISN="";
     @SerializedName("BranchNameStockMove")
     String BranchNameStockMove="";
+    @SerializedName("LinesCount")
+    int LinesCount = 0;
+    @SerializedName("INVTotalQuan")
+    double INVTotalQuan = 0;
 
     public String getBranchNameStockMove() {
         return BranchNameStockMove;
     }
 
+    public int getLinesCount() {
+        return LinesCount;
+    }
+
+    public double getINVTotalQuan() {
+        return INVTotalQuan;
+    }
     public void setBranchNameStockMove(String branchNameStockMove) {
         BranchNameStockMove = branchNameStockMove;
     }

@@ -291,7 +291,19 @@ public class ReportViewModel extends ViewModel {
 
     public void getCashierMoves(ReportBody reportBody, String uuid, long storeBranchISN, long storeISN, long workerBranch, Integer moveType, CustomerData customerData, DataItem selectedWorker, CustomerData supplierData) {
 
-        Observable<CashierMovesReportResponse> observable = apiClient.getCashierMovesReport(reportBody,App.currentUser.getIllustrativeQuantity(),App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(),App.currentUser.getVendorID(), uuid, storeBranchISN, storeISN, workerBranch, App.currentUser.getWorkerName(),
+        Observable<CashierMovesReportResponse> observable = apiClient.getCashierMovesReport(
+                        reportBody,
+                        currentUser.getMobileC_D_B_W_W_C(),
+                        currentUser.getMobileOldShiftUse(),
+                        currentUser.getPermission(),
+                        currentUser.getMobileAllowCreateForward(),
+                        currentUser.getMobileAllowCreateForwardAmount(),
+                        currentUser.getMobileWS_AllowCreateForward(),
+                        currentUser.getMobileWS_AllowCreateForwardAmount(),
+                        currentUser.getLogIn_F_Spare1(),
+                        currentUser.getLogIn_F_Spare2(),
+                        currentUser.getLogIn_F_Spare3(),
+                        App.currentUser.getIllustrativeQuantity(), App.currentUser.getDeviceID(), App.currentUser.getLogIn_CurrentWorkingDayDate(), App.currentUser.getVendorID(), uuid, storeBranchISN, storeISN, workerBranch, App.currentUser.getWorkerName(),
                         App.currentUser.getUserName(), App.currentUser.getWorkStationName(), String.valueOf(App.currentUser.getWorkStationISN()), String.valueOf(App.currentUser.getWorkerBranchISN()),
                         moveType, customerData == null ? null : customerData.getDealerType(), customerData == null ? null : customerData.getBranchISN(), customerData == null ? null : customerData.getDealer_ISN(),
                         selectedWorker == null ? null : selectedWorker.getWorkerISN(), selectedWorker == null ? null : Long.valueOf(selectedWorker.getBranchISN()),selectedFoundation,

@@ -32,19 +32,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/loginContainer"
+                android:id="@+id/parentCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="100dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView"
+                app:layout_constraintTop_toBottomOf="@+id/imageView">
 
-                >
-
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardView2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -54,6 +51,7 @@
                     android:layout_marginEnd="20dp"
                     android:layout_marginRight="20dp"
                     app:cardCornerRadius="15dp"
+                    app:cardElevation="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/cardView">
@@ -63,8 +61,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
-                        app:passwordToggleEnabled="true"
-                        >
+                        app:passwordToggleEnabled="true">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/password"
@@ -72,8 +69,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_margin="15dp"
-
-                            android:background="@color/white"
+                            android:background="@color/transparent"
                             android:hint="@string/password"
                             android:imeOptions="actionDone"
 
@@ -82,15 +78,16 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
+                    app:cardElevation="8dp"
                     app:cardCornerRadius="15dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -109,7 +106,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_margin="15dp"
-                            android:background="@color/white"
+                            android:background="@color/transparent"
                             android:hint="@string/username"
                             android:imeOptions="actionNext"
                             android:inputType="text"
@@ -118,16 +115,17 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
 
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/foundationCard"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="20dp"
+                    app:cardElevation="8dp"
                     android:layout_marginEnd="20dp"
                     android:layout_marginRight="20dp"
                     android:visibility="gone"
@@ -153,16 +151,17 @@
                             android:inputType="text" />
 
                     </com.google.android.material.textfield.TextInputLayout>
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/phoneCard"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="20dp"
+                    app:cardElevation="8dp"
                     android:layout_marginEnd="20dp"
                     android:layout_marginRight="20dp"
                     android:visibility="gone"
@@ -189,9 +188,9 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/branchNameCard"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -200,6 +199,7 @@
                     android:layout_marginTop="20dp"
                     android:layout_marginEnd="20dp"
                     android:layout_marginRight="20dp"
+                    app:cardElevation="8dp"
                     android:visibility="gone"
                     app:cardCornerRadius="15dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -223,9 +223,9 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/branchNumberCard"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -233,6 +233,7 @@
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginEnd="20dp"
+                    app:cardElevation="8dp"
                     android:layout_marginRight="20dp"
                     android:visibility="gone"
                     app:cardCornerRadius="15dp"
@@ -243,6 +244,7 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@color/white"
                         android:orientation="vertical">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -257,7 +259,7 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
 
                 <Spinner
@@ -271,7 +273,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/branchNumberCard" />
 
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/workstationName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -304,7 +306,7 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
                 <include
                     android:id="@+id/selectBranch"
@@ -385,7 +387,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
+            <!--            </com.google.android.material.card.MaterialCardView>-->
             <CheckBox
                 android:id="@+id/rememberMe"
                 android:layout_width="wrap_content"
@@ -393,7 +395,7 @@
                 android:layout_marginTop="5dp"
                 android:gravity="center"
                 app:layout_constraintEnd_toStartOf="@+id/textView12"
-                app:layout_constraintTop_toBottomOf="@+id/loginContainer" />
+                app:layout_constraintTop_toBottomOf="@+id/parentCard" />
 
 
             <TextView
@@ -404,7 +406,7 @@
 
                 android:textSize="17sp"
                 app:layout_constraintBottom_toBottomOf="@+id/rememberMe"
-                app:layout_constraintEnd_toEndOf="@+id/loginContainer"
+                app:layout_constraintEnd_toEndOf="@+id/parentCard"
                 app:layout_constraintHorizontal_bias="0.54"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/rememberMe" />

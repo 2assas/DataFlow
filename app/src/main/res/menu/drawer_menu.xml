@@ -84,7 +84,7 @@
         <menu>
             <item
                 android:id="@+id/appVersion"
-                android:title="24.1109" />
+                android:title="24.1229" />
         </menu>
     </item>
     <item

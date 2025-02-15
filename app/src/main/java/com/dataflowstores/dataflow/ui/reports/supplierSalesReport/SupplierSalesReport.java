@@ -294,7 +294,7 @@ public class SupplierSalesReport extends BaseActivity implements MyDialogCloseLi
                     } else {
                         customerData = null;
                     }
-
+                    binding.reportButton.setEnabled(false);
                     reportBody = new ReportBody();
                     reportBody.setBranchISN(selectedBranch.getBranchISN());
                     if (binding.shiftsCheckbox.isChecked()) {

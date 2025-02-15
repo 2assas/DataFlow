@@ -148,7 +148,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <View
-                    android:id="@+id/view2"
+                    android:id="@+id/view11"
                     android:layout_width="0dp"
                     android:layout_height="2dp"
                     android:layout_marginStart="10dp"
@@ -158,6 +158,42 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/invoiceHeader" />
+
+
+                <TextView
+                    android:id="@+id/totalQuantity"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:gravity="start"
+                    android:text="اجمالي الكمية: "
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toStartOf="@+id/totalLines"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/view11" />
+
+                <TextView
+                    android:id="@+id/totalLines"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:text="عدد السطور: "
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/totalQuantity"
+                    app:layout_constraintTop_toBottomOf="@+id/view11" />
+
+                <View
+                    android:id="@+id/view2"
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/totalQuantity" />
+
 
                 <LinearLayout
                     android:id="@+id/linearLayout"

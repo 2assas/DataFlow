@@ -45,7 +45,8 @@
                 android:text="سعر الشراء"
                 android:textColor="@color/white"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:targetApi="lollipop" />
 
             <RadioButton
                 android:id="@+id/sellingPrice"
@@ -54,8 +55,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="30dp"
                 android:text="سعر البيع"
+                android:buttonTint="@color/white"
                 android:textColor="@color/white"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:targetApi="lollipop" />
 
         </RadioGroup>
 

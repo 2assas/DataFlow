@@ -31,6 +31,12 @@ public class ReportBody{
 	@SerializedName("SafeDepositBranchISN")
 	private String safeDepositBranchISN;
 
+	@SerializedName("LogIn_SafeDepositBranchISN")
+	private String LogIn_SafeDepositBranchISN;
+
+	@SerializedName("LogIn_SafeDepositISN")
+	private String LogIn_SafeDepositISN;
+
 	@SerializedName("Worker_ISN")
 	private String Worker_ISN;
 
@@ -41,6 +47,8 @@ public class ReportBody{
 
 	@SerializedName("to")
 	private String to;
+
+
 
 
 	public String getSafeDepositBranchISN() {
@@ -141,5 +149,21 @@ public class ReportBody{
 
 	public String getBankISN(){
 		return bankISN;
+	}
+
+	public String getLogIn_SafeDepositBranchISN() {
+		return LogIn_SafeDepositBranchISN;
+	}
+
+	public String getLogIn_SafeDepositISN() {
+		return LogIn_SafeDepositISN;
+	}
+
+	public void setLogIn_SafeDepositBranchISN(String logIn_SafeDepositBranchISN) {
+		LogIn_SafeDepositBranchISN = logIn_SafeDepositBranchISN;
+	}
+
+	public void setLogIn_SafeDepositISN(String logIn_SafeDepositISN) {
+		LogIn_SafeDepositISN = logIn_SafeDepositISN;
 	}
 }

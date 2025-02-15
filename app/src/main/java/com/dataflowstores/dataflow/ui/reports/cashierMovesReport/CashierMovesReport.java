@@ -180,6 +180,13 @@ public class CashierMovesReport extends BaseActivity implements MyDialogCloseLis
                     }
                     intent.putExtra("dataList", (Serializable) cashierMovesReportResponse.getData());
 
+                    if (cashierMovesReportResponse.getINVTotalQuan() != 0) {
+                        intent.putExtra("totalQuantity", cashierMovesReportResponse.getINVTotalQuan());
+                    }
+                    if (cashierMovesReportResponse.getLinesCount() != 0) {
+                        intent.putExtra("totalCount", cashierMovesReportResponse.getLinesCount());
+                    }
+
                     startActivity(intent);
                 } else {
                     Toast.makeText(this, getString(R.string.no_result), Toast.LENGTH_LONG).show();
@@ -475,6 +482,8 @@ public class CashierMovesReport extends BaseActivity implements MyDialogCloseLis
         workDayEnd = binding.workEndTime.getText().toString();
 
         reportBody.setBranchISN(App.currentUser.getBranchISN());
+        reportBody.setLogIn_SafeDepositISN(String.valueOf(App.currentUser.getSafeDepositISN()));
+        reportBody.setLogIn_SafeDepositBranchISN(String.valueOf(App.currentUser.getSafeDepositBranchISN()));
         reportBody.setWorker_ISN(String.valueOf(App.currentUser.getWorkerISN()));
         if (binding.safeDepositCheckbox.isChecked()) {
             reportBody.setSafeDeposit_ISN(String.valueOf(selectedSafeDeposit.getSafeDeposit_ISN()));
@@ -542,6 +551,8 @@ public class CashierMovesReport extends BaseActivity implements MyDialogCloseLis
         }
         reportBody = new ReportBody();
         reportBody.setBranchISN(selectedBranch.getBranchISN());
+        reportBody.setLogIn_SafeDepositISN(String.valueOf(App.currentUser.getSafeDepositISN()));
+        reportBody.setLogIn_SafeDepositBranchISN(String.valueOf(App.currentUser.getSafeDepositBranchISN()));
         if (binding.safeDepositCheckbox.isChecked()) {
             reportBody.setSafeDeposit_ISN(String.valueOf(selectedSafeDeposit.getSafeDeposit_ISN()));
             reportBody.setSafeDepositBranchISN(String.valueOf(selectedSafeDeposit.getBranchISN()));

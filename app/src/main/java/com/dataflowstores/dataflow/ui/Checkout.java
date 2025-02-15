@@ -156,6 +156,7 @@ public class Checkout extends BaseActivity implements LocationListener {
         });
 
         checkoutVM.responseDataMutableLiveData.observe(this, response -> {
+            App.lastSelectedStore = -1;
             isLoading = false;
             binding.progress.setVisibility(View.GONE);
             String errorMessage = response.getMessage();

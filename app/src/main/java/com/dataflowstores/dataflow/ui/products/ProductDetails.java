@@ -84,6 +84,7 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
             handleSpinners();
             unitSpinner();
             stores_priceTypeSpinner();
+            priceTypeSpinner();
             quantityButtons();
             bonusButtons();
             addButton();
@@ -261,7 +262,7 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
             }
             binding.price3.setText("نسبة: " + String.format(Locale.ENGLISH, "%.3f", Double.parseDouble(App.product.getItemTax())) + "% ");
             binding.price4.setText("قيمة: " + String.format(Locale.ENGLISH, "%.3f",
-                    (App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax()))) + "جنيه ");
+                                                            (App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax()))) + "جنيه ");
             App.product.setBarCodePrice(true);
         }
     }
@@ -478,7 +479,7 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
                     }
                 } else {
                     binding.price4.setText("قيمة: " + String.format(Locale.ENGLISH, "%.3f",
-                            (App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax()))) + "جنيه ");
+                                                                    (App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax()))) + "جنيه ");
                     binding.itemDiscVal.setText("");
                     App.product.setNetPrice(App.product.getPriceItem() * quantity);
                     App.product.setDiscount1(0);
@@ -521,7 +522,7 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
                 } else {
                     binding.price2.setText(String.format(Locale.US, "%.3f", (App.product.getPriceItem() * quantity)) + " جنيه");
                     binding.price4.setText("قيمة: " + String.format(Locale.ENGLISH, "%.3f",
-                            (App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax()))) + "جنيه ");
+                                                                    (App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax()))) + "جنيه ");
                     binding.itemDiscPer.setText("");
                     App.product.setNetPrice(App.product.getPriceItem() * quantity);
                     App.product.setDiscount1(0);
@@ -631,7 +632,6 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
                 App.product.setSelectedStore(App.stores.getData().get(0));
             }
         });
-//      =========================
         if (App.product.getSelectedStore() != null) {
             for (int i = 0; i < App.stores.getData().size(); i++) {
                 if (App.product.getSelectedStore() == App.stores.getData().get(i))
@@ -670,11 +670,20 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
                         break;
                 }
             }
-
+            if (App.lastSelectedStore != -1) {
+                for (int i = 0; i < App.stores.getData().size(); i++) {
+                    if (App.lastSelectedStore == App.stores.getData().get(i).getStore_ISN())
+                        binding.storesList.setSelection(i);
+                }
+                return;
+            }
         }
+    }
+
+    private void priceTypeSpinner() {
+        Log.e("checkPriceType", " priceType Should show");
         ArrayList<String> priceType = new ArrayList<>();
         priceType.add(App.priceType.getPricesTypeName());
-
         ArrayAdapter bb = new ArrayAdapter(this, android.R.layout.simple_spinner_item, priceType);
         bb.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.priceType.setAdapter(bb);
@@ -683,7 +692,6 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 App.product.setSelectedPriceType(App.priceType);
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
                 App.product.setSelectedPriceType(App.priceType);
@@ -870,6 +878,7 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
     private void addButton() {
         binding.saveProduct.setOnClickListener(view -> {
             double itemPrice = (Double.parseDouble(binding.price.getText().toString().replace(" ", "").replace("جنيه", "")) / quantity);
+            binding.saveProduct.setClickable(false);
             if (!String.format(Locale.ENGLISH, "%.3f", measureUnit.getPrice()).equals(String.format(Locale.ENGLISH, "%.3f", itemPrice))) {
                 new AlertDialog.Builder(this).setMessage("سعر " + "(" + measureUnit.getMeasureUnitArName() + ")" + " لنوع سعر " + "(" + priceType.getPricesTypeName() + ")" +
                                                                  " هو " + "(" + String.format(Locale.ENGLISH, "%.3f", measureUnit.getPrice()) + ")" + " وسيتم إضافته بسعر " + "(" + String.format(Locale.ENGLISH, "%.3f", itemPrice) + ")" +
@@ -878,6 +887,7 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
                     dialogInterface.dismiss();
                 })).setNegativeButton("إلغاء", ((dialogInterface, i) -> {
                     dialogInterface.dismiss();
+                    binding.saveProduct.setClickable(true);
                 })).setCancelable(false).show();
             } else {
                 saveProduct();
@@ -889,6 +899,7 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
         App.product.setUserNote(binding.productNote.getText().toString());
         App.product.setIllustrativeQuantity(Double.parseDouble(binding.illQuantity.illQuantity.getText().toString()));
         App.product.setPriceTotal(App.product.getPriceItem() * quantity);
+        App.lastSelectedStore = product.getSelectedStore().getStore_ISN();
         product.setAllowStoreMinus(product.getSelectedStore().getAllowCurrentStoreMinus());
         App.product.setTotalTax((App.product.getNetPrice() / 100 * Double.parseDouble(App.product.getItemTax())));
         if (App.product.getSerial() && !binding.serial.getText().toString().isEmpty()) {
@@ -953,6 +964,7 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
                                     finish();
                                 }).setNegativeButton("إلغاء", (dialogInterface, i) -> {
                                     checkoutVM.checkItemMutableLiveData = new MutableLiveData<>();
+                                    binding.saveProduct.setClickable(true);
                                     dialogInterface.dismiss();
                                 }).show();
                     } else if (response.getStatus() == 0 && (App.currentUser.getAllowStoreMinus() == 1 ||
@@ -968,12 +980,12 @@ public class ProductDetails extends BaseActivity implements View.OnFocusChangeLi
                                 .setCancelable(false)
                                 .setNegativeButton("إلغاء", (dialogInterface, i) -> {
                                     checkoutVM.checkItemMutableLiveData = new MutableLiveData<>();
+                                    binding.saveProduct.setClickable(true);
                                     dialogInterface.dismiss();
                                 }).show();
                     } else {
                         if (!App.isEditing) {
                             App.selectedProducts.add(App.product);
-                            binding.saveProduct.setClickable(false);
                             if (App.product.getSelectedUnit().getSpecialDiscFound() == 1) {
                                 App.specialDiscount = 1;
                             }

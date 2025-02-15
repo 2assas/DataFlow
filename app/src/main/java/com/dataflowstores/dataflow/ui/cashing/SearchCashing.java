@@ -169,7 +169,8 @@ public class SearchCashing extends BaseActivity {
         binding.invoiceTemplate.invoiceDate.setText("التاريخ: " + App.printInvoice.getMoveHeader().getCreateDate().replace(".000", ""));
         binding.invoiceTemplate.dealerName.setText("الموظف: " + App.printInvoice.getMoveHeader().getWorkerName());
         binding.invoiceTemplate.foundationName.setText(App.currentUser.getFoundationName());
-
+        binding.invoiceTemplate.totalLines.setText("عدد السطور: " + App.printInvoice.getMoveHeader().getLinesCount());
+        binding.invoiceTemplate.totalQuantity.setText("اجمالي الكمية: " + App.printInvoice.getMoveHeader().getINVTotalQuan());
         switch (moveType) {
             case 16: {
                 binding.invoiceTemplate.cashingNumber.setText("إذن صرف رقم " + App.printInvoice.getMoveHeader().getMove_ID());

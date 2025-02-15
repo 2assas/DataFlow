@@ -9,6 +9,7 @@
         <item name="android:textColor">@color/black</item>
         <item name="background">@color/white</item>
         <item name="fontFamily">@font/cairo_regular</item>
+        <item name="shapeAppearanceSmallComponent">@style/CustomCardShape</item>
     </style>
 
     <style name="SecondTheme" parent="Theme.Material3.Light.NoActionBar">
@@ -21,9 +22,22 @@
         <item name="colorError">@color/colorError</item>
         <item name="background">@color/colorNatural</item>
         <item name="fontFamily">@font/cairo_regular</item>
+        <item name="shapeAppearanceSmallComponent">@style/CustomCardShape</item>
 
     </style>
 
+    <!-- Custom Card Style -->
+        <style name="CustomCardStyle" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardElevation">8dp</item>
+        <item name="shapeAppearanceSmallComponent">@style/CustomCardShape</item>
+        <item name="cardBackgroundColor">@color/white</item>
+    </style>
+
+    <!-- Custom Shape -->
+    <style name="CustomCardShape" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">4dp</item>
+    </style>
 
     <style name="NavigationDrawerStyle">
         <item name="fontFamily">@font/cairo_regular</item>
@@ -47,8 +61,9 @@
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
     </style>
-    <style name="CustomRadioButtonStyle" parent="Widget.AppCompat.CompoundButton.RadioButton">
-        <item name="android:buttonTint" tools:targetApi="lollipop">@color/white</item>
+    <style name="CustomRadioButtonStyle" parent="Widget.Material3.CompoundButton.RadioButton">
+        <item name="rippleColor" tools:targetApi="lollipop">@color/white</item>
+        <item name="buttonTint" tools:targetApi="lollipop">@color/white</item>
     </style>
 
 

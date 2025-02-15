@@ -15,6 +15,11 @@ public class CashierMovesReportResponse implements Serializable {
 	@SerializedName("status")
 	private int status;
 
+	@SerializedName("LinesCount")
+	int LinesCount = 0;
+	@SerializedName("INVTotalQuan")
+	double INVTotalQuan = 0;
+
 	public List<CashierMoveData> getData(){
 		return data;
 	}
@@ -25,5 +30,21 @@ public class CashierMovesReportResponse implements Serializable {
 
 	public int getStatus(){
 		return status;
+	}
+
+	public int getLinesCount() {
+		return LinesCount;
+	}
+
+	public void setLinesCount(int linesCount) {
+		LinesCount = linesCount;
+	}
+
+	public double getINVTotalQuan() {
+		return INVTotalQuan;
+	}
+
+	public void setINVTotalQuan(double INVTotalQuan) {
+		this.INVTotalQuan = INVTotalQuan;
 	}
 }

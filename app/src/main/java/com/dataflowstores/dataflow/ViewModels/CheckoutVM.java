@@ -199,6 +199,16 @@ public class CheckoutVM extends ViewModel {
         requestBody.setLogIn_Spare4(App.currentUser.getLogIn_Spare4());
         requestBody.setLogIn_Spare5(App.currentUser.getLogIn_Spare5());
         requestBody.setLogIn_Spare6(App.currentUser.getLogIn_Spare6());
+        requestBody.setMobileC_D_B_W_W_C(currentUser.getMobileC_D_B_W_W_C());
+        requestBody.setMobileOldShiftUse(currentUser.getMobileOldShiftUse());
+        requestBody.setPermission(String.valueOf(currentUser.getPermission() == -1 ? null : currentUser.getPermission()));
+        requestBody.setMobileAllowCreateForward(App.currentUser.getMobileAllowCreateForward());
+        requestBody.setMobileAllowCreateForwardAmount(String.valueOf(App.currentUser.getMobileAllowCreateForwardAmount()));
+        requestBody.setMobileWS_AllowCreateForward(App.currentUser.getMobileWS_AllowCreateForward());
+        requestBody.setMobileWS_AllowCreateForwardAmount(String.valueOf(App.currentUser.getMobileWS_AllowCreateForwardAmount()));
+        requestBody.setLogIn_F_Spare1(String.valueOf(App.currentUser.getLogIn_F_Spare1()));
+        requestBody.setLogIn_F_Spare2(String.valueOf(App.currentUser.getLogIn_F_Spare2()));
+        requestBody.setLogIn_F_Spare3(String.valueOf(App.currentUser.getLogIn_F_Spare3()));
 
 
         Observable<InvoiceResponse> checkItem = apiClient.checkItem(requestBody)

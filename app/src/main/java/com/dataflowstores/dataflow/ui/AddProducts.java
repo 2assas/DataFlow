@@ -56,7 +56,7 @@ public class AddProducts extends BaseActivity implements MyDialogCloseListener ,
     Boolean isSerial = false;
     List<SearchProductResponse> searchProductList = new ArrayList<>();
     String itemCode = "";
-
+    String searchQuery = "";
     @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,16 +83,32 @@ public class AddProducts extends BaseActivity implements MyDialogCloseListener ,
                 selectedProductsAdapter.notifyDataSetChanged();
                 binding.productsRecycler.setAdapter(selectedProductsAdapter);
                 setOrderSummary(false);
-                binding.invoice.setOnClickListener(view -> {
-                    setOrderSummary(true);
-                });
+            } else {
+                App.lastSelectedStore = -1;
             }
+            setupViews();
             recyclerSwipe();
             barCodeScan();
             searchProducts();
             observeSearching();
             observeSearchProduct();
         }
+    }
+
+    private void setupViews(){
+        binding.invoice.setOnClickListener(view -> {
+            if (!searchQuery.isEmpty()) {
+                if (App.isNetworkAvailable(AddProducts.this)) {
+                    productVM.getProduct(searchQuery, uuid, null, getMoveType(), null);
+                    BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
+                    bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+                } else {
+                    App.noConnectionDialog(AddProducts.this);
+                }
+            } else {
+                setOrderSummary(true);
+            }
+        });
     }
 
     @Override
@@ -152,27 +168,18 @@ public class AddProducts extends BaseActivity implements MyDialogCloseListener ,
                 }
                 BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
                 bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
-                Log.e("checkType2", App.invoiceType.name());
-                invoiceName();
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                binding.invoice.setText("بحث عن صنف");
-                productVM.setSearchQuery(s);
-                binding.invoice.setOnClickListener(view -> {
-                    if (App.isNetworkAvailable(AddProducts.this)) {
-                        productVM.getProduct(s, uuid, null, getMoveType(), null);
-                        BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
-                        bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
-                    } else {
-                        App.noConnectionDialog(AddProducts.this);
-                    }
-                    Log.e("checkType3", App.invoiceType.name());
+                searchQuery = s;
+                if (s.isEmpty()) {
                     invoiceName();
-
-                });
+                } else {
+                    binding.invoice.setText("بحث عن صنف");
+                    productVM.setSearchQuery(s);
+                }
                 return false;
             }
         });
@@ -321,7 +328,6 @@ public class AddProducts extends BaseActivity implements MyDialogCloseListener ,
                 bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
                 Log.e("checkType4", App.invoiceType.name());
                 invoiceName();
-
             }
             if (resultCode == RESULT_CANCELLED) {
                 //handle cancel

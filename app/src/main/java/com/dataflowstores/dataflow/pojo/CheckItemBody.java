@@ -1,5 +1,7 @@
 package com.dataflowstores.dataflow.pojo;
 
+import com.dataflowstores.dataflow.App;
+
 import java.util.ArrayList;
 
 public class CheckItemBody {
@@ -77,6 +79,17 @@ public class CheckItemBody {
     private Integer LogIn_Spare4;
     private Integer LogIn_Spare5;
     private Integer LogIn_Spare6;
+    private String MobileC_D_B_W_W_C;
+    private String MobileOldShiftUse;
+    private String permission;
+    private String MobileAllowCreateForward;
+    private String MobileAllowCreateForwardAmount;
+    private String MobileWS_AllowCreateForward;
+    private String MobileWS_AllowCreateForwardAmount;
+    private String LogIn_F_Spare1;
+    private String LogIn_F_Spare2;
+    private String LogIn_F_Spare3;
+
 
     public Integer getIllustrativeQuantity() {
         return IllustrativeQuantity;
@@ -668,5 +681,85 @@ public class CheckItemBody {
 
     public void setLogIn_Spare6(Integer logIn_Spare6) {
         LogIn_Spare6 = logIn_Spare6;
+    }
+
+    public String getMobileC_D_B_W_W_C() {
+        return MobileC_D_B_W_W_C;
+    }
+
+    public void setMobileC_D_B_W_W_C(String mobileC_D_B_W_W_C) {
+        MobileC_D_B_W_W_C = mobileC_D_B_W_W_C;
+    }
+
+    public String getMobileOldShiftUse() {
+        return MobileOldShiftUse;
+    }
+
+    public void setMobileOldShiftUse(String mobileOldShiftUse) {
+        MobileOldShiftUse = mobileOldShiftUse;
+    }
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public void setPermission(String permission) {
+        this.permission = permission;
+    }
+
+    public String getMobileAllowCreateForward() {
+        return MobileAllowCreateForward;
+    }
+
+    public void setMobileAllowCreateForward(String mobileAllowCreateForward) {
+        MobileAllowCreateForward = mobileAllowCreateForward;
+    }
+
+    public String getMobileAllowCreateForwardAmount() {
+        return MobileAllowCreateForwardAmount;
+    }
+
+    public void setMobileAllowCreateForwardAmount(String mobileAllowCreateForwardAmount) {
+        MobileAllowCreateForwardAmount = mobileAllowCreateForwardAmount;
+    }
+
+    public String getMobileWS_AllowCreateForward() {
+        return MobileWS_AllowCreateForward;
+    }
+
+    public void setMobileWS_AllowCreateForward(String mobileWS_AllowCreateForward) {
+        MobileWS_AllowCreateForward = mobileWS_AllowCreateForward;
+    }
+
+    public String getMobileWS_AllowCreateForwardAmount() {
+        return MobileWS_AllowCreateForwardAmount;
+    }
+
+    public void setMobileWS_AllowCreateForwardAmount(String mobileWS_AllowCreateForwardAmount) {
+        MobileWS_AllowCreateForwardAmount = mobileWS_AllowCreateForwardAmount;
+    }
+
+    public String getLogIn_F_Spare1() {
+        return LogIn_F_Spare1;
+    }
+
+    public void setLogIn_F_Spare1(String logIn_F_Spare1) {
+        LogIn_F_Spare1 = logIn_F_Spare1;
+    }
+
+    public String getLogIn_F_Spare2() {
+        return LogIn_F_Spare2;
+    }
+
+    public void setLogIn_F_Spare2(String logIn_F_Spare2) {
+        LogIn_F_Spare2 = logIn_F_Spare2;
+    }
+
+    public String getLogIn_F_Spare3() {
+        return LogIn_F_Spare3;
+    }
+
+    public void setLogIn_F_Spare3(String logIn_F_Spare3) {
+        LogIn_F_Spare3 = logIn_F_Spare3;
     }
 }

@@ -79,6 +79,7 @@ public class InvoicesFragment extends Fragment {
         binding.back.setOnClickListener(view -> {
             back();
         });
+        App.lastSelectedStore = -1;
         saleOrders();
         purchaseOrders();
     }

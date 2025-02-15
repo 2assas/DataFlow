@@ -191,6 +191,8 @@ public class SearchInvoice extends BaseActivity {
             }
         } else
             binding.invoiceTemplate.invoiceNumber.setText("رقم  الشيك: " + App.printInvoice.getMoveHeader().getBillNumber());
+        binding.invoiceTemplate.totalLines.setText("عدد السطور: " + App.printInvoice.getMoveHeader().getLinesCount());
+        binding.invoiceTemplate.totalQuantity.setText("اجمالي الكمية: " + App.printInvoice.getMoveHeader().getINVTotalQuan());
         binding.invoiceTemplate.foundationName.setText(App.currentUser.getFoundationName());
         binding.invoiceTemplate.branchName.setText(App.printInvoice.getMoveHeader().getBranchName());
         binding.invoiceTemplate.moveId.setText("رقم الفاتورة: " + App.printInvoice.getMoveHeader().getMove_ID());

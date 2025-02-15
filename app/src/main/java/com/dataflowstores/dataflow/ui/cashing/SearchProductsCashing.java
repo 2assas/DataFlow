@@ -75,11 +75,11 @@ public class SearchProductsCashing extends BaseActivity implements MyDialogClose
     List<SearchProductResponse> searchProductList = new ArrayList<>();
     String itemCode = "";
     boolean isLoading = false;
+    String searchQuery = "";
 
     @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             startActivity(new Intent(this, SplashScreen.class));
@@ -149,7 +149,16 @@ public class SearchProductsCashing extends BaseActivity implements MyDialogClose
             setOrderSummary(false);
         }
         binding.invoice.setOnClickListener(view -> {
-            if (App.selectedProducts.size() > 0) {
+            if (!searchQuery.isEmpty()) {
+                if (App.isNetworkAvailable(SearchProductsCashing.this))
+                    productVM.getProduct(searchQuery, uuid, null, moveType, null);
+                else {
+                    App.noConnectionDialog(SearchProductsCashing.this);
+                }
+                BottomSheetFragmentCashing bottomSheetFragment = new BottomSheetFragmentCashing(moveType);
+                bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+            } else {
+                if (!App.selectedProducts.isEmpty()) {
                 if (requiredData()) {
                     binding.invoice.setClickable(false);
                     if (lat == 0 && _long == 0) {
@@ -162,7 +171,10 @@ public class SearchProductsCashing extends BaseActivity implements MyDialogClose
                     }
                     binding.progress.setVisibility(View.VISIBLE);
                 }
+                }
             }
+
+
         });
         binding.branch.setOnClickListener(v -> {
             binding.addBranch.getRoot().setVisibility(View.VISIBLE);
@@ -274,25 +286,18 @@ public class SearchProductsCashing extends BaseActivity implements MyDialogClose
                 }
                 BottomSheetFragmentCashing bottomSheetFragment = new BottomSheetFragmentCashing(moveType);
                 bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
-                writeSaveButton();
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
+                searchQuery = s;
+                if (s.isEmpty()) {
+                    writeSaveButton();
+                } else {
                 binding.invoice.setText("بحث عن صنف");
                 productVM.setSearchQuery(s);
-
-                binding.invoice.setOnClickListener(view -> {
-                    if (App.isNetworkAvailable(SearchProductsCashing.this))
-                        productVM.getProduct(s, uuid, null, moveType, null);
-                    else {
-                        App.noConnectionDialog(SearchProductsCashing.this);
-                    }
-                    BottomSheetFragmentCashing bottomSheetFragment = new BottomSheetFragmentCashing(moveType);
-                    bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
-                    writeSaveButton();
-                });
+                }
                 return false;
             }
         });

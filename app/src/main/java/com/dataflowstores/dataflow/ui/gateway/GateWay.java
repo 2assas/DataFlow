@@ -61,7 +61,6 @@ public class GateWay extends BaseActivity implements SelectFoundationDialog.Dial
     List<StoresData> storesDataListBranch = new ArrayList<>();
     boolean selectBranchStaff = false;
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,9 +99,6 @@ public class GateWay extends BaseActivity implements SelectFoundationDialog.Dial
             }
         }
     }
-
-
-
 
     public void loginButton(View view) {
         binding.progress.setVisibility(View.VISIBLE);

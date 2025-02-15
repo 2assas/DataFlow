@@ -144,7 +144,6 @@ public class SearchExpenses extends BaseActivity {
         if (expenseData.getShiftISN() != null && !Objects.equals(expenseData.getShiftISN(), "0"))
             binding.expTemplate.shiftNum.setText("رقم الوردية: " + expenseData.getShiftISN());
         binding.expTemplate.foundationName.setText(App.currentUser.getFoundationName());
-
         binding.expTemplate.date.setText("التاريخ: " + expenseData.getCreateDate());
 //        binding.expTemplate.
         binding.expTemplate.expensesTotal.setText(String.format(Locale.US, "%.3f", Float.parseFloat(expenseData.getNetValue())) + " جنيه");

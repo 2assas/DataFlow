@@ -408,7 +408,6 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
                         if (App.stores.getData().get(i).getStore_ISN() == App.currentUser.getTransfereFromDefaultStoreISN()
                                 && App.stores.getData().get(i).getBranchISN() == App.currentUser.getTransfereFromDefaultStoreBranchISN()) {
                             pos = i;
-//                        break;
                         }
                 }
 
@@ -498,7 +497,7 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
         if (App.product.getSelectedStore() != null) {
             for (int i = 0; i < App.stores.getData().size(); i++) {
                 if (App.stores.getData().get(i) == App.product.getSelectedStore()) {
-                    binding.measureUnitSpinner.setSelection(i);
+                    binding.storesList.setSelection(i);
                 }
                 Log.e("checkDefault", "selected 1");
             }
@@ -508,6 +507,15 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
             binding.storesList.setSelection(pos);
             Log.e("checkSelection", "Selected " + pos);
         }
+        if (App.lastSelectedFromStoreCaching != -1) {
+            for (int i = 0; i < App.stores.getData().size(); i++) {
+                if (App.stores.getData().get(i).getStore_ISN() == App.lastSelectedFromStoreCaching) {
+                    binding.storesList.setSelection(i);
+                }
+            }
+        }
+
+
         if (moveType == 14) {
             int pos2 = 0;
             ArrayList<String> storesTo = new ArrayList<>();
@@ -532,12 +540,17 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
                 }
             });
             binding.ToStoresList.setSelection(pos2);
+            if (App.lastSelectedToStoreCaching != -1) {
+                for (int i = 0; i < App.storesCashing.getData().size(); i++) {
+                    if (App.storesCashing.getData().get(i).getStore_ISN() == App.lastSelectedToStoreCaching) {
+                        binding.ToStoresList.setSelection(i);
+                    }
+                }
+            }
         }
-        //      =========================
-
+        Log.e("checkPriceType", "price type is here");
         ArrayList<String> priceType = new ArrayList<>();
         priceType.add(App.priceType.getPricesTypeName());
-
         ArrayAdapter bb = new ArrayAdapter(this, android.R.layout.simple_spinner_item, priceType);
         bb.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.priceType.setAdapter(bb);
@@ -664,12 +677,15 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
 
     private void addButton() {
         binding.saveProduct.setOnClickListener(view -> {
+            binding.saveProduct.setClickable(false);
             if (App.product.getSelectedToStore() != null && App.product.getSelectedStore().getBranchISN() == App.product.getSelectedToStore().getBranchISN()
                     && App.product.getSelectedStore().getStore_ISN() == App.product.getSelectedToStore().getStore_ISN()) {
                 new AlertDialog.Builder(ProductScreenCashing.this).
                         setTitle("إختر مخزن آخر")
                         .setMessage("لا يمكن إختيار التحويل داخل نفس المخزن، من فضلك اختر مخزن آخر")
-                        .setPositiveButton("حسنا", (dialogInterface, f) -> dialogInterface.dismiss()).show();
+                        .setPositiveButton("حسنا", (dialogInterface, f) -> {
+                            binding.saveProduct.setClickable(true);
+                            dialogInterface.dismiss();}).show();
             } else {
                 App.product.setUserNote(binding.productNote.getText().toString());
                 App.product.setPriceTotal(measureUnit.getPrice() * quantity);
@@ -680,7 +696,6 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
                     App.product.setSelectedSerial(binding.serial.getText().toString());
                 }
                 if (App.product.getExpireDate() && !dateValidation) {
-//                    assas
                     binding.expirePicker.setError(getString(R.string.date_error));
                 } else if (App.product.getSerial() && binding.serial.getText().toString().isEmpty()) {
                     binding.serial.setError(getString(R.string.serial_error));
@@ -702,7 +717,6 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
                         }
                         finish();
                     } else {
-                        Log.e("checkCurrentStore", "storeName= " + product.getSelectedStore().getStoreName() + " storeMinus " + product.getSelectedStore().getStore_ISN());
                         if (moveType != 17 && moveType != 21 && moveType != 12 && moveType != 15 && (App.currentUser.getAllowStoreMinus() == 1 || App.currentUser.getAllowStoreMinus() == 2 || (App.currentUser.getAllowStoreMinus() == 4 && product.getSelectedStore().getAllowCurrentStoreMinus() == 1))) {
                             minusCheck();
                         } else {
@@ -750,7 +764,9 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
                                             finish();
                                         }).setNegativeButton("إلغاء", (dialogInterface, i) -> {
                                             checkoutVM.checkItemMutableLiveData = new MutableLiveData<>();
+                                            binding.saveProduct.setClickable(true);
                                             dialogInterface.dismiss();
+
                                         }).show();
                             } else if
                             (response.getStatus() == 0 && (App.currentUser.getAllowStoreMinus() == 1 || (App.currentUser.getAllowStoreMinus() == 4 && App.product.getSelectedStore().getAllowCurrentStoreMinus() == 1))) {
@@ -764,6 +780,7 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
                                         .setCancelable(false)
                                         .setNegativeButton("إلغاء", (dialogInterface, i) -> {
                                             checkoutVM.checkItemMutableLiveData = new MutableLiveData<>();
+                                            binding.saveProduct.setClickable(true);
                                             dialogInterface.dismiss();
                                         }).show();
                             } else {
@@ -785,6 +802,10 @@ public class ProductScreenCashing extends BaseActivity implements AvailableProdu
                         });
                     }
                 }
+            }
+            App.lastSelectedFromStoreCaching = product.getSelectedStore().getStore_ISN();
+            if (moveType == 14) {
+                App.lastSelectedToStoreCaching = product.getSelectedToStore().getStore_ISN();
             }
         });
     }

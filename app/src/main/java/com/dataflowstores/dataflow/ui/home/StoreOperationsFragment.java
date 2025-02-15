@@ -215,6 +215,13 @@ public class StoreOperationsFragment extends Fragment {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        App.lastSelectedFromStoreCaching = -1;
+        App.lastSelectedToStoreCaching = -1;
+    }
+
     private void back() {
         requireActivity().onBackPressed();
     }

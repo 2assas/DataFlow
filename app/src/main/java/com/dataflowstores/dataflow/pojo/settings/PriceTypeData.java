@@ -19,7 +19,6 @@ public class PriceTypeData implements Serializable, Parcelable {
     String PricesTypeName;
     @SerializedName("Type")
     String Type;
-
     @SerializedName("BasicPriceType")
     int BasicPriceType;
 
